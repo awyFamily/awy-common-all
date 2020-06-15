@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.awyFamily</groupId>
+	<artifactId>awy-common-all</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<description>spring boot cloud 相关封装组件</description>
+	<packaging>pom</packaging>
+
+
+	<properties>
+		<java.version>11</java.version>
+		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
+		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>
+		<!--<alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>-->
+		<alibaba.cloud.version>2.2.0.RELEASE</alibaba.cloud.version>
+		<!-- nacos配置中心 0.2.1 对应的是1.1.1  -->
+		<!--<spring.alibaba.cloud>0.2.1.RELEASE</spring.alibaba.cloud>-->
+		<spring.alibaba.cloud>0.9.0.RELEASE</spring.alibaba.cloud>
+		<spring.platform.version>Cairo-SR7</spring.platform.version>
+		<!--<security.oauth.version>[2.3.5,)</security.oauth.version>-->
+		<security.oauth.version>2.3.6.RELEASE</security.oauth.version>
+		<security.oauth.auto.version>2.1.2.RELEASE</security.oauth.auto.version>
+		<mysql.connector.java.version>8.0.15</mysql.connector.java.version>
+		<!-- 稳定版 -->
+		<jedis.version>2.9.0</jedis.version>
+		<spring.data.mongodb.version>2.1.9.RELEASE</spring.data.mongodb.version>
+		<ojdbc6.version>11.2.0.3</ojdbc6.version>
+		<!-- alibaba druid 连接池 -->
+		<druid.spring.boot.starter>1.1.9</druid.spring.boot.starter>
+		<mybatis.plus.version>3.3.1</mybatis.plus.version>
+		<!-- netty -->
+		<netty.version>4.1.48.Final</netty.version>
+		<!-- t-io aio通讯 -->
+		<org.t.io.version>3.3.0.v20190512-RELEASE</org.t.io.version>
+		<swagger.version>2.9.2</swagger.version>
+		<swagger.annotations>1.5.20</swagger.annotations>
+		<jboss.spec.javax.annotation.version>1.0.2.Final</jboss.spec.javax.annotation.version>
+		<hutool.version>5.2.0</hutool.version>
+		<!-- 不安全 -->
+		<jackson.version>2.10.2</jackson.version>
+		<guava.version>28.0-jre</guava.version>
+		<google.gson.version>2.8.6</google.gson.version>
+		<lombok.version>1.18.6</lombok.version>
+		<fastjson.version>1.2.62</fastjson.version>
+		<!-- servlet包 -->
+		<servlet.version>4.0.1</servlet.version>
+		<poi.version>4.1.0</poi.version>
+		<!-- 配置文件加密 -->
+		<jasypt.version>2.1.2</jasypt.version>
+		<slf4j.api.version>1.7.25</slf4j.api.version>
+		<project.sourceEncoding>UTF-8</project.sourceEncoding>
+		<!-- apache maven插件版本-->
+		<org.apache.maven.plugins.version>3.8.0</org.apache.maven.plugins.version>
+		<docker.plugins.version>1.2.0</docker.plugins.version>
+<!--		<docker.plugins.version>1.2.0</docker.plugins.version>-->
+		<awy.common.version>1.0.0-SNAPSHOT</awy.common.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<modules>
+		<!-- 基础包 -->
+		<!-- API通用配置 -->
+		<module>common-api</module>
+		<!-- 服务通用配置 -->
+		<module>common-bom</module>
+		<!-- 服务客户端安全配置,用于资源服务器 -->
+		<module>common-security</module>
+		<!-- 安全配置相关工具类 -->
+		<module>common-security-util</module>
+		<!-- 通用工具包 -->
+		<module>common-util</module>
+		<!-- DiscoveryClient 工具包  -->
+		<module>common-discovery-client</module>
+		<!-- 邮件工具 -->
+		<module>common-email</module>
+		<!--数据库操作-->
+		<module>common-data</module>
+		<module>common-redis</module>
+		<!-- mongodb option -->
+		<module>common-mongo</module>
+		<!-- excel操作 -->
+		<module>common-excel</module>
+		<!-- 日志 -->
+		<module>common-log</module>
+		<!-- swagger -->
+		<module>common-swagger-bp</module>
+		<module>common-swagger-layui</module>
+		<!--rabbitmq -->
+		<module>common-rabbit</module>
+
+		<!-- web公共包 -->
+		<module>common-web</module>
+
+		<!-- 网关公共包 -->
+		<module>common-gateway</module>
+
+		<!-- feign 有待验证 -->
+		<module>common-feign</module>
+		<!-- 待开发 -->
+<!--		<module>common-rpc</module>-->
+		<!-- netty 实现 webSocket -->
+		<module>common-ws-netty</module>
+    </modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<!--springcloud-->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring.cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!-- cloud alibaba start -->
+			<!--<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-alibaba-dependencies</artifactId>
+				<version>${spring.alibaba.cloud}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>-->
+			<!--nacos config依赖-->
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
+				<version>${spring.alibaba.cloud}</version>
+			</dependency>
+
+			<!-- 注册中心配置 -->
+			<dependency>
+				<groupId>com.alibaba.cloud</groupId>
+				<artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+				<version>${alibaba.cloud.version}</version>
+			</dependency>
+			<!-- cloud alibaba end -->
+
+			<!--springboot-->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>io.spring.platform</groupId>
+				<artifactId>platform-bom</artifactId>
+				<version>${spring.platform.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+			<!--稳定版本，替代spring security bom内置-->
+			<dependency>
+				<groupId>org.springframework.security.oauth</groupId>
+				<artifactId>spring-security-oauth2</artifactId>
+				<version>${security.oauth.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.security.oauth.boot</groupId>
+				<artifactId>spring-security-oauth2-autoconfigure</artifactId>
+				<version>${security.oauth.auto.version}</version>
+			</dependency>
+			<!--web 模块-->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-web</artifactId>
+				<version>${spring.boot.version}</version>
+				<exclusions>
+					<!--排除tomcat依赖-->
+					<exclusion>
+						<artifactId>spring-boot-starter-tomcat</artifactId>
+						<groupId>org.springframework.boot</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<!--undertow容器-->
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-undertow</artifactId>
+				<version>${spring.boot.version}</version>
+			</dependency>
+			<!-- 连接池 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid-spring-boot-starter</artifactId>
+				<version>${druid.spring.boot.starter}</version>
+			</dependency>
+			<!-- mysql支持 -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql.connector.java.version}</version>
+			</dependency>
+			<!-- oracle -->
+			<dependency>
+				<groupId>com.oracle</groupId>
+				<artifactId>ojdbc6</artifactId>
+				<version>${ojdbc6.version}</version>
+			</dependency>
+			<!--mybatis plus extension,包含了mybatis plus core-->
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-extension</artifactId>
+				<version>${mybatis.plus.version}</version>
+			</dependency>
+			<!--mybatis-->
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-boot-starter</artifactId>
+				<version>${mybatis.plus.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.baomidou</groupId>
+				<artifactId>mybatis-plus-annotation</artifactId>
+				<version>${mybatis.plus.version}</version>
+			</dependency>
+
+
+			<!-- nosql,不使用jedis,多线程情况下效率不高 -->
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${jedis.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springframework.data</groupId>
+				<artifactId>spring-data-mongodb</artifactId>
+				<version>${spring.data.mongodb.version}</version>
+				<scope>compile</scope>
+				<exclusions>
+					<exclusion>
+						<artifactId>mongo-java-driver</artifactId>
+						<groupId>org.mongodb</groupId>
+					</exclusion>
+					<exclusion>
+						<artifactId>jcl-over-slf4j</artifactId>
+						<groupId>org.slf4j</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+
+			<!-- 网络包 -->
+			<dependency>
+				<groupId>org.t-io</groupId>
+				<artifactId>tio-websocket-server</artifactId>
+				<version>${org.t.io.version}</version>
+			</dependency>
+
+			<!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-all</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+
+			<!--swagger 依赖-->
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger2</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-ui</artifactId>
+				<version>${swagger.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>io.springfox</groupId>
+				<artifactId>springfox-swagger-common</artifactId>
+				<version>${swagger.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
+				<groupId>io.swagger</groupId>
+				<artifactId>swagger-annotations</artifactId>
+				<version>${swagger.annotations}</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<!--  servlet -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${servlet.version}</version>
+				<!--                <scope>compile</scope>-->
+			</dependency>
+
+			<!--工具包开始 -->
+			<!--hutool-->
+			<dependency>
+				<groupId>cn.hutool</groupId>
+				<artifactId>hutool-all</artifactId>
+				<version>${hutool.version}</version>
+			</dependency>
+			<!-- guava -->
+			<dependency>
+				<groupId>com.google.guava</groupId>
+				<artifactId>guava</artifactId>
+				<version>${guava.version}</version>
+			</dependency>
+			<!-- jackson -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<!-- fastjson -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<!-- <version>1.2.8</version> -->
+				<version>${fastjson.version}</version>
+			</dependency>
+			<!-- gson -->
+			<dependency>
+				<groupId>com.google.code.gson</groupId>
+				<artifactId>gson</artifactId>
+				<version>${google.gson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<!--<version>1.9</version>-->
+				<version>[1.18,)</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+			</dependency>
+			<!--Lombok-->
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+			</dependency>
+			<!--  annotation package -->
+			<dependency>
+				<groupId>org.jboss.spec.javax.annotation</groupId>
+				<artifactId>jboss-annotations-api_1.2_spec</artifactId>
+				<version>${jboss.spec.javax.annotation.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.poi</groupId>
+				<artifactId>poi-ooxml-schemas</artifactId>
+				<version>${poi.version}</version>
+			</dependency>
+
+			<!-- 配置文件加密 -->
+			<dependency>
+				<groupId>com.github.ulisesbocchio</groupId>
+				<artifactId>jasypt-spring-boot-starter</artifactId>
+				<version>${jasypt.version}</version>
+			</dependency>
+			<!--工具包结束 -->
+
+			<!-- 日志模块 -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-parent</artifactId>
+				<version>${slf4j.api.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.api.version}</version>
+			</dependency>
+
+			<!--<dependency>
+				<groupId>com.yhw.nc</groupId>
+				<artifactId>commons</artifactId>
+				<version>${cloud.version}</version>
+			</dependency>-->
+
+
+		</dependencies>
+	</dependencyManagement>
+
+	<!--<repositories>
+		&lt;!&ndash; 配置远程仓库，用于获取cloud.alibaba 包 &ndash;&gt;
+		<repository>
+			<id>spring-snapshot</id>
+			<name>Spring Snapshot Repository</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>-->
+
+	<build>
+		<finalName>${project.name}</finalName>
+		<!-- 资源目录 -->
+		<resources>
+			<resource>
+				<!-- 设定资源主目录 指定resources插件处理哪个目录下的资源文件 -->
+				<directory>src/main/resources</directory>
+				<!-- 不包含directory指定目录下的以下文件 -->
+				<excludes>
+					<exclude>test/*</exclude>
+				</excludes>
+				<!-- filtering为true的时候，这时只会把过滤的文件（<excludes>）打到classpath下，
+                 filtering为false的时候，会把不需要过滤的文件（<includes>）打到classpath下 -->
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+
+		<pluginManagement>
+			<plugins>
+				<!--spring boot打包插件-->
+				<plugin>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-maven-plugin</artifactId>
+					<version>${spring.boot.version}</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!--编译插件-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${org.apache.maven.plugins.version}</version>
+					<configuration>
+						<source>${java.version}</source> <!--源代码 jdk版本-->
+						<target>${java.version}</target> <!--class文件编译版本-->
+						<encoding>${project.sourceEncoding}</encoding> <!-- 字符集编码-->
+						<skip>true</skip> <!-- 打包跳过测试 -->
+					</configuration>
+				</plugin>
+				<!--源码打包插件-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${org.apache.maven.plugins.version}</version>
+					<configuration>
+						<attach>true</attach>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>compile</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<!-- docker插件 -->
+				<plugin>
+					<groupId>com.spotify</groupId>
+					<artifactId>docker-maven-plugin</artifactId>
+					<version>${docker.plugins.version}</version>
+					<!-- 配置插件绑定某些 phase 执行 -->
+					<executions>
+						<!-- 绑定 package 执行 -->
+						<execution>
+							<!-- 此处，只要用户执行：[mvn package],就会自动执行：[mvn docker:build]-->
+							<phase>install</phase>
+							<goals>
+								<goal>build</goal>
+							</goals>
+						</execution>
+						<!-- 推送jar,同时推送docker -->
+						<!--<execution>
+							<id>push-image</id>
+							<phase>deploy</phase>
+							<goals>
+								<goal>push</goal>
+							</goals>
+							<configuration>
+								<imageName>yhw-cloud/${project.name}:latest</imageName>
+							</configuration>
+						</execution>-->
+					</executions>
+					<configuration>
+						<!-- 镜像名称 -->
+						<imageName>awy-cloud/${project.name}:latest</imageName>
+						<env>
+							<TZ>Asia/Shanghai</TZ>
+						</env>
+						<!-- 指定dockerFile所在路径-->
+						<dockerDirectory>${project.basedir}</dockerDirectory>
+						<!-- 启动容器执行命令 -->
+						<!--<entryPoint>["java", "-jar", "-Xmx 128M", "-Xms 128M", "/${project.build.finalName}.jar"]</entryPoint>-->
+						<resources>
+							<resource>
+								<targetPath>/</targetPath>
+								<!-- 指定需要复制的根目录,此处表示target目录 -->
+								<directory>${project.build.directory}</directory>
+								<!-- 指定需要复制的文件 打包后的jar文件-->
+								<include>${project.build.finalName}.jar</include>
+							</resource>
+						</resources>
+						<!-- 与maven配置文件setting.xml中的 server.id一致，用于推送镜像-->
+						<!--<serverId>docker-hub</serverId>-->
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+
+	<!-- maven releases版本重新上传时候 必须更新版本号 -->
+	<distributionManagement>
+		<!-- 发布仓库 -->
+		<repository>
+			<id>rdc-releases</id>
+			<url>https://repo.rdc.aliyun.com/repository/122155-release-3wHSw4/</url>
+		</repository>
+		<!-- 快照仓库 版本后缀加上 SNAPSHOT -->
+		<snapshotRepository>
+			<id>rdc-snapshots</id>
+			<url>https://repo.rdc.aliyun.com/repository/122155-snapshot-LIyi76/</url>
+		</snapshotRepository>
+	</distributionManagement>
+</project>
