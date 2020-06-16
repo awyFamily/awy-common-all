@@ -116,9 +116,7 @@ public class NettyWebSocketStarter {
         if(propertiesConfig.isRegister()){
             Map<String, AbstractAutoServiceRegistration> serviceRegistrationMap = getApplicationContext().getBeansOfType(AbstractAutoServiceRegistration.class);
             for (Map.Entry<String,AbstractAutoServiceRegistration>  registrationEntry : serviceRegistrationMap.entrySet()){
-                System.err.println(">>>>>>>>>>>>>>>>> " + registrationEntry.getValue().getClass());
-//                AbstractAutoServiceRegistration registration = registrationEntry.getValue();
-//                registration.
+//                System.err.println(">>>>>>>>>>>>>>>>> " + registrationEntry.getValue().getClass());
                 registrationEntry.getValue().start();
             }
 
