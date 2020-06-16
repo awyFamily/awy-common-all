@@ -1,4 +1,4 @@
-package com.awy.common.ws.netty.packets;
+package com.awy.common.message.api.packets;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,7 +34,7 @@ public abstract class Message {
     private Integer code;
 
 
-    public Message(Integer code,String uid){
+    public Message(Integer code, String uid){
         this.code = code;
         this.uid = uid;
     }

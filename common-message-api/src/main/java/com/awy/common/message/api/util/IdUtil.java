@@ -1,4 +1,4 @@
-package com.awy.common.ws.netty.toolkit;
+package com.awy.common.message.api.util;
 
 import java.util.UUID;
 

@@ -1,7 +1,7 @@
 package com.awy.common.ws.netty.process;
 
+import com.awy.common.message.api.util.IdUtil;
 import com.awy.common.ws.netty.model.ImSession;
-import com.awy.common.ws.netty.toolkit.IdUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**

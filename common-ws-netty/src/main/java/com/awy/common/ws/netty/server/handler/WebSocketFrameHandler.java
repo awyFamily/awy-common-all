@@ -17,10 +17,10 @@ package com.awy.common.ws.netty.server.handler;
 
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.awy.common.message.api.packets.Message;
+import com.awy.common.message.api.packets.response.ResponseMessage;
 import com.awy.common.ws.netty.context.MessageManager;
 import com.awy.common.ws.netty.context.ProcessManager;
-import com.awy.common.ws.netty.packets.Message;
-import com.awy.common.ws.netty.packets.response.ResponseMessage;
 import com.awy.common.ws.netty.process.CmdProcess;
 import com.awy.common.ws.netty.toolkit.ImSendUtil;
 import io.netty.channel.ChannelHandler;

@@ -1,6 +1,7 @@
 package com.awy.common.ws.netty.context;
 
-import com.awy.common.ws.netty.packets.Message;
+
+import com.awy.common.message.api.packets.Message;
 
 import java.util.HashMap;
 import java.util.List;

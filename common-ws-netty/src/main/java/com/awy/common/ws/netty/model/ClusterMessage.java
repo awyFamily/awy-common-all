@@ -1,6 +1,6 @@
 package com.awy.common.ws.netty.model;
 
-import com.awy.common.ws.netty.packets.Message;
+import com.awy.common.message.api.packets.Message;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,9 +15,9 @@ import java.util.List;
 public class ClusterMessage {
 
     /**
-     * 无状态
-     * 单聊
-     * 群聊
+     * 无状态(no)
+     * 单聊(chat)
+     * 群聊(group)
      */
     private String messageType;
 

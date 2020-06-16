@@ -9,7 +9,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import java.util.Date;
 
 /**
- * 简单的获取token 后拓展方法
+ * 简单的获取token 后 拓展方法
  */
 public class ExampleExpandTokenService implements IExpandTokenService {
 

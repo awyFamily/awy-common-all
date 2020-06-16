@@ -1,6 +1,6 @@
 package com.awy.common.ws.netty.process;
 
-import com.awy.common.ws.netty.packets.Message;
+import com.awy.common.message.api.packets.Message;
 import io.netty.channel.Channel;
 
 /**

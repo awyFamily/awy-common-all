@@ -1,9 +1,9 @@
 package com.awy.common.ws.netty.even.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.awy.common.message.api.util.IdUtil;
 import com.awy.common.ws.netty.constants.ImCommonConstant;
 import com.awy.common.ws.netty.context.SessionContext;
-import com.awy.common.ws.netty.toolkit.IdUtil;
 import com.awy.common.ws.netty.even.LifeCycleEvent;
 import com.awy.common.ws.netty.model.ImSession;
 import io.netty.channel.Channel;

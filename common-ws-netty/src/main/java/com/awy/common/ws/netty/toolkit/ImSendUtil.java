@@ -2,10 +2,10 @@ package com.awy.common.ws.netty.toolkit;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
+import com.awy.common.message.api.packets.Message;
 import com.awy.common.ws.netty.cluster.ImClusterTopic;
 import com.awy.common.ws.netty.context.GlobalContent;
 import com.awy.common.ws.netty.context.SessionContext;
-import com.awy.common.ws.netty.packets.Message;
 import com.awy.common.ws.netty.config.ImConfig;
 import com.awy.common.ws.netty.model.ClusterMessage;
 import io.netty.channel.Channel;
