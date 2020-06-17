@@ -60,15 +60,15 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                     if(process != null){
                         response = process.handler(message,ctx.channel());
                     }else {
-                        response = ResponseMessage.error("消息编码不存在");
+                        response = ResponseMessage.error("message code not exists");
                     }
                 }else {
-                    response = ResponseMessage.error("请传递合法的指令");
+                    response = ResponseMessage.error("Please pass legal instructions");
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                response = ResponseMessage.error("请传递合法的消息体");
+                response = ResponseMessage.error("Please pass a legitimate message body");
             }
             if(response != null){
                 //做回应，服务器是否处理成功
