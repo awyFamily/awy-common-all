@@ -35,7 +35,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
 
     MyWebSocketServerProtocolHandshakeHandler(String websocketPath, String subProtocols,
                                               boolean allowExtensions, int maxFrameSize, boolean allowMaskMismatch, boolean checkStartsWith) {
-        System.err.println("MyWebSocketServerProtocolHandshakeHandler init");
+//        System.err.println("MyWebSocketServerProtocolHandshakeHandler init");
         this.websocketPath = websocketPath;
         this.subProtocols = subProtocols;
         this.allowExtensions = allowExtensions;

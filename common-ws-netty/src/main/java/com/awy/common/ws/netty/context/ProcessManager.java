@@ -17,7 +17,7 @@ public class ProcessManager {
         return Holder.manager;
     }
 
-    public CmdProcess getCmdProcess(int code){
+    public CmdProcess getCmdProcess(byte code){
         return cmdRepository.get(code);
     }
 

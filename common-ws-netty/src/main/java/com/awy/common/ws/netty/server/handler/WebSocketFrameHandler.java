@@ -49,7 +49,7 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
             JSONObject requestObj;
             try {
                 requestObj = JSONUtil.parseObj(request);
-                Byte code = requestObj.getByte("cmd");
+                Byte code = requestObj.getByte("cmd",requestObj.getByte("CMD"));
                 if(code != null){
                     Class<? extends Message> clazz = MessageManager.getInstance().getMessage(code);
 

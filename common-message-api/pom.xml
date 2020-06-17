@@ -11,6 +11,11 @@
 
     <artifactId>common-message-api</artifactId>
 
+    <properties>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
     <description>通用的消息包，基于此消息包实现自定义协议</description>
 
 

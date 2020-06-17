@@ -187,7 +187,7 @@ public class ImSendUtil {
             return null;
         }
         String result = JSONUtil.toJsonStr(message);
-        return new TextWebSocketFrame(result.toUpperCase(Locale.US));
+        return new TextWebSocketFrame(result);
     }
 
 }

@@ -18,7 +18,7 @@ public class MessageManager {
         return Holder.manager;
     }
 
-    public Class<? extends Message> getMessage(int code){
+    public Class<? extends Message> getMessage(byte code){
         return msgRepository.get(code);
     }
 
