@@ -10,11 +10,11 @@ public abstract class AuthProcess {
 
     /**
      * 登录事件
-     * @param userName 用户名
+     * @param username 用户名
      * @param password 用户密码
      * @return IM用户对象
      */
-    public abstract ImSession login(String userName, String password);
+    public abstract ImSession login(String username, String password);
 
 
 }

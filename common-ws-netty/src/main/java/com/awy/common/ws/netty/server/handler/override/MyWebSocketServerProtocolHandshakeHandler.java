@@ -156,8 +156,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
         }
 
 
-//        ImSession login = authProcess.login(parameterMap.get("userName"), parameterMap.get("passwod"));
-        ImSession login = GlobalContent.getInstance().getAuthProcess().login(parameterMap.get("userName"), parameterMap.get("passwod"));
+        ImSession login = GlobalContent.getInstance().getAuthProcess().login(parameterMap.get("username"), parameterMap.get("password"));
 
         if(login == null){
 //            System.err.println("认证失败，关闭连接");

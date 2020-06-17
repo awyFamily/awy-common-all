@@ -12,6 +12,7 @@
     <artifactId>common-message-api</artifactId>
 
     <properties>
+        <java.version>11</java.version>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>

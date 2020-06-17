@@ -48,24 +48,29 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
 //            ctx.channel().writeAndFlush(new TextWebSocketFrame(request.toUpperCase(Locale.US)));
             JSONObject requestObj;
             try {
-                requestObj = JSONUtil.parseObj(request);
-                Byte code = requestObj.getByte("cmd",requestObj.getByte("CMD"));
-                if(code != null){
-                    Class<? extends Message> clazz = MessageManager.getInstance().getMessage(code);
+                if(JSONUtil.isJson(request)){
+                    requestObj = JSONUtil.parseObj(request);
+                    Byte code = requestObj.getByte("cmd",requestObj.getByte("CMD"));
+                    if(code != null){
+                        Class<? extends Message> clazz = MessageManager.getInstance().getMessage(code);
 
-                    Message message = JSONUtil.toBean(requestObj, clazz);
+                        Message message = JSONUtil.toBean(requestObj, clazz);
 
-                    CmdProcess process = ProcessManager.getInstance().getCmdProcess(code);
+                        CmdProcess process = ProcessManager.getInstance().getCmdProcess(code);
 
-                    if(process != null){
-                        response = process.handler(message,ctx.channel());
+                        if(process != null){
+                            response = process.handler(message,ctx.channel());
+                        }else {
+                            response = ResponseMessage.error("message code not exists");
+                        }
                     }else {
-                        response = ResponseMessage.error("message code not exists");
+                        response = ResponseMessage.error("Please pass legal instructions");
                     }
                 }else {
-                    response = ResponseMessage.error("Please pass legal instructions");
-                }
+                    //不为 json 消息时不进行处理
 
+                    response = null;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 response = ResponseMessage.error("Please pass a legitimate message body");
