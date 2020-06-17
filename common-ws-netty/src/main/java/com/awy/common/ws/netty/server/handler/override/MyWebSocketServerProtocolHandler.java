@@ -66,7 +66,7 @@ public class MyWebSocketServerProtocolHandler extends WebSocketServerProtocolHan
 
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) {
-        System.err.println("============== webSocket 握手handler ,只需进行一次握手======================");
+//        System.err.println("============== webSocket 握手handler ,只需进行一次握手======================");
 //        super.handlerAdded(ctx);
         ChannelPipeline cp = ctx.pipeline();
         if (cp.get(MyWebSocketServerProtocolHandshakeHandler.class) == null) {
@@ -83,10 +83,15 @@ public class MyWebSocketServerProtocolHandler extends WebSocketServerProtocolHan
     }
 
 
+    /**
+     * 通道关闭触发(进行通道 进行 解绑操作)
+     * @param ctx
+     * @throws Exception
+     */
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        //第一步 通道关闭触发(解绑操作)
-        System.err.println(this.getClass().getName() + " channel 被关闭：channelInactive() 进行解绑操作！");
+        //第一步
+//        System.err.println(this.getClass().getName() + " channel 被关闭：channelInactive() 进行解绑操作！");
         GlobalContent.getInstance().getLifeCycleEvent().cleanContext(ctx.channel());
 //        super.channelInactive(ctx);
     }
@@ -94,14 +99,14 @@ public class MyWebSocketServerProtocolHandler extends WebSocketServerProtocolHan
     @Override
     public void channelUnregistered(ChannelHandlerContext ctx) throws Exception {
         //第二步
-        System.err.println(this.getClass().getName() +" channel 取消线程(NioEventLoop) 的绑定: channelUnregistered()");
+//        System.err.println(this.getClass().getName() +" channel 取消线程(NioEventLoop) 的绑定: channelUnregistered()");
 //        super.channelUnregistered(ctx);
     }
 
     @Override
     public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
         //第三步骤
-        System.err.println(this.getClass().getName() + " channel 逻辑处理器被移除：handlerRemoved()");
+//        System.err.println(this.getClass().getName() + " channel 逻辑处理器被移除：handlerRemoved()");
 //        super.handlerRemoved(ctx);
     }
 

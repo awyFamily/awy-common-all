@@ -160,7 +160,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
         ImSession login = GlobalContent.getInstance().getAuthProcess().login(parameterMap.get("userName"), parameterMap.get("passwod"));
 
         if(login == null){
-            System.err.println("认证失败，关闭连接");
+//            System.err.println("认证失败，关闭连接");
             ctx.channel().close();
             return;
         }
@@ -172,7 +172,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
         //浏览器直接关闭，此处不会被触发
-        System.err.println(this.getClass().getName() + " channel 被关闭");
+//        System.err.println(this.getClass().getName() + " channel 被关闭");
     }
 
 }
