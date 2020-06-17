@@ -1,17 +1,33 @@
-package com.awy.common.ws.netty.client;
+package com.awy.common.ws.client.handler;
 
+import com.awy.common.ws.client.reader.CloseReader;
+import com.awy.common.ws.client.reader.SimpleCloseReader;
+import com.awy.common.ws.client.reader.SimpleTextReader;
+import com.awy.common.ws.client.reader.TextReader;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
     private final WebSocketClientHandshaker handshaker;
     private ChannelPromise handshakeFuture;
 
+    private  TextReader textReader;
+
+    private  CloseReader closeReader;
+
     public WebSocketClientHandler(WebSocketClientHandshaker handshaker) {
+        this(handshaker,new SimpleTextReader(),new SimpleCloseReader());
+    }
+
+    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,TextReader textReader,CloseReader closeReader) {
         this.handshaker = handshaker;
+        this.textReader = textReader == null ? new SimpleTextReader() : textReader;
+        this.closeReader = closeReader == null ? new SimpleCloseReader() : closeReader;
     }
 
     public ChannelFuture handshakeFuture() {
@@ -39,10 +55,11 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (!handshaker.isHandshakeComplete()) {
             try {
                 handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-                System.out.println("WebSocket Client connected!");
+                log.info("WebSocket Client connected!");
                 handshakeFuture.setSuccess();
             } catch (WebSocketHandshakeException e) {
-                System.out.println("WebSocket Client failed to connect");
+                log.error("WebSocket Client failed to connect");
+                closeReader.onClose();
                 handshakeFuture.setFailure(e);
             }
             return;
@@ -58,15 +75,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
-            //TODO 处理文本数据
-            System.out.println("test message: " + textFrame.text());
-
-
-
+            textReader.handler(textFrame.text(),ctx.channel());
+//            System.out.println("test message: " + textFrame.text());
         } else if (frame instanceof PongWebSocketFrame) {
-            System.out.println("pong ....");
+            log.info("pong ....");
         } else if (frame instanceof CloseWebSocketFrame) {
-            System.out.println("closing ....");
+//            System.out.println("closing ....");
             ch.close();
         }
     }

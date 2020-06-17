@@ -106,6 +106,7 @@
 
 		<!-- netty 实现 webSocket -->
 		<module>common-ws-netty</module>
+		<module>common-ws-client</module>
 
 	</modules>
 

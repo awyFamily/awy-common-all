@@ -95,4 +95,9 @@ public class WebSocketServer {
         boss.shutdownGracefully();
         work.shutdownGracefully();
     }
+
+    public static void main(String[] args) {
+        WebSocketServer server = new WebSocketServer(8080,"/websocket",false,null,null,null);
+        server.start();
+    }
 }
