@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 
 /**
  * 读取文本文件
+ * @author yhw
  */
 public interface TextReader {
 

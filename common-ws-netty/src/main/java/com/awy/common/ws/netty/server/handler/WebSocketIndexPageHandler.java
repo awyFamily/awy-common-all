@@ -93,7 +93,6 @@ public class WebSocketIndexPageHandler extends SimpleChannelInboundHandler<FullH
 
     private static void sendHttpResponse(ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res) {
         // Generate an error page if response getStatus code is not OK (200).
-//        System.err.println(res.status().code());
         if (res.status().code() != 200) {
             ByteBuf buf = Unpooled.copiedBuffer(res.status().toString(), CharsetUtil.UTF_8);
             res.content().writeBytes(buf);

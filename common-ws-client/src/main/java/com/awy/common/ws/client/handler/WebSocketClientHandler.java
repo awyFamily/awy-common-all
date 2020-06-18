@@ -10,6 +10,9 @@ import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @author yhw
+ */
 @Slf4j
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -76,11 +79,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             textReader.handler(textFrame.text(),ctx.channel());
-//            System.out.println("test message: " + textFrame.text());
         } else if (frame instanceof PongWebSocketFrame) {
             log.info("pong ....");
         } else if (frame instanceof CloseWebSocketFrame) {
-//            System.out.println("closing ....");
             ch.close();
         }
     }

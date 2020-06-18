@@ -26,11 +26,11 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
-import java.util.Locale;
 
 
 /**
  * 客户端
+ * @author yhw
  */
 @Slf4j
 public final class WebSocketClient {
@@ -159,6 +159,9 @@ public final class WebSocketClient {
      * @param message
      */
     public void sendMsg(Message message){
+        if(!channel.isActive()){
+            this.restart();
+        }
         channel.writeAndFlush(getMessage(message));
     }
 

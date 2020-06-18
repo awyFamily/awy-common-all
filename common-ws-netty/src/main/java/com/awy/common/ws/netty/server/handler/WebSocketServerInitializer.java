@@ -23,13 +23,11 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
     String subProtocols;
     boolean allowExtensions;
     boolean checkStartsWith;
-//    AuthProcess authProcess;
 
 
     private WebSocketServerInitializer(){}
 
     public WebSocketServerInitializer(SslContext sslCtx, String websocketPath){
-//        this(sslCtx,websocketPath,null,true,true,authProcess);
         this(sslCtx,websocketPath,null,true,true);
     }
 
@@ -43,8 +41,6 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         this.allowExtensions = allowExtensions;
         //严格校验webSocket请求路径(false , true 无法进行认证)
         this.checkStartsWith = checkStartsWith;
-//        this.authProcess = authProcess;
-
     }
 
     @Override
@@ -60,9 +56,7 @@ public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel
         //WebSocket数据压缩
         pipeline.addLast(new WebSocketServerCompressionHandler());
         //webSocket 协议处理
-//        pipeline.addLast(new WebSocketServerProtocolHandler(websocketPath, null, true));
         pipeline.addLast(new MyWebSocketServerProtocolHandler(websocketPath,subProtocols,allowExtensions,checkStartsWith));
-//        pipeline.addLast(new MyWebSocketServerProtocolHandler(websocketPath,subprotocols,allowExtensions,checkStartsWith,authProcess, lifeCycleEvent));
         //http 首页处理器
         pipeline.addLast(new WebSocketIndexPageHandler(websocketPath));
         //webSocket处理器

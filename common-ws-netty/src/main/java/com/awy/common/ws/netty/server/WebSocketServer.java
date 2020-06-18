@@ -14,10 +14,12 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author yhw
  */
+@Slf4j
 public class WebSocketServer {
 
     /**
@@ -80,9 +82,9 @@ public class WebSocketServer {
 
     public void start(){
         try {
-            Channel ch = serverBootstrap.bind(port).sync().channel();
+            serverBootstrap.bind(port).sync().channel();
 
-            System.out.println("Open your web browser and navigate to " +
+           log.info("Open your web browser and navigate to " +
                     (ssl ? "https" : "http") + "://127.0.0.1:" + port + "" + websocketPath);
 
 //            ch.closeFuture().sync();
@@ -96,8 +98,4 @@ public class WebSocketServer {
         work.shutdownGracefully();
     }
 
-    public static void main(String[] args) {
-        WebSocketServer server = new WebSocketServer(8080,"/websocket",false,null,null,null);
-        server.start();
-    }
 }

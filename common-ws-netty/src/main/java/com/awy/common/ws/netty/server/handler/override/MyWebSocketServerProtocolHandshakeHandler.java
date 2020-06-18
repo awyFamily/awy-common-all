@@ -31,11 +31,9 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
     private final boolean allowMaskMismatch;
     private final boolean checkStartsWith;
 
-//    private AuthProcess authProcess;
 
     MyWebSocketServerProtocolHandshakeHandler(String websocketPath, String subProtocols,
                                               boolean allowExtensions, int maxFrameSize, boolean allowMaskMismatch, boolean checkStartsWith) {
-//        System.err.println("MyWebSocketServerProtocolHandshakeHandler init");
         this.websocketPath = websocketPath;
         this.subProtocols = subProtocols;
         this.allowExtensions = allowExtensions;
@@ -43,20 +41,6 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
         this.allowMaskMismatch = allowMaskMismatch;
         this.checkStartsWith = checkStartsWith;
     }
-
-
-/*    MyWebSocketServerProtocolHandshakeHandler(String websocketPath, String subProtocols,
-                                              boolean allowExtensions, int maxFrameSize, boolean allowMaskMismatch, boolean checkStartsWith, AuthProcess authProcess) {
-        System.err.println("MyWebSocketServerProtocolHandshakeHandler init");
-        this.websocketPath = websocketPath;
-        this.subProtocols = subProtocols;
-        this.allowExtensions = allowExtensions;
-        maxFramePayloadSize = maxFrameSize;
-        this.allowMaskMismatch = allowMaskMismatch;
-        this.checkStartsWith = checkStartsWith;
-
-        this.authProcess = authProcess;
-    }*/
 
     @Override
     public void channelRead(final ChannelHandlerContext ctx, Object msg) throws Exception {
@@ -115,18 +99,32 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
     }
 
 
+    /**
+     * 是否 url 严格校验模式
+     * @param req
+     * @return 返回校验结果
+     */
     private boolean isNotWebSocketPath(FullHttpRequest req) {
-//        return false;
         return checkStartsWith ? !req.uri().startsWith(websocketPath) : !req.uri().equals(websocketPath);
     }
 
+    //http 响应
     private static void sendHttpResponse(ChannelHandlerContext ctx, HttpRequest req, HttpResponse res) {
         ChannelFuture f = ctx.channel().writeAndFlush(res);
+        //没有建立 keepalive 机制 或者 响应码 ！= 200
         if (!isKeepAlive(req) || res.status().code() != 200) {
+            //关闭通道
             f.addListener(ChannelFutureListener.CLOSE);
         }
     }
 
+    /**
+     * 获取监听url
+     * @param cp
+     * @param req
+     * @param path
+     * @return
+     */
     private static String getWebSocketLocation(ChannelPipeline cp, HttpRequest req, String path) {
         String protocol = "ws";
         if (cp.get(SslHandler.class) != null) {
@@ -158,11 +156,12 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
 
         ImSession login = GlobalContent.getInstance().getAuthProcess().login(parameterMap.get("username"), parameterMap.get("password"));
 
+        //认证失败，关闭连接
         if(login == null){
-//            System.err.println("认证失败，关闭连接");
             ctx.channel().close();
             return;
         }
+
         //认证成功，绑定上下文信息
         GlobalContent.getInstance().getLifeCycleEvent().bindContext(login,ctx);
 
@@ -170,8 +169,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        //浏览器直接关闭，此处不会被触发
-//        System.err.println(this.getClass().getName() + " channel 被关闭");
+
     }
 
 }

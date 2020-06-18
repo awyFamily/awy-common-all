@@ -4,9 +4,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.message.api.packets.Message;
 import com.awy.common.ws.netty.cluster.ImClusterTopic;
+import com.awy.common.ws.netty.config.ImConfig;
 import com.awy.common.ws.netty.context.GlobalContent;
 import com.awy.common.ws.netty.context.SessionContext;
-import com.awy.common.ws.netty.config.ImConfig;
 import com.awy.common.ws.netty.model.ClusterMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
@@ -14,7 +14,6 @@ import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -97,10 +96,7 @@ public class ImSendUtil {
      * @param message 消息
      */
     public static void sendCurrentNodeUser(String userId,Message message){
-        Channel channel = SessionContext.getChannel(userId);
-        if(channel != null){
-            channel.writeAndFlush(getMessage(message));
-        }
+        sendMsgChannel(message,SessionContext.getChannel(userId));
     }
 
     /**
@@ -126,10 +122,7 @@ public class ImSendUtil {
      * @param message
      */
     public static void sendCurrentNodeGroup(String groupId,Message message){
-        ChannelGroup channelGroup = SessionContext.getChannelGroup(groupId);
-        if(channelGroup != null){
-            channelGroup.writeAndFlush(getMessage(message));
-        }
+        sendMsgChannelGroup(message,SessionContext.getChannelGroup(groupId));
     }
 
     /**
@@ -155,7 +148,7 @@ public class ImSendUtil {
      */
     public static void sendCurrentNodeAllChannel(Message message){
         for (Map.Entry<String, Channel> entry : SessionContext.getAllChannel().entrySet()){
-            entry.getValue().writeAndFlush(getMessage(message));
+            sendMsgChannel(message,entry.getValue());
         }
     }
 
@@ -189,5 +182,24 @@ public class ImSendUtil {
         String result = JSONUtil.toJsonStr(message);
         return new TextWebSocketFrame(result);
     }
+
+    private static boolean sendMsgChannel(Message message,Channel channel){
+        TextWebSocketFrame textWebSocketFrame = getMessage(message);
+        if(textWebSocketFrame != null && channel != null){
+            if(channel.isActive()){
+                channel.writeAndFlush(textWebSocketFrame);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void sendMsgChannelGroup(Message message,ChannelGroup channelGroup) {
+        TextWebSocketFrame textWebSocketFrame = getMessage(message);
+        if(textWebSocketFrame != null && channelGroup != null){
+            channelGroup.writeAndFlush(textWebSocketFrame);
+        }
+    }
+
 
 }

@@ -7,7 +7,6 @@ public class SimpleCloseReader implements CloseReader {
 
     @Override
     public void onClose() {
-        System.out.println("channel close ................");
         log.info("channel close ................");
     }
 }
