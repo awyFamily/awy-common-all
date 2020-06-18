@@ -24,7 +24,6 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketCl
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
-import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
@@ -153,15 +152,9 @@ public final class WebSocketClient {
      */
     public void start(){
         if(group == null){
-            try {
-                initBootstrap(this.textReader,this.closeReader);
-                this.restart();
-                handler.handshakeFuture().sync();
-                if(isRetry){
-                    reconnection();
-                }
-            }catch (InterruptedException e) {
-                this.stop();
+            this.restart();
+            if(isRetry){
+                reconnection();
             }
         }
     }
@@ -171,10 +164,11 @@ public final class WebSocketClient {
      */
     public void restart(){
         try {
+            initBootstrap(this.textReader,this.closeReader);
             channel = bootstrap.connect(host, port).sync().channel();
+            handler.handshakeFuture().sync();
         } catch (InterruptedException e) {
-            e.printStackTrace();
-            this.stop();
+            log.error("restart error",e);
         }
 
     }
@@ -197,7 +191,7 @@ public final class WebSocketClient {
                     }else {
                         channel.writeAndFlush(new PingWebSocketFrame());
                     }
-                    sleepTime(TimeUnit.SECONDS,30);
+                    sleepTime(TimeUnit.SECONDS,15);
                 }
             }
         });
