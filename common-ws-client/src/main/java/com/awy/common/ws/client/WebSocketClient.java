@@ -16,6 +16,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpClientCodec;
 import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
@@ -23,9 +24,11 @@ import io.netty.handler.codec.http.websocketx.extensions.compression.WebSocketCl
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -52,17 +55,37 @@ public final class WebSocketClient {
 
     private  WebSocketClientHandler handler;
 
+    private TextReader textReader;
+
+    private CloseReader closeReader;
+
+    //是否断线重连
+    private boolean isRetry;
+
     private WebSocketClient(){
-        this("ws://127.0.0.1:8080/websocket",null,null);
+        this("ws://127.0.0.1:8080/websocket",null);
     }
 
-    public WebSocketClient(String url,TextReader textReader,CloseReader closeReader){
+    public WebSocketClient(String url,TextReader textReader) {
+        this(url,textReader,null,true);
+    }
+
+
+    /**
+     * @param url 监听url
+     * @param textReader 收到文本消息回调
+     * @param closeReader 通道关闭处理事件
+     * @param isRetry 是否进行重连(心跳)
+     */
+    public WebSocketClient(String url,TextReader textReader,CloseReader closeReader,boolean isRetry){
         try {
             setHostAndPort(url);
+            this.textReader = textReader;
+            this.closeReader = closeReader;
+            this.isRetry = isRetry;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        initBootstrap(textReader,closeReader);
     }
 
     private void  setHostAndPort(String url) throws Exception{
@@ -125,23 +148,88 @@ public final class WebSocketClient {
                 });
     }
 
-
+    /**
+     * 建立连接
+     */
     public void start(){
+        if(group == null){
+            try {
+                initBootstrap(this.textReader,this.closeReader);
+                this.restart();
+                handler.handshakeFuture().sync();
+                if(isRetry){
+                    reconnection();
+                }
+            }catch (InterruptedException e) {
+                this.stop();
+            }
+        }
+    }
+
+    /**
+     * 重连
+     */
+    public void restart(){
         try {
             channel = bootstrap.connect(host, port).sync().channel();
-            handler.handshakeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
             this.stop();
         }
+
     }
 
+    private volatile boolean reconnectionThreadStop = false;
+
+    private Thread reconnectionThread;
+
+
+    private void reconnection(){
+        reconnectionThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                sleepTime(TimeUnit.MILLISECONDS,5000 - System.currentTimeMillis() % 1000);
+
+                while (!reconnectionThreadStop){
+                    if(!channel.isActive()){
+                        restart();
+                    }else {
+                        channel.writeAndFlush(new PingWebSocketFrame());
+                    }
+                    sleepTime(TimeUnit.SECONDS,30);
+                }
+            }
+        });
+
+        reconnectionThread.setDaemon(true);
+        reconnectionThread.start();
+    }
+
+    /**
+     * 关闭连接
+     */
     public void stop(){
+        this.reconnectionThreadStop = true;
+        sleepTime(TimeUnit.SECONDS,1);
+        if (reconnectionThread.getState() != Thread.State.TERMINATED){
+            reconnectionThread.interrupt();
+            try {
+                reconnectionThread.join();
+            } catch (InterruptedException e) {
+                log.error(e.getMessage(), e);
+            }
+        }
+        channel.close();
         group.shutdownGracefully();
     }
 
-    public void restart(){
-        this.start();
+    private void sleepTime(TimeUnit timeUnit,long time){
+        try {
+            timeUnit.sleep(time);
+        } catch (InterruptedException e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
 

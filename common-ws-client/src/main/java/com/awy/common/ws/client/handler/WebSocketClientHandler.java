@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author yhw
  */
+@ChannelHandler.Sharable
 @Slf4j
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -49,7 +50,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("WebSocket Client disconnected!");
+        log.info("WebSocket Client disconnected!");
+        closeReader.onClose();
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
     }
 
     @Override
@@ -62,7 +68,6 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                 handshakeFuture.setSuccess();
             } catch (WebSocketHandshakeException e) {
                 log.error("WebSocket Client failed to connect");
-                closeReader.onClose();
                 handshakeFuture.setFailure(e);
             }
             return;

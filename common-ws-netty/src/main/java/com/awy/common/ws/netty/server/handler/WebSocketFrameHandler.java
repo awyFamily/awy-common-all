@@ -26,6 +26,8 @@ import com.awy.common.ws.netty.toolkit.ImSendUtil;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
+import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketFrame;
 
@@ -77,6 +79,8 @@ public class WebSocketFrameHandler extends SimpleChannelInboundHandler<WebSocket
                 //做回应，服务器是否处理成功
                 ctx.channel().writeAndFlush(ImSendUtil.getMessage(response));
             }
+        }else if(frame instanceof PingWebSocketFrame){
+            ctx.channel().writeAndFlush(new PongWebSocketFrame());
         } else {
             String message = "unsupported frame type: " + frame.getClass().getName();
             throw new UnsupportedOperationException(message);
