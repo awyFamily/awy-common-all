@@ -194,7 +194,7 @@ public final class WebSocketClient {
                     sleepTime(TimeUnit.SECONDS,15);
                 }
             }
-        });
+        },"reconnection-thread");
 
         reconnectionThread.setDaemon(true);
         reconnectionThread.start();
