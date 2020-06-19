@@ -31,6 +31,8 @@ public class UserMultiLoginLifeCycleEvent implements LifeCycleEvent {
             groupIds = new ArrayList<>(1);
         }
         groupIds.add(login.getUserId());
+        //将用户id 分组
+        login.setGroupIds(groupIds);
 
         Channel channel = ctx.channel();
 
