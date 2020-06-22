@@ -87,7 +87,7 @@ public class MyWebSocketServerProtocolHandshakeHandler extends ChannelInboundHan
                         }
                     }
                 });
-
+                //连接通道绑定 ws 协议版本
                 MyWebSocketServerProtocolHandler.setHandshaker(ctx.channel(), handShaker);
                 //用当前处理器替换为 WS403Responder(禁止http请求)
                 ctx.pipeline().replace(this, "WS403Responder",

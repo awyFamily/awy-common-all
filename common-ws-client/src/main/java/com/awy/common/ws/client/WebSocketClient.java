@@ -9,7 +9,9 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -27,6 +29,7 @@ import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 
@@ -48,7 +51,6 @@ public final class WebSocketClient {
 
     private Channel channel;
 
-    private EventLoopGroup group;
 
     private Bootstrap bootstrap;
 
@@ -58,6 +60,8 @@ public final class WebSocketClient {
 
     private CloseReader closeReader;
 
+    private LinkedBlockingQueue<Message> messageRetryQueue;
+
     //是否断线重连
     private boolean isRetry;
 
@@ -66,17 +70,17 @@ public final class WebSocketClient {
     }
 
     public WebSocketClient(String url,TextReader textReader) {
-        this(url,textReader,null,true);
+        this(url,textReader,null,true,300);
     }
-
 
     /**
      * @param url 监听url
      * @param textReader 收到文本消息回调
      * @param closeReader 通道关闭处理事件
      * @param isRetry 是否进行重连(心跳)
+     * @param queueCapacity 重试消息长度
      */
-    public WebSocketClient(String url,TextReader textReader,CloseReader closeReader,boolean isRetry){
+    public WebSocketClient(String url,TextReader textReader,CloseReader closeReader,boolean isRetry,int queueCapacity){
         try {
             setHostAndPort(url);
             this.textReader = textReader;
@@ -85,6 +89,7 @@ public final class WebSocketClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        messageRetryQueue = new LinkedBlockingQueue <>(messageRetryQueue);
     }
 
     private void  setHostAndPort(String url) throws Exception{
@@ -121,37 +126,40 @@ public final class WebSocketClient {
     }
 
     private void initBootstrap(TextReader textReader,CloseReader closeReader){
-        group = new NioEventLoopGroup();
+        if(Epoll.isAvailable()){
+            bootstrap = new Bootstrap().group(new EpollEventLoopGroup()).channel(EpollSocketChannel.class);
+
+        }else {
+            bootstrap = new Bootstrap().group(new NioEventLoopGroup()).channel(NioSocketChannel.class);
+        }
 
         handler =
                 new WebSocketClientHandler(
                         WebSocketClientHandshakerFactory.newHandshaker(
                                 uri, WebSocketVersion.V13, null, true, new DefaultHttpHeaders()),textReader,closeReader);
 
-        bootstrap = new Bootstrap();
-        bootstrap.group(group)
-                .channel(NioSocketChannel.class)
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel ch) {
-                        ChannelPipeline p = ch.pipeline();
-                        if (sslCtx != null) {
-                            p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
-                        }
-                        p.addLast(
-                                new HttpClientCodec(),
-                                new HttpObjectAggregator(8192),
-                                WebSocketClientCompressionHandler.INSTANCE,
-                                handler);
-                    }
-                });
+
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel ch) {
+                ChannelPipeline p = ch.pipeline();
+                if (sslCtx != null) {
+                    p.addLast(sslCtx.newHandler(ch.alloc(), host, port));
+                }
+                p.addLast(
+                        new HttpClientCodec(),
+                        new HttpObjectAggregator(8192),
+                        WebSocketClientCompressionHandler.INSTANCE,
+                        handler);
+            }
+        });
     }
 
     /**
      * 建立连接
      */
     public void start(){
-        if(group == null){
+        if(bootstrap == null){
             this.restart();
             if(isRetry){
                 reconnection();
@@ -163,41 +171,20 @@ public final class WebSocketClient {
      * 重连
      */
     public void restart(){
-        try {
+        /*try {
             initBootstrap(this.textReader,this.closeReader);
-            channel = bootstrap.connect(host, port).sync().channel();
+            channel = bootstrap.connect(host, port).channel();
             handler.handshakeFuture().sync();
         } catch (InterruptedException e) {
             log.error("restart error",e);
-        }
+        }*/
 
-    }
+        initBootstrap(this.textReader,this.closeReader);
+        channel = bootstrap.connect(host, port).channel();
+        handler.handshakeFuture();
+        //必需要等待协议建立完毕，因为上述连接都是同步操作，需要sync（同步的模式，为了重连）
+        sleepTime(TimeUnit.SECONDS,15);
 
-    private volatile boolean reconnectionThreadStop = false;
-
-    private Thread reconnectionThread;
-
-
-    private void reconnection(){
-        reconnectionThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                sleepTime(TimeUnit.MILLISECONDS,5000 - System.currentTimeMillis() % 1000);
-
-                while (!reconnectionThreadStop){
-                    if(!channel.isActive()){
-                        restart();
-                    }else {
-                        channel.writeAndFlush(new PingWebSocketFrame());
-                    }
-                    sleepTime(TimeUnit.SECONDS,15);
-                }
-            }
-        },"reconnection-thread");
-
-        reconnectionThread.setDaemon(true);
-        reconnectionThread.start();
     }
 
     /**
@@ -215,7 +202,78 @@ public final class WebSocketClient {
             }
         }
         channel.close();
-        group.shutdownGracefully();
+        bootstrap.config().group().shutdownGracefully();
+    }
+
+    /**
+     * 发送消息
+     * 当消息未发送完毕 -> 稍后进行投递
+     * @param message
+     */
+    public void sendMsg(Message message){
+        if(channel.isActive()){
+            TextWebSocketFrame textWebSocketFrame = getMessage(message);
+            if(textWebSocketFrame != null){
+                channel.writeAndFlush(textWebSocketFrame);
+            }
+        }else {
+            log.error("channel not connection .  message join retry queue");
+            addQueue(message);
+        }
+    }
+
+    private void addQueue(Message message){
+        if(!messageRetryQueue.offer(message)){
+            Message lostMessage = messageRetryQueue.poll();
+            log.error("action lost a message {}",lostMessage);
+            messageRetryQueue.add(message);
+        }
+    }
+
+    private void pollMessage(){
+        for(int i = 0; i < messageRetryQueue.size(); i++){
+            sendMsg(messageRetryQueue.poll());
+        }
+    }
+
+    public static TextWebSocketFrame getMessage(Message message){
+        if(message == null){
+            log.error(">>>>>>>>>>>> message can not be empty ");
+            return null;
+        }
+        String result = JSONUtil.toJsonStr(message);
+        return new TextWebSocketFrame(result);
+    }
+
+
+
+    private volatile boolean reconnectionThreadStop = false;
+
+    private Thread reconnectionThread;
+
+    private void reconnection(){
+        reconnectionThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                sleepTime(TimeUnit.MILLISECONDS,5000 - System.currentTimeMillis() % 1000);
+//                sleepTime(TimeUnit.SECONDS,15);
+
+                while (!reconnectionThreadStop){
+                    if(!channel.isActive()){
+                        log.info("retry connection ..... ");
+                        restart();
+                    }else {
+                        pollMessage();
+                        channel.writeAndFlush(new PingWebSocketFrame());
+                    }
+                    sleepTime(TimeUnit.SECONDS,15);
+                }
+            }
+        },"reconnection-thread");
+
+        reconnectionThread.setDaemon(true);
+        reconnectionThread.start();
     }
 
     private void sleepTime(TimeUnit timeUnit,long time){
@@ -227,24 +285,24 @@ public final class WebSocketClient {
     }
 
 
-    public static TextWebSocketFrame getMessage(Message message){
-        if(message == null){
-            log.error(">>>>>>>>>>>> message can not be empty ");
-            return null;
-        }
-        String result = JSONUtil.toJsonStr(message);
-        return new TextWebSocketFrame(result);
-    }
+    public static void main(String[] args) {
+        LinkedBlockingQueue<String> messageRetryQueue = new LinkedBlockingQueue <>(10);
+//        ConcurrentLinkedQueue<String> messageRetryQueue = new ConcurrentLinkedQueue <>();
+        for (int i = 0; i < 15;i++){
+//            System.out.println(messageRetryQueue.offer(String.valueOf(i)));
+            if(!messageRetryQueue.offer(String.valueOf(i))){
+                System.out.println(messageRetryQueue.poll());
+                messageRetryQueue.add(String.valueOf(i));
+            }
 
-    /**
-     * 发送消息
-     * @param message
-     */
-    public void sendMsg(Message message){
-        if(!channel.isActive()){
-            this.restart();
         }
-        channel.writeAndFlush(getMessage(message));
+
+
+        System.out.println(messageRetryQueue.size());
+        for (int i = 0; i < 30;i++){
+            System.out.println(messageRetryQueue.poll());
+        }
+        System.out.println(messageRetryQueue.size());
     }
 
 }
