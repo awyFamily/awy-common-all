@@ -8,12 +8,16 @@ import com.awy.common.ws.netty.process.AuthProcess;
 import com.awy.common.ws.netty.process.SimpleAuthProcess;
 import com.awy.common.ws.netty.server.handler.WebSocketServerInitializer;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.Channel;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
+import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,10 +33,7 @@ public class WebSocketServer {
     private int port;
     private String websocketPath;
 
-
     private ServerBootstrap serverBootstrap;
-    private NioEventLoopGroup boss;
-    private NioEventLoopGroup work;
 
 
     private WebSocketServer(){}
@@ -55,15 +56,38 @@ public class WebSocketServer {
         globalContent.setImClusterTopic(imClusterTopic);
         globalContent.setLifeCycleEvent(lifeCycleEvent);
 
-
         //主从 react 模型
-        serverBootstrap = new ServerBootstrap();
-        boss = new NioEventLoopGroup(1);
-        work = new NioEventLoopGroup();
+        serverBootstrap = newServerBootstrap();
+        //绑定处理器
+        serverBootstrap.childHandler(new WebSocketServerInitializer(getSslContext(),websocketPath));
+    }
 
-        serverBootstrap.group(boss,work)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new WebSocketServerInitializer(getSslContext(),websocketPath));
+
+    public ServerBootstrap newServerBootstrap() {
+        //默认开启 Epoll
+        if (Epoll.isAvailable()) {
+            EventLoopGroup bossGroup =
+                    new EpollEventLoopGroup(1, new DefaultThreadFactory("bossGroup", true));
+            EventLoopGroup workerGroup =
+                    new EpollEventLoopGroup(0, new DefaultThreadFactory("workerGroup", true));
+            return new ServerBootstrap().group(bossGroup, workerGroup).channel(EpollServerSocketChannel.class);
+        }
+
+        return newNioServerBootstrap(1, 0);
+    }
+
+    private ServerBootstrap newNioServerBootstrap(int bossThreads, int workerThreads) {
+        EventLoopGroup bossGroup;
+        EventLoopGroup workerGroup;
+        if (bossThreads >= 0 && workerThreads >= 0) {
+            bossGroup = new NioEventLoopGroup(bossThreads);
+            workerGroup = new NioEventLoopGroup(workerThreads);
+        } else {
+            bossGroup = new NioEventLoopGroup();
+            workerGroup = new NioEventLoopGroup();
+        }
+
+        return new ServerBootstrap().group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
     }
 
 
@@ -94,8 +118,8 @@ public class WebSocketServer {
     }
 
     public void stop(){
-        boss.shutdownGracefully();
-        work.shutdownGracefully();
+        serverBootstrap.config().group().shutdownGracefully();
+        serverBootstrap.config().childGroup().shutdownGracefully();
     }
 
 }
