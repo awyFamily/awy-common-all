@@ -22,7 +22,7 @@
 		<!--<security.oauth.version>[2.3.5,)</security.oauth.version>-->
 		<security.oauth.version>2.3.6.RELEASE</security.oauth.version>
 		<security.oauth.auto.version>2.1.2.RELEASE</security.oauth.auto.version>
-		<mysql.connector.java.version>8.0.15</mysql.connector.java.version>
+		<mysql.connector.java.version>8.0.16</mysql.connector.java.version>
 		<!-- 稳定版 -->
 		<jedis.version>2.9.0</jedis.version>
 		<spring.data.mongodb.version>2.1.9.RELEASE</spring.data.mongodb.version>
