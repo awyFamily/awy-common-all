@@ -1,6 +1,5 @@
 package com.awy.common.gateway.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
 import org.springframework.cloud.gateway.route.RouteDefinition;
 import org.springframework.cloud.gateway.route.RouteDefinitionWriter;
@@ -13,6 +12,9 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.Resource;
 
+/**
+ * 动态更新路由
+ */
 @Service
 public class DynamicRouteService implements ApplicationEventPublisherAware {
 
@@ -40,9 +42,7 @@ public class DynamicRouteService implements ApplicationEventPublisherAware {
             return "update fail,not find route  routeId: "+definition.getId();
         }
         try {
-            routeDefinitionWriter.save(Mono.just(definition)).subscribe();
-            this.publisher.publishEvent(new RefreshRoutesEvent(this));
-            return "success";
+            return add(definition);
         } catch (Exception e) {
             return "update route  fail";
         }

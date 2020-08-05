@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * 动态获取路由表
  * remote route service
  * @author yhw
  */

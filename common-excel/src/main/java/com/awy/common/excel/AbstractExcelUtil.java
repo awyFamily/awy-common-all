@@ -431,7 +431,7 @@ public abstract class AbstractExcelUtil<T>{
     private String getFilePath(String name,String folderName){
         SimpleDateFormat df = new SimpleDateFormat(DatePattern.PURE_DATETIME_PATTERN);
         String fileName = name.concat(df.format(new Date())).concat(PoiPool.XSSF_WORK_BOOK);
-        return FileUtil.getFilePath(folderName,fileName);
+        return FileUtil.getCurrentDataFormatFilePath(folderName,fileName);
     }
 
     /**

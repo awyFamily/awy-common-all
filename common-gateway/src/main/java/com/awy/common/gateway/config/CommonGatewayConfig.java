@@ -9,9 +9,9 @@ import org.springframework.web.client.RestTemplate;
  * @author yhw
  */
 @Configuration
-public class Config {
+public class CommonGatewayConfig {
 
-    private static final String  AUTH_FILTER_PROPERTIES_PREFIX = "security.oauth.filter";
+    private static final String  AUTH_FILTER_PROPERTIES_PREFIX = "awy.cloud.gateway.oauth.filter";
 
     @Bean
     public RestTemplate restTemplate(){

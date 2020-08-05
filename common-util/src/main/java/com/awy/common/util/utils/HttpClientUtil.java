@@ -13,9 +13,8 @@ public class HttpClientUtil {
     private HttpClientUtil(){}
 
     public static String download(String uri,String temFolderName,String fileName){
-        String filePath = FileUtil.getFilePath(temFolderName,fileName);
+        String filePath = FileUtil.getCurrentDataFormatFilePath(temFolderName,fileName);
         try {
-            //HttpResponse.BodyHandlers.ofInputStream();
             HttpClient.newHttpClient().send(getHttpRequest(uri), HttpResponse.BodyHandlers.ofFile(Paths.get(filePath))).body();
         } catch (IOException e) {
             e.printStackTrace();

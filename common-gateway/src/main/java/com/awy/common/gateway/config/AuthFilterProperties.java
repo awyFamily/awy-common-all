@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.List;
 
 /**
+ * 认证配置
  * @author yhw
  */
 @Data

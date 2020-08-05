@@ -35,13 +35,13 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
 
         routeLocator.getRoutes().subscribe(obj->routes.add(obj.getId()));
 
-        gatewayProperties.getRoutes().stream().peek(obj -> {
+        gatewayProperties.getRoutes().stream()/*.peek(obj -> {
             System.out.println("=================peek======================");
 
             System.out.println(obj.toString());
 
             System.out.println("=================peek======================");
-        }).filter(obj -> routes.contains(obj.getId()))
+        })*/.filter(obj -> routes.contains(obj.getId()))
                 .forEach(routeDefinition -> routeDefinition.getPredicates().stream()
                         .filter(predicateDefinition -> "Path".equalsIgnoreCase(predicateDefinition.getName()))
                         .filter(predicateDefinition -> !"auth".equalsIgnoreCase(routeDefinition.getId()))
@@ -49,8 +49,8 @@ public class SwaggerProvider implements SwaggerResourcesProvider {
                                 predicateDefinition.getArgs().get(NameUtils.GENERATED_NAME_PREFIX + "0")
                                         .replace("/**", API_URI)))));
 
-        System.out.println(JSONUtil.toJsonStr(resources));
-        System.out.println(JSONUtil.toJsonStr(routes));
+//        System.out.println(JSONUtil.toJsonStr(resources));
+//        System.out.println(JSONUtil.toJsonStr(routes));
         return resources;
     }
 
