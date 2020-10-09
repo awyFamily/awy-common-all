@@ -2,7 +2,7 @@ package com.awy.common.util.service;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
-import com.awy.common.redis.RedisComponent;
+import com.awy.common.redis.RedisWrapper;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 
@@ -18,11 +18,11 @@ public class ExampleExpandTokenService implements IExpandTokenService {
 
     }
 
-    private RedisComponent redisComponent;
+    private RedisWrapper redisWrapper;
 
-    public ExampleExpandTokenService(RedisComponent redisComponent){
-        Assert.isFalse(redisComponent == null, "redis component is empty");
-        this.redisComponent = redisComponent;
+    public ExampleExpandTokenService(RedisWrapper redisWrapper){
+        Assert.isFalse(redisWrapper == null, "redisWrapper is empty");
+        this.redisWrapper = redisWrapper;
     }
 
 //    @Value("${spring.security.oauth2.client.client_secret}")
@@ -48,7 +48,7 @@ public class ExampleExpandTokenService implements IExpandTokenService {
         expires = expires - (new Date().getTime() / 1000);
         if(expires > 120){
             expires = expires - 60;
-            redisComponent.setStrEx(key,refreshToken,expires);
+            redisWrapper.setStrEx(key,refreshToken,expires);
         }
     }
 

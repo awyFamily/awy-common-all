@@ -1,7 +1,7 @@
 package com.awy.common.util.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.awy.common.redis.RedisComponent;
+import com.awy.common.redis.RedisWrapper;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.common.*;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -22,16 +22,16 @@ public class YyDefaultTokenServices extends DefaultTokenServices {
 
     private TokenStore yyTokenStore;
 
-    private RedisComponent redisComponent;
+    private RedisWrapper redisWrapper;
 
     private YyDefaultTokenServices(){}
 
-    public YyDefaultTokenServices(TokenEnhancer tokenEnhancer, TokenStore tokenStore,RedisComponent redisComponent){
+    public YyDefaultTokenServices(TokenEnhancer tokenEnhancer, TokenStore tokenStore, RedisWrapper redisWrapper){
         super.setTokenEnhancer(tokenEnhancer);
         super.setTokenStore(tokenStore);
         this.yyyTokenEnhancer = tokenEnhancer;
         this.yyTokenStore = tokenStore;
-        this.redisComponent = redisComponent;
+        this.redisWrapper = redisWrapper;
     }
 
     @Transactional
@@ -130,7 +130,7 @@ public class YyDefaultTokenServices extends DefaultTokenServices {
 //        expires = expires - (new Date().getTime() / 1000);
         if(expires > 120){
             expires = expires - 60;
-            redisComponent.setStrEx(key,refreshToken,expires);
+            redisWrapper.setStrEx(key,refreshToken,expires);
         }
     }
 

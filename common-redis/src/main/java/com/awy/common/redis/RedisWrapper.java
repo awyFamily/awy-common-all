@@ -1,6 +1,8 @@
 package com.awy.common.redis;
 
 import com.awy.common.redis.data.ScanData;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.*;
@@ -18,7 +20,9 @@ import java.util.stream.Stream;
  * @author yhw
  */
 @Component
-public class RedisComponent {
+public class RedisWrapper {
+
+    protected static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     private  RedisTemplate redisTemplate;
@@ -29,6 +33,10 @@ public class RedisComponent {
 
 
     //============================== 字符串操作 =====================================
+
+    public String  getStr(String key){
+        return getStringTemplate().get(key);
+    }
 
 
     /**
@@ -63,12 +71,6 @@ public class RedisComponent {
         getStringTemplate().set(key, value, timeOut, timeUnit);
     }
 
-
-    public String  getStr(String key){
-        return getStringTemplate().get(key);
-    }
-
-
     private ValueOperations<String, String> getStringTemplate(){
         return redisTemplate.opsForValue();
     }
@@ -76,9 +78,22 @@ public class RedisComponent {
 
     //====================== object =======================================
 
+    public <T> T  getObj(String key,Class<T> clazz){
+        String value = this.getStr(key);
+        try {
+            return MAPPER.readValue(value,clazz);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
-    public Object getObj(String key){
-        return getObjectTemplate().get(key);
+    public void setObj(String key,Object value){
+        try {
+            this.setStr(key, MAPPER.writeValueAsString(value));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -88,20 +103,15 @@ public class RedisComponent {
         setObjEx(key,value,timeOut,TimeUnit.SECONDS);
     }
 
-
-    public void setObj(String key,Object value){
-        getObjectTemplate().set(key,value);
-    }
-
-
     public void setObjEx(String key,Object value,long timeOut,TimeUnit timeUnit){
-        getObjectTemplate().set(key,value,timeOut,timeUnit);
+        try {
+            this.setStrEx(key, MAPPER.writeValueAsString(value),timeOut,timeUnit);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
 
-    private ValueOperations<String, Object> getObjectTemplate(){
-        return redisTemplate.opsForValue();
-    }
 
 
     //===================== map ================================
