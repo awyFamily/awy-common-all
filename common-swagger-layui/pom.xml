@@ -19,9 +19,23 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
+            <version>2.9.2</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-models</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.swagger/swagger-models -->
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>1.5.21</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>
@@ -33,22 +47,10 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.awyFamily</groupId>
-            <artifactId>common-swagger-bp</artifactId>
-            <version>${awy.common.version}</version>
-        </dependency>
-
-        <!--<dependency>
-            <groupId>com.github.caspar-chen</groupId>
-            <artifactId>swagger-ui-layer</artifactId>
-            <version>1.1.3</version>
-        </dependency>-->
-        <!--<dependency>
             <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>1.9.5</version>
-        </dependency>-->
-
+            <artifactId>knife4j-spring-ui</artifactId>
+            <version>2.0.5</version>
+        </dependency>
     </dependencies>
 
     <build>

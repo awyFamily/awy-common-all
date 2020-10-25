@@ -1,4 +1,4 @@
-package com.awy.common.security;
+package com.awy.common.security.converter;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -19,7 +19,7 @@ import java.util.*;
  * 避免使用缓存中的拓展数据信息
  * @see DefaultAccessTokenConverter
  */
-public class NcAccessTokenConverter implements AccessTokenConverter {
+public class AwyAccessTokenConverter implements AccessTokenConverter {
 
     private UserAuthenticationConverter userTokenConverter = new DefaultUserAuthenticationConverter();
 

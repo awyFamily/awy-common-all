@@ -15,7 +15,7 @@ public class ApiResult<T> implements Serializable {
 
     private int code = CommonConstant.RESPONSE_SUCCESS;
 
-    private boolean isSuccess = true;
+    private boolean success = true;
 
     private String message = "";
 
@@ -24,10 +24,10 @@ public class ApiResult<T> implements Serializable {
     private ApiResult() {
     }
 
-    private ApiResult(int code, boolean seccess, String message, T data) {
+    private ApiResult(int code, boolean success, String message, T data) {
         this.code = code;
         this.message = message;
-        this.isSuccess = seccess;
+        this.success = success;
         this.data = data;
     }
 
@@ -36,8 +36,8 @@ public class ApiResult<T> implements Serializable {
         return this;
     }
 
-    private ApiResult isSuceess(Boolean isSuceess) {
-        this.isSuccess = isSuceess;
+    private ApiResult success(Boolean success) {
+        this.success = success;
         return this;
     }
 
@@ -84,7 +84,7 @@ public class ApiResult<T> implements Serializable {
     }
 
     public static <T> ApiResult error(String message) {
-        return new ApiResult().isSuceess(false).code(CommonConstant.RESPONSE_ERROR).message(message);
+        return new ApiResult().success(false).code(CommonConstant.RESPONSE_ERROR).message(message);
     }
 
     public static  ApiResult timeOut() {
@@ -100,7 +100,7 @@ public class ApiResult<T> implements Serializable {
     }
 
     public static <T>  ApiResult timeOut(String message) {
-        return new ApiResult().isSuceess(false).code(CommonConstant.RESPONSE_TIMEOUT).message(message);
+        return new ApiResult().success(false).code(CommonConstant.RESPONSE_TIMEOUT).message(message);
     }
 
     public static Builder getBuilder(){
@@ -110,7 +110,7 @@ public class ApiResult<T> implements Serializable {
     public static class Builder<T>{
         private int code;
 
-        private boolean isSuccess;
+        private boolean success;
 
         private String message;
 
@@ -129,7 +129,7 @@ public class ApiResult<T> implements Serializable {
         }
 
         public Builder setSuccess(boolean success){
-            this.isSuccess = success;
+            this.success = success;
             return this;
         }
 
@@ -139,7 +139,7 @@ public class ApiResult<T> implements Serializable {
         }
 
         public ApiResult builder(){
-            return new ApiResult(this.code, this.isSuccess, this.message, this.data);
+            return new ApiResult(this.code, this.success, this.message, this.data);
         }
     }
 

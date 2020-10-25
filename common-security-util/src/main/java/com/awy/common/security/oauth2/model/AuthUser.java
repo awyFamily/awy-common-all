@@ -1,10 +1,11 @@
-package com.awy.common.util.model;
+package com.awy.common.security.oauth2.model;
 
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 拓展Security用户认证
@@ -16,11 +17,15 @@ public class AuthUser extends User {
 
     private String userId;
 
-    private Integer companyId;
+    private Integer platformType;
 
-    public AuthUser(String userId,Integer companyId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    private List<Integer> companyIds;
+
+    public AuthUser(String userId,Integer platformType,List<Integer> companyIds, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.userId = userId;
-        this.companyId = companyId;
+        this.platformType = platformType;
+        this.companyIds = companyIds;
     }
+
 }

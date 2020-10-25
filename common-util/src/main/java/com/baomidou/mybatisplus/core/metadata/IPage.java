@@ -102,6 +102,26 @@ public interface IPage<T> extends Serializable {
     }
 
     /**
+     * 设置是否命中count缓存
+     *
+     * @param hit 是否命中
+     * @since 3.3.1
+     */
+    default void hitCount(boolean hit) {
+
+    }
+
+    /**
+     * 是否命中count缓存
+     *
+     * @return 是否命中count缓存
+     * @since 3.3.1
+     */
+    default boolean isHitCount() {
+        return false;
+    }
+
+    /**
      * 分页记录列表
      *
      * @return 分页对象记录列表
@@ -126,14 +146,14 @@ public interface IPage<T> extends Serializable {
     IPage<T> setTotal(long total);
 
     /**
-     * 当前分页总页数
+     * 获取每页显示条数
      *
-     * @return 总页数
+     * @return 每页显示条数
      */
     long getSize();
 
     /**
-     * 设置当前分页总页数
+     * 设置每页显示条数
      */
     IPage<T> setSize(long size);
 

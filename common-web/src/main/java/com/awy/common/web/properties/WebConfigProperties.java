@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@ConfigurationProperties(prefix = "nccloud.config.web")
+@ConfigurationProperties(prefix = "awy.config.web")
 @Data
 public class WebConfigProperties {
 

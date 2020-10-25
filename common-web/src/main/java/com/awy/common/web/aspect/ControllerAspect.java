@@ -44,7 +44,7 @@ public class ControllerAspect implements Ordered {
 
     private static LRUCache<String, Byte> ignoreCache = CacheUtil.newLRUCache(100);
 
-    @Pointcut("execution(* com.yhw.nc..*.controller..*.*(..))")
+    @Pointcut("execution(* com.awy..*.controller..*.*(..)) || execution(* com.awy..*.facade..*.*(..))")
     public void pointCut() {}
 
     @Around("pointCut()")

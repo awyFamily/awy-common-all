@@ -4,6 +4,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.yunyang.service.knowledge.biz.domain.standard.repository.po.PlantingStandardCalendarPO;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,41 +17,6 @@ import java.util.Map;
 
 public class MongoClientTest {
 
-    /*public static void main(String[] args) {
-        String database = "myTest";
-        String username = "test";
-        String password = "test";
-        MongoCredential credential =  MongoCredential.createCredential(username,database,password.toCharArray());//验证对象
-        MongoClientOptions options =  MongoClientOptions.builder().sslEnabled(false).build();//连接操作对象
-        MongoClient client = new MongoClient(new ServerAddress("localhost",6618),credential,options);//连接对象
-
-        //构造mongoTemplate
-        MongoTemplate mongoTemplate = new  MongoTemplate(client,database);
-        System.out.println(mongoTemplate);
-        MongoCollection<Document> iot_data_detail = mongoTemplate.getCollection("iot_data_detail");
-        System.out.println(iot_data_detail.find().first());
-        Document first = iot_data_detail.find().first();
-
-        MongoCursor<Document> iterator = iot_data_detail.find().iterator();
-        Document next;
-        while (iterator.hasNext()){
-            next = iterator.next();
-        }
-        first.toJson();
-
-
-
-    }*/
-
-
-
-    public MongoTemplate getMongoTemplate(String collectionName){
-        //创建集合
-        /*if(!mongoTemplate.collectionExists(collectionName)){
-            mongoTemplate.createCollection(collectionName);
-        }*/
-        return null;
-    }
 
 
     public static BsonDocument getQuerySn(String obj){
@@ -61,17 +27,15 @@ public class MongoClientTest {
         return bsonDocument;
     }
 
-    public static void main(String[] args) {
-        String database = "";
-        String username = "";
-        String password = "";
-        String host = "";
-        Integer port = 3717;
-
+    private static MongoTemplate getMongoTemplate(String host,Integer port,String database,String username,String password){
         MongoCredential credential = MongoCredential.createCredential(username,database,password.toCharArray());
         MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
         MongoClient client = new MongoClient(new ServerAddress(host,port),credential,options);
-        MongoTemplate mongoTemplate = new MongoTemplate(client,database);
+        return new MongoTemplate(client,database);
+    }
+
+    public static void main(String[] args) {
+        MongoTemplate mongoTemplate = getMongoTemplate("127.0.0.1",27017,"dev_base_cloud","dev_cloud","dev_cloud");
 
         //("sn").is("TDMQ20190422008").and
 
@@ -82,14 +46,17 @@ public class MongoClientTest {
         CriteriaDefinition criteria = Criteria.where("sn").is("16061840");//.and("createdAt").gt(DateUtil.parse("2019-10-05"))
         Query query = Query.query(criteria);
 
-        List<Map> iotDataDetails = mongoTemplate.find(query, Map.class, "iot_data_detail");
+        //List<Map> iotDataDetails = mongoTemplate.find(query, Map.class, "yy_planting_standard_calendar");
+        List<PlantingStandardCalendarPO> plantingStandardCalendars = mongoTemplate.findAll(PlantingStandardCalendarPO.class, "yy_planting_standard_calendar");
 
         /*for (IotDataDetail detail : iotDataDetails) {
             System.out.println(detail);
         }*/
-        System.out.println(iotDataDetails.size());
-        System.out.println(iotDataDetails.get(0));
+        System.out.println(plantingStandardCalendars.size());
+        System.out.println(plantingStandardCalendars.get(0));
 //        documents = iot_data_detail.find(getQuerySn(sn));
 
+        MongoTemplate mongoNewTemplate = getMongoTemplate("127.0.0.1",3717,"dev_base_cloud","base","base");
+        mongoNewTemplate.insert(plantingStandardCalendars,PlantingStandardCalendarPO.class);
     }
 }

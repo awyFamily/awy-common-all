@@ -1,4 +1,4 @@
-package com.awy.common.security.model;
+package com.awy.common.security.oauth2.model;
 
 import lombok.Data;
 

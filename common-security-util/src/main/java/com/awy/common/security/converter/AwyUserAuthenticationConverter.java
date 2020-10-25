@@ -1,7 +1,7 @@
-package com.awy.common.security;
+package com.awy.common.security.converter;
 
 import com.awy.common.util.constants.SecurityConstant;
-import com.awy.common.util.model.AuthUser;
+import com.awy.common.security.oauth2.model.AuthUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,15 +11,16 @@ import org.springframework.util.StringUtils;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 自定义token转换器
  * @author yhw
  */
-public class NcUserAuthenticationConverter implements UserAuthenticationConverter {
+public class AwyUserAuthenticationConverter implements UserAuthenticationConverter {
 
-    private final static String N_A = "N/A";
+
 
     /**
      * Extract information about the user to be used in an access token (i.e. for resource servers).
@@ -37,7 +38,8 @@ public class NcUserAuthenticationConverter implements UserAuthenticationConverte
         if(principal instanceof  AuthUser){
             authUser =   (AuthUser)principal;
             response.put(SecurityConstant.USER_ID, authUser.getUserId());
-            response.put(SecurityConstant.COMPANY_ID, authUser.getCompanyId());
+            response.put(SecurityConstant.COMPANY_IDS, authUser.getCompanyIds());
+            response.put(SecurityConstant.PLAT_FROM_TYPE, authUser.getPlatformType());
         }
 
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
@@ -61,12 +63,13 @@ public class NcUserAuthenticationConverter implements UserAuthenticationConverte
 
             String username = (String) map.get(USERNAME);
             String userId = (String)map.get(SecurityConstant.USER_ID);
-            Integer companyId = (Integer)map.get(SecurityConstant.COMPANY_ID);
+            Integer platformType = (Integer)map.get(SecurityConstant.PLAT_FROM_TYPE);
+            List<Integer> companyIds = (List<Integer>)map.get(SecurityConstant.COMPANY_IDS);
 
             //Security User增强类
-            AuthUser user = new AuthUser(userId, companyId, username, N_A,
+            AuthUser user = new AuthUser(userId, platformType,companyIds, username, SecurityConstant.N_A,
                     true, true, true, true, authorities);
-            return new UsernamePasswordAuthenticationToken(user, N_A, authorities);
+            return new UsernamePasswordAuthenticationToken(user, SecurityConstant.N_A, authorities);
         }
         return null;
     }

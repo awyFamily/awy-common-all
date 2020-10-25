@@ -2,7 +2,7 @@ package com.awy.data.config;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
-import com.awy.common.util.model.AuthUser;
+import com.awy.common.security.oauth2.model.AuthUser;
 import com.awy.common.util.utils.SecurityUtil;
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.stereotype.Component;

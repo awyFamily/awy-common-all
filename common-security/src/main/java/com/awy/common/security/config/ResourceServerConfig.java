@@ -1,7 +1,7 @@
 package com.awy.common.security.config;
 
-import com.awy.common.security.NcUserAuthenticationConverter;
-import com.awy.common.security.model.RemoteTokenProperties;
+import com.awy.common.security.converter.AwyUserAuthenticationConverter;
+import com.awy.common.security.oauth2.model.RemoteTokenProperties;
 import com.awy.common.util.componse.AuthExceptionEntryPoint;
 import com.awy.common.util.componse.CustomAccessDeniedHandler;
 import com.awy.common.util.constants.SecurityConstant;
@@ -43,7 +43,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     @Bean
     public AccessTokenConverter accessTokenConverter() {
         DefaultAccessTokenConverter accessTokenConverter = new DefaultAccessTokenConverter();
-        NcUserAuthenticationConverter userTokenConverter = new NcUserAuthenticationConverter();
+        AwyUserAuthenticationConverter userTokenConverter = new AwyUserAuthenticationConverter();
         //setting user token converter
         accessTokenConverter.setUserTokenConverter(userTokenConverter);
         return accessTokenConverter;
@@ -59,12 +59,12 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         remoteTokenServices.setCheckTokenEndpointUrl(properties.getCheck_token_uri());
         remoteTokenServices.setClientId(properties.getClient_id());
         remoteTokenServices.setClientSecret(properties.getClient_secret());
-        //use default converter token
+        //定义 token 转换器
         remoteTokenServices.setAccessTokenConverter(accessTokenConverter());
         return remoteTokenServices;
     }
 
-
+    //1
     @Override
     public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
         resources.tokenServices(remoteTokenServices())

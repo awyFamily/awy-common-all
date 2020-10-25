@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableTransactionManagement
 @Configuration
-@MapperScan("com.yhw.nc.**.mapper*")
+@MapperScan("com.awy.**.mapper*")
 public class MybatisPlusConfig {
 
     /**
@@ -20,5 +20,4 @@ public class MybatisPlusConfig {
         // paginationInterceptor.setLimit(你的最大单页限制数量，默认 500 条，小于 0 如 -1 不受限制);
         return paginationInterceptor;
     }
-
 }

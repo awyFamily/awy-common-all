@@ -6,7 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.awy.common.log.annotation.CloudLog;
 import com.awy.common.log.listener.LogNoteEvent;
 import com.awy.common.log.listener.LogMessage;
-import com.awy.common.util.model.AuthUser;
+import com.awy.common.security.oauth2.model.AuthUser;
 import com.awy.common.util.utils.DateJdK8Util;
 import com.awy.common.util.utils.SecurityUtil;
 import org.aopalliance.intercept.MethodInterceptor;

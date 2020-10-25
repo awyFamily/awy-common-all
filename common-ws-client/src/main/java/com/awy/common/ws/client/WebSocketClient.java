@@ -78,7 +78,7 @@ public final class WebSocketClient {
      * @param textReader 收到文本消息回调
      * @param closeReader 通道关闭处理事件
      * @param isRetry 是否进行重连(心跳)
-     * @param queueCapacity 重试消息长度
+     * @param queueCapacity 重试消息队列长度
      */
     public WebSocketClient(String url,TextReader textReader,CloseReader closeReader,boolean isRetry,int queueCapacity){
         try {

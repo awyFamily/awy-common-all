@@ -1,9 +1,12 @@
 package com.awy.common.util.utils;
 
-import com.awy.common.util.model.AuthUser;
+import com.awy.common.security.oauth2.model.AuthUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SecurityUtil {
 
@@ -17,12 +20,12 @@ public class SecurityUtil {
         return "";
     }
 
-    public static Integer getCurrentCompanyId(){
+    public static List<Integer> getCurrentCompanyIds(){
         AuthUser authUser = getUser();
         if(authUser != null){
-            return authUser.getCompanyId();
+            return authUser.getCompanyIds();
         }
-        return 0;
+        return new ArrayList<>();
     }
 
 

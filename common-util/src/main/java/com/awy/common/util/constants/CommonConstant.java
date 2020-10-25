@@ -2,7 +2,7 @@ package com.awy.common.util.constants;
 
 public interface CommonConstant {
 
-    String GROUP_ID = "com.yhw.nc";
+    String ROOT_PACKAGE_ID = "com.awy";
 
     /**
      * 响应成功
