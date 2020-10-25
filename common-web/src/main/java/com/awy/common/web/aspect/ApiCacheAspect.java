@@ -6,7 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.util.model.ApiResult;
-import com.awy.common.redis.RedisComponent;
+import com.awy.common.redis.RedisWrapper;
 import com.awy.common.util.utils.JsonUtil;
 import com.awy.common.util.utils.SecurityUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -35,16 +35,16 @@ import java.util.List;
 @Slf4j
 @Aspect
 @Component
-public class ControllerAspect implements Ordered {
+public class ApiCacheAspect implements Ordered {
 
     private static final String JOIN_KEY = ":";
 
     @Autowired
-    private RedisComponent redisComponent;
+    private RedisWrapper redisWrapper;
 
     private static LRUCache<String, Byte> ignoreCache = CacheUtil.newLRUCache(100);
 
-    @Pointcut("execution(* com.awy..*.controller..*.*(..)) || execution(* com.awy..*.facade..*.*(..))")
+    @Pointcut("execution(* com..*.controller..*.*(..)) || execution(* com..*.interfaces.facade..*.*(..))")
     public void pointCut() {}
 
     @Around("pointCut()")
@@ -61,7 +61,7 @@ public class ControllerAspect implements Ordered {
             if(!"".equals(parameterKey)){
                 String proceedStr =null;
                 try{
-                    proceedStr = redisComponent.getStr(parameterKey);
+                    proceedStr = redisWrapper.getStr(parameterKey);
                 }catch (Exception e){
                     log.error("redis connection error",e);
                 }
@@ -78,7 +78,7 @@ public class ControllerAspect implements Ordered {
             Object proceed = getProceed(proceedingJoinPoint);
             if(proceed != null){
                 try{
-                    redisComponent.setStrEx(parameterKey, JsonUtil.toJson(proceed), 3);
+                    redisWrapper.setStrEx(parameterKey, JsonUtil.toJson(proceed), 3);
                 }catch (Exception e){
                     log.error("redis connection error",e);
                     ignoreCache.put(parameterKey,(byte)0);

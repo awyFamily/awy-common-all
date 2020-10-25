@@ -5,7 +5,7 @@ import cn.hutool.json.JSONObject;
 import com.google.common.collect.Lists;
 import com.awy.common.discovery.client.util.ServiceInstanceUtil;
 import com.awy.common.gateway.config.AuthFilterProperties;
-import com.awy.common.redis.RedisComponent;
+import com.awy.common.redis.RedisWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -49,7 +49,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     private RestTemplate restTemplate;
 
     @Resource
-    private RedisComponent redisComponent;
+    private RedisWrapper redisWrapper;
 
     @Resource
     private AuthFilterProperties authFilterProperties;
@@ -154,7 +154,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     private Boolean isNotExpires(String token){
-        String str = redisComponent.getStr(token);
+        String str = redisWrapper.getStr(token);
         if("1".equals(str)){
             return true;
         }
@@ -170,7 +170,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         expires = expires - (new Date().getTime() / 1000);
         if(expires > 120){
             expires = expires - 60;
-            redisComponent.setStrEx(token,"1",expires);
+            redisWrapper.setStrEx(token,"1",expires);
         }
     }
 
