@@ -89,7 +89,7 @@ public final class WebSocketClient {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        messageRetryQueue = new LinkedBlockingQueue <>(messageRetryQueue);
+        messageRetryQueue = new LinkedBlockingQueue <>(queueCapacity);
     }
 
     private void  setHostAndPort(String url) throws Exception{
