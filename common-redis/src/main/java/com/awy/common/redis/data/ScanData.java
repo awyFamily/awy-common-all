@@ -9,10 +9,13 @@ import java.util.List;
 public class ScanData {
 
     /**
-     *
-     */
+     * 分页起始值,第一次为0, 下一次 scan 时 : cursor 值为 上次 scan 返回结果中第一个整数值 即 list.get(0)
+    */
     private String cursor;
 
+    /**
+     * scan 到的 key 列表
+     */
     private List<String> keys;
 
 

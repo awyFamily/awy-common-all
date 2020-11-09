@@ -207,7 +207,7 @@ public class RedisWrapper {
 
     /**
      * scan 操作，需要测试
-     * @param pattern
+     * @param pattern 匹配的 key 值前缀
      * @return
      */
     public ScanData scan(String pattern) {
@@ -218,6 +218,13 @@ public class RedisWrapper {
         return this.scan(pattern,null,count);
     }
 
+    /**
+     *  scan cursor [MATCH pattern] [COUNT count]
+     * @param pattern 匹配的 key 值前缀
+     * @param scanData scan 数据对象
+     * @param count  单次遍历字典的槽位
+     * @return
+     */
     public ScanData scan(String pattern, ScanData scanData,Integer count) {
         if(scanData == null){
             scanData = new ScanData("0",new ArrayList<>());
@@ -227,7 +234,7 @@ public class RedisWrapper {
 
         RedisSerializer serializer = redisTemplate.getStringSerializer();
         List<Object> list = (List<Object>)redisTemplate.execute(redisScript, serializer,
-                serializer, Collections.singletonList(scanData.getCursor()), pattern.concat("*"), count);
+                serializer, Collections.singletonList(pattern.concat("*")), scanData.getCursor(), count);
 
         scanData.setCursor((String)list.get(0));
         scanData.setKeys((List<String>) list.get(1));
