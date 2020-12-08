@@ -522,7 +522,8 @@
 					</executions>
 					<configuration>
 						<!-- 镜像名称 -->
-						<imageName>awy-cloud/${project.name}:latest</imageName>
+						<!--<imageName>awy-cloud/${project.name}:latest</imageName>--> <!-- 后续在打 latest(最新的) 标签  -->
+						<imageName>awy-cloud/${project.name}:${project.version}</imageName>
 						<env>
 							<TZ>Asia/Shanghai</TZ>
 						</env>
