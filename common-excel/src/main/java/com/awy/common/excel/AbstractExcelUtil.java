@@ -309,6 +309,10 @@ public abstract class AbstractExcelUtil<T>{
         return getExportPath(excelName,workbook);
     }
 
+    public Workbook  exportWorkbook(List<T> datas, String sheetName, String[] titles, String[] columns, Integer[] widths){
+        return getWorkbook(datas, sheetName, null, PoiPool.DEFAULT_PAGE_SIZE, titles, columns,  widths);
+    }
+
     private Workbook getWorkbook( List<T> datas, String sheetName,CellStyle style,int sheetPageSize, String[] titles, String[] columns, Integer[] widths){
         Workbook workbook = createXssfWorkbook();
         if(style == null){

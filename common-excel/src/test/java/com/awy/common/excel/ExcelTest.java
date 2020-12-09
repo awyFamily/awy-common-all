@@ -14,6 +14,26 @@ public class ExcelTest {
 //        importNative();
 //        importRemote();
 //        importRemoteMap();
+
+        //大数据的导出可以通过 ThreadPoolExecutor + CompletableFuture  多线程处理
+
+        //本地文件路径
+        /*String localPath = excelUtil.exportFilePath("监测记录数据",listData,"监测记录",headers,cols,widths);
+                response.setHeader("content-disposition",
+                        "attachment;fileName="+ URLEncoder.encode("监测记录数据.xlsx", "UTF-8"));
+                InputStream is = new FileInputStream(localPath);
+                response.getOutputStream().write(is.readAllBytes());
+                response.getOutputStream().flush();
+                is.close();
+                response.getOutputStream().close();*/
+
+        //写入response
+        /*Workbook wb = excelUtil.exportWorkbook(listData, "监测记录", headers, cols, widths);
+                response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                response.setHeader("Content-Disposition", "attachment;filename="+URLEncoder.encode("监测记录数据.xlsx", "utf-8"));
+                response.flushBuffer();
+                wb.write(response.getOutputStream());
+                excelUtil.close(wb);*/
     }
 
     private static String export(){
