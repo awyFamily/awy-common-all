@@ -326,7 +326,7 @@ public abstract class AbstractExcelUtil<T>{
 
             //使用线程池处理
             ThreadPoolExecutor batchExportJobPool = new ThreadPoolExecutor(
-                    3,
+                    1,
                     10,
                     60L,
                     TimeUnit.SECONDS,
@@ -342,32 +342,21 @@ public abstract class AbstractExcelUtil<T>{
             List<T> ts;
 
             AtomicInteger atomicInteger = new AtomicInteger();
-
-
-            try {
-                for(int i = 1; i <= page ; i++){
-                    if(i == 1){
-                        ts = datas.subList(0, sheetPageSize);
-                        list.add(AsyncExport(workbook,sheetName,ts,fStyle,titles,columns,widths,batchExportJobPool));
-                    }else if(i == page){
-                        ts = datas.subList(sheetPageSize * ( i - 1 ), size);
-                        list.add(AsyncExport(workbook,getCurrentSheetName(sheetName,atomicInteger),ts,fStyle,titles,columns,widths,batchExportJobPool));
-                    }else {
-                        ts = datas.subList(sheetPageSize * ( i - 1 ), sheetPageSize * i);
-                        list.add(AsyncExport(workbook,getCurrentSheetName(sheetName,atomicInteger),ts,fStyle,titles,columns,widths,batchExportJobPool));
-                    }
-                    //当分页太大，需要等待，防止sheet名称 在多线程下出错
-                    if(page > 3){
-                        Thread.sleep(110);
-                    }
+            for(int i = 1; i <= page ; i++){
+                if(i == 1){
+                    ts = datas.subList(0, sheetPageSize);
+                    list.add(AsyncExport(workbook,sheetName,ts,fStyle,titles,columns,widths,batchExportJobPool));
+                }else if(i == page){
+                    ts = datas.subList(sheetPageSize * ( i - 1 ), size);
+                    list.add(AsyncExport(workbook,getCurrentSheetName(sheetName,atomicInteger),ts,fStyle,titles,columns,widths,batchExportJobPool));
+                }else {
+                    ts = datas.subList(sheetPageSize * ( i - 1 ), sheetPageSize * i);
+                    list.add(AsyncExport(workbook,getCurrentSheetName(sheetName,atomicInteger),ts,fStyle,titles,columns,widths,batchExportJobPool));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
 
-
-            batchExportJobPool.shutdown();
             getSyncResult(list);
+            batchExportJobPool.shutdown();
         }
         return workbook;
     }
