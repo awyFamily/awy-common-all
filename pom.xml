@@ -31,7 +31,8 @@
 		<druid.spring.boot.starter>1.1.9</druid.spring.boot.starter>
 		<mybatis.plus.version>3.3.1</mybatis.plus.version>
 		<!-- netty -->
-		<netty.version>4.1.48.Final</netty.version>
+<!--		<netty.version>4.1.48.Final</netty.version>-->
+		<netty.version>4.1.55.Final</netty.version>
 		<!-- t-io aio通讯 -->
 		<org.t.io.version>3.3.0.v20190512-RELEASE</org.t.io.version>
 		<swagger.version>2.9.2</swagger.version>
