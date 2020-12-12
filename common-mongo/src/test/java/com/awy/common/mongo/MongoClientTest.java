@@ -4,13 +4,12 @@ import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
-import com.yunyang.service.knowledge.biz.domain.standard.repository.po.PlantingStandardCalendarPO;
 import org.bson.BsonDocument;
 import org.bson.BsonString;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
-import org.springframework.data.mongodb.core.query.Query;
+//import org.springframework.data.mongodb.core.query.Criteria;
+//import org.springframework.data.mongodb.core.query.CriteriaDefinition;
+//import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -34,7 +33,7 @@ public class MongoClientTest {
         return new MongoTemplate(client,database);
     }
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         MongoTemplate mongoTemplate = getMongoTemplate("127.0.0.1",27017,"dev_base_cloud","dev_cloud","dev_cloud");
 
         //("sn").is("TDMQ20190422008").and
@@ -49,14 +48,14 @@ public class MongoClientTest {
         //List<Map> iotDataDetails = mongoTemplate.find(query, Map.class, "yy_planting_standard_calendar");
         List<PlantingStandardCalendarPO> plantingStandardCalendars = mongoTemplate.findAll(PlantingStandardCalendarPO.class, "yy_planting_standard_calendar");
 
-        /*for (IotDataDetail detail : iotDataDetails) {
+        *//*for (IotDataDetail detail : iotDataDetails) {
             System.out.println(detail);
-        }*/
+        }*//*
         System.out.println(plantingStandardCalendars.size());
         System.out.println(plantingStandardCalendars.get(0));
 //        documents = iot_data_detail.find(getQuerySn(sn));
 
         MongoTemplate mongoNewTemplate = getMongoTemplate("127.0.0.1",3717,"dev_base_cloud","base","base");
         mongoNewTemplate.insert(plantingStandardCalendars,PlantingStandardCalendarPO.class);
-    }
+    }*/
 }
