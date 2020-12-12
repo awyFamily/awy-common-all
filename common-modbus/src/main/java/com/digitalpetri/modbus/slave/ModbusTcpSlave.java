@@ -181,7 +181,7 @@ public class ModbusTcpSlave {
     }
 
     private static class ModbusTcpServiceRequest<Request extends ModbusRequest, Response extends ModbusResponse>
-        implements ServiceRequestHandler.ServiceRequestTcp<Request, Response> {
+        implements ServiceRequestHandler.ServiceRequest<Request, Response> {
 
         private final short transactionId;
         private final short unitId;

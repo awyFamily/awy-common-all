@@ -1,6 +1,7 @@
 package com.awy.common.modbus.server;
 
 import com.awy.common.modbus.server.context.SessionContext;
+import com.awy.common.modbus.server.rtu.ServiceRequestRtuHandler;
 import com.codahale.metrics.Counter;
 import com.digitalpetri.modbus.ExceptionCode;
 import com.digitalpetri.modbus.codec.ModbusRequestEncoder;
@@ -36,8 +37,8 @@ public class ModbusRtuSlave {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final AtomicReference<ServiceRequestHandler> requestHandler =
-        new AtomicReference<>(new ServiceRequestHandler() {});
+    private final AtomicReference<ServiceRequestRtuHandler> requestHandler =
+        new AtomicReference<>(new ServiceRequestRtuHandler() {});
 
     private final Map<SocketAddress, Channel> serverChannels = new ConcurrentHashMap<>();
 
@@ -110,7 +111,7 @@ public class ModbusRtuSlave {
         return new ServerBootstrap().group(bossGroup, workerGroup).channel(NioServerSocketChannel.class);
     }
 
-    public void setRequestHandler(ServiceRequestHandler requestHandler) {
+    public void setRequestHandler(ServiceRequestRtuHandler requestHandler) {
         this.requestHandler.set(requestHandler);
     }
 
@@ -127,7 +128,7 @@ public class ModbusRtuSlave {
      * @param payload
      */
     private void onChannelRead(ChannelHandlerContext ctx, ModbusRtuPayload payload) {
-        ServiceRequestHandler handler = requestHandler.get();
+        ServiceRequestRtuHandler handler = requestHandler.get();
         if (handler == null) return;
 
         switch (payload.getModbusPdu().getFunctionCode()) {
@@ -182,7 +183,6 @@ public class ModbusRtuSlave {
         }
     }
 
-
     private void onChannelInactive(ChannelHandlerContext ctx) {
         logger.debug("Master/client channel closed: {}", ctx.channel());
     }
@@ -194,6 +194,8 @@ public class ModbusRtuSlave {
 
     private static class ModbusRtuSlaveHandler extends SimpleChannelInboundHandler<ModbusRtuPayload> {
 
+        private final Logger logger = LoggerFactory.getLogger(getClass());
+
         private final ModbusRtuSlave slave;
 
         private ModbusRtuSlaveHandler(ModbusRtuSlave slave) {
@@ -202,6 +204,11 @@ public class ModbusRtuSlave {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, ModbusRtuPayload msg) {
+            String clientRemoteAddress = ctx.channel().remoteAddress().toString();
+            String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
+            String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");
+            logger.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getSiteId(),msg.getModbusPdu().getFunctionCode().toString());
+
             slave.onChannelRead(ctx, msg);
             SessionContext.bindSession(msg.getSiteId(),ctx.channel());
         }
@@ -220,7 +227,7 @@ public class ModbusRtuSlave {
     }
 
     private static class ModbusRtuServiceRequest<Request extends ModbusRequest, Response extends ModbusResponse>
-        implements ServiceRequestHandler.ServiceRequestRtu<Request, Response> {
+        implements ServiceRequestRtuHandler.ServiceRequestRtu<Request, Response> {
 
         private final int  siteId;
         private final Request request;

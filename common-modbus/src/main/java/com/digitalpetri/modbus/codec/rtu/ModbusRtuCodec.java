@@ -5,6 +5,8 @@ import com.digitalpetri.modbus.UnsupportedPdu;
 import com.digitalpetri.modbus.codec.ModbusPduDecoder;
 import com.digitalpetri.modbus.codec.ModbusPduEncoder;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
 import org.slf4j.Logger;
@@ -15,8 +17,6 @@ import java.util.List;
 public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
 
     private static final int packageLength = 8;
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final ModbusPduEncoder encoder;
     private final ModbusPduDecoder decoder;
@@ -29,10 +29,20 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
     //编码
     @Override
     protected void encode(ChannelHandlerContext ctx, ModbusRtuPayload payload, ByteBuf buffer) {
-        buffer.writeZero(packageLength);
+//        buffer.writeZero(packageLength);
         buffer.writeByte(payload.getSiteId());
         encoder.encode(payload.getModbusPdu(), buffer);
+        //crc -此处需要
+        int readableBytes = buffer.readableBytes();//返回可读的字节数
+        int startIndex = buffer.readerIndex();
+        int end = startIndex + readableBytes;
+        int crc = 0;
+        for (int i = startIndex;i < end;i++){
+            crc += buffer.getByte(i);
+        }
+        buffer.writeShort(crc);
     }
+
 
     //解码
     @Override
