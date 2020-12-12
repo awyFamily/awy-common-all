@@ -32,7 +32,7 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
 //        buffer.writeZero(packageLength);
         buffer.writeByte(payload.getSiteId());
         encoder.encode(payload.getModbusPdu(), buffer);
-        //crc -此处需要
+        //crc -此处需要(16位CRC校验 低字节在前)
         int readableBytes = buffer.readableBytes();//返回可读的字节数
         int startIndex = buffer.readerIndex();
         int end = startIndex + readableBytes;
