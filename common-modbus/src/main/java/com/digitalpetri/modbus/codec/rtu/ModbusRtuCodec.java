@@ -10,6 +10,9 @@ import io.netty.handler.codec.ByteToMessageCodec;
 
 import java.util.List;
 
+/**
+ * @author yhw
+ */
 public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
 
     private static final int packageLength = 8;
@@ -52,7 +55,7 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
         while (buffer.readableBytes() >= packageLength) {
 
             try {
-                int siteId = buffer.readByte();
+                int siteId = buffer.readUnsignedByte();
                 //控制类型
                 ModbusPdu modbusPdu = decoder.decode(buffer);
                 //跳出读取(指令错误)

@@ -2,6 +2,9 @@ package com.digitalpetri.modbus.codec.rtu;
 
 import com.digitalpetri.modbus.ModbusPdu;
 
+/**
+ * @author yhw
+ */
 public class ModbusRtuPayload {
     /**
      * 站点id(地址)

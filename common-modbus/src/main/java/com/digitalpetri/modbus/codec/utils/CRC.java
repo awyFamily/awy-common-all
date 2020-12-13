@@ -63,7 +63,7 @@ public class CRC {
         return Integer.toHexString(src);
     }
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         //02 05 00 00 FF 00 8C 09
 //        int[] data = new int[]{0x01, 0x04, 0x04, 0x01, 0x0e, 0x01, 0xde};
         int[] data = new int[]{0x02, 0x05, 0x00, 0x00, 0xff, 0x00};
@@ -71,7 +71,6 @@ public class CRC {
             System.out.println("data：" + d);
         }
         System.out.println(CRC.crc16(data));
-
 
         int b = 0x0201;
 
@@ -87,5 +86,5 @@ public class CRC {
         int c = lowByte | highByte;
         System.out.println(c);
 
-    }
+    }*/
 }

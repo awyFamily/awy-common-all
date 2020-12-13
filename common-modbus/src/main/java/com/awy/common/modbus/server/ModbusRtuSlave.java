@@ -33,6 +33,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
+/**
+ * @author yhw
+ */
 public class ModbusRtuSlave {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
