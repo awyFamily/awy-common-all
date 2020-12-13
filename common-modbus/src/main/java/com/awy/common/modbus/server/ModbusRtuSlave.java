@@ -24,6 +24,7 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +37,8 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author yhw
  */
+@Slf4j
 public class ModbusRtuSlave {
-
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final AtomicReference<ServiceRequestRtuHandler> requestHandler =
         new AtomicReference<>(new ServiceRequestRtuHandler() {});
@@ -61,7 +61,7 @@ public class ModbusRtuSlave {
             @Override
             protected void initChannel(SocketChannel channel) {
                 channelCounter.inc();
-                logger.info("channel initialized: {}", channel);
+                log.info("channel initialized: {}", channel);
                 channel.pipeline().addLast(new LoggingHandler(LogLevel.TRACE));
                 //请求编码 响应解码
                 channel.pipeline().addLast(new ModbusRtuCodec(new ModbusRequestEncoder(), new ModbusResponseDecoder()));
@@ -80,8 +80,10 @@ public class ModbusRtuSlave {
                 Channel channel = future.channel();
                 serverChannels.put(channel.localAddress(), channel);
                 bindFuture.complete(ModbusRtuSlave.this);
+                log.info("bind port : " + port + " success");
             } else {
                 bindFuture.completeExceptionally(future.cause());
+                log.info("bind port : " + port + " fail.....");
             }
         });
 
@@ -187,17 +189,17 @@ public class ModbusRtuSlave {
     }
 
     private void onChannelInactive(ChannelHandlerContext ctx) {
-        logger.debug("Master/client channel closed: {}", ctx.channel());
+        log.error("Master/client channel closed: {}", ctx.channel());
     }
 
     private void onExceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        logger.error("Exception caught on channel: {}", ctx.channel(), cause);
+        log.error("Exception caught on channel: {}", ctx.channel(), cause);
         ctx.close();
     }
 
+    @Slf4j
     private static class ModbusRtuSlaveHandler extends SimpleChannelInboundHandler<ModbusRtuPayload> {
 
-        private final Logger logger = LoggerFactory.getLogger(getClass());
 
         private final ModbusRtuSlave slave;
 
@@ -210,7 +212,7 @@ public class ModbusRtuSlave {
             String clientRemoteAddress = ctx.channel().remoteAddress().toString();
             String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
             String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");
-            logger.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getSiteId(),msg.getModbusPdu().getFunctionCode().toString());
+            log.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getSiteId(),msg.getModbusPdu().getFunctionCode().toString());
 
             slave.onChannelRead(ctx, msg);
             SessionContext.bindSession(msg.getSiteId(),ctx.channel());
