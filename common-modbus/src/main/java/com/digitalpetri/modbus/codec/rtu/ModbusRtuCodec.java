@@ -5,12 +5,8 @@ import com.digitalpetri.modbus.UnsupportedPdu;
 import com.digitalpetri.modbus.codec.ModbusPduDecoder;
 import com.digitalpetri.modbus.codec.ModbusPduEncoder;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -26,7 +22,6 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
         this.decoder = decoder;
     }
 
-    //编码
     @Override
     protected void encode(ChannelHandlerContext ctx, ModbusRtuPayload payload, ByteBuf buffer) {
 //        buffer.writeZero(packageLength);
@@ -38,13 +33,16 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
         int end = startIndex + readableBytes;
         int crc = 0;
         for (int i = startIndex;i < end;i++){
-            crc += buffer.getByte(i);
+            //数据是以补码的形式存储的，正数的补码是本身，负数的补码是除符号位外其它位取反，
+            // 再加上1，1111 1111 是 补码，转换成原码是 1000 0001，就是 -1.
+            //crc += buffer.getByte(i);
+            //所以此处 获取无符号字节值返回
+            crc += buffer.getUnsignedByte(i);
         }
         buffer.writeShort(crc);
     }
 
 
-    //解码
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
         //起始读取的下标
