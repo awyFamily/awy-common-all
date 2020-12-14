@@ -46,10 +46,14 @@ public enum FunctionCode {
     ReadWriteMultipleRegisters(0x17),
     ReadFifoQueue(0x18),
     EncapsulatedInterfaceTransport(0x2B),
+    //=========== 非标准规则 ===================
     //注册包(需要和厂商单独确认-定义好为 0x4C) ****
     EquipmentRegister(0x4C),
     //心跳(需要和厂商单独确认-定义好为 0x4D)   *****
     Heartbeat(0x4D),
+    //忽略的包
+    IgnorePackage(0x00),
+    //============================================
     ;
 
     private final int code;
@@ -85,6 +89,7 @@ public enum FunctionCode {
             case 0x2B: return Optional.of(EncapsulatedInterfaceTransport);
             case 0x4C: return Optional.of(EquipmentRegister);
             case 0x4D: return Optional.of(Heartbeat);
+            case 0x00: return Optional.of(IgnorePackage);
         }
 
         return Optional.empty();
