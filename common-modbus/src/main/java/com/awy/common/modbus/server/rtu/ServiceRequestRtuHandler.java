@@ -75,6 +75,9 @@ public interface ServiceRequestRtuHandler {
         ReferenceCountUtil.release(service.getRequest());
     }
 
+    default void onEquipmentRegisterRequest(ModbusRtuPayload payload) {
+    }
+
     default void onHeartbeatRequest(ModbusRtuPayload payload) {
     }
 

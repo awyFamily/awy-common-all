@@ -176,6 +176,10 @@ public class ModbusRtuSlave {
             case ReadWriteMultipleRegisters:
                 handler.onReadWriteMultipleRegisters(ModbusRtuServiceRequest.of(payload, ctx.channel()));
                 break;
+            case EquipmentRegister:
+                log.info("receive equipment register package .......");
+                handler.onEquipmentRegisterRequest(payload);
+                break;
             case Heartbeat:
                 log.info("receive Heartbeat package .......");
                 handler.onHeartbeatRequest(payload);
