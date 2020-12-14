@@ -34,6 +34,7 @@ public enum FunctionCode {
     ReadExceptionStatus(0x07),
     Diagnostics(0x08),
     GetCommEventCounter(0x0B),
+    //通讯事件日志
     GetCommEventLog(0x0C),
     //写多个线圈
     WriteMultipleCoils(0x0F),

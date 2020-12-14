@@ -8,6 +8,28 @@ import io.netty.buffer.PooledByteBufAllocator;
 public class test {
 
     public static void main(String[] args) {
+        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
+        ByteBuf original = allocator.directBuffer(32);
+
+        original.writeByte(2);
+        original.writeByte(5);
+        original.writeShort(0);
+        original.writeShort(0xFF00);
+
+       System.out.println(original.readerIndex());
+       System.out.println(original.readableBytes());
+        original.readerIndex(3); //剩下还有3，起始是3，剩下可读的是3
+       System.out.println(original.readerIndex());
+       System.out.println(original.readableBytes());
+//       System.out.println(original.readerIndex());
+        original.readerIndex(6); //剩下还有3，起始是3，剩下可读的是3
+        System.out.println(original.readerIndex());
+        System.out.println(original.readableBytes());
+
+
+    }
+
+    public static void main1(String[] args) {
         //02 05 0000  FF00      8C09
         ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
         ByteBuf original = allocator.directBuffer(32);

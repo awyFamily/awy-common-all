@@ -50,6 +50,8 @@ public class ModbusRtuSlave {
 
     public ModbusRtuSlave() {
         bootstrap = newServerBootstrap();
+//        bootstrap = new ServerBootstrap();
+//        bootstrap.group(new NioEventLoopGroup()).channel(NioServerSocketChannel.class);
     }
 
     public CompletableFuture<ModbusRtuSlave> bind(String host, int port) {
