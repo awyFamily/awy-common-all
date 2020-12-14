@@ -4,6 +4,7 @@ import com.digitalpetri.modbus.ModbusPdu;
 import com.digitalpetri.modbus.UnsupportedPdu;
 import com.digitalpetri.modbus.codec.ModbusPduDecoder;
 import com.digitalpetri.modbus.codec.ModbusPduEncoder;
+import com.digitalpetri.modbus.codec.utils.CRC;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -34,17 +35,17 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
         int readableBytes = buffer.readableBytes();//返回可读的字节数
         int startIndex = buffer.readerIndex();
         int end = startIndex + readableBytes;
-        int crc = 0;
+        int[] crcArr = new int[end];
         for (int i = startIndex;i < end;i++){
             //数据是以补码的形式存储的，正数的补码是本身，负数的补码是除符号位外其它位取反，
             // 再加上1，1111 1111 是 补码，转换成原码是 1000 0001，就是 -1.
             //crc += buffer.getByte(i);
             //所以此处 获取无符号字节值返回
-            crc += buffer.getUnsignedByte(i);
+            crcArr[i] = buffer.getUnsignedByte(i);
         }
-        buffer.writeShort(crc);
+        String hexNumber = CRC.crc16(crcArr);
+        buffer.writeShort(Integer.valueOf(hexNumber,16));
     }
-
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
