@@ -46,9 +46,9 @@ public enum FunctionCode {
     ReadWriteMultipleRegisters(0x17),
     ReadFifoQueue(0x18),
     EncapsulatedInterfaceTransport(0x2B),
-    //注册包(需要和厂商单独确认-定义好为 0x4C)
+    //注册包(需要和厂商单独确认-定义好为 0x4C) ****
     EquipmentRegister(0x4C),
-    //心跳(需要和厂商单独确认-定义好为 0x4D)
+    //心跳(需要和厂商单独确认-定义好为 0x4D)   *****
     Heartbeat(0x4D),
     ;
 
