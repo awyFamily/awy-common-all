@@ -45,7 +45,10 @@ public enum FunctionCode {
     MaskWriteRegister(0x16),
     ReadWriteMultipleRegisters(0x17),
     ReadFifoQueue(0x18),
-    EncapsulatedInterfaceTransport(0x2B);
+    EncapsulatedInterfaceTransport(0x2B),
+    //心跳(需要和厂商单独确认-定义好为 0x2e)
+    Heartbeat(0x2E),
+    ;
 
     private final int code;
 
@@ -78,6 +81,7 @@ public enum FunctionCode {
             case 0x17: return Optional.of(ReadWriteMultipleRegisters);
             case 0x18: return Optional.of(ReadFifoQueue);
             case 0x2B: return Optional.of(EncapsulatedInterfaceTransport);
+            case 0x2E: return Optional.of(Heartbeat);
         }
 
         return Optional.empty();

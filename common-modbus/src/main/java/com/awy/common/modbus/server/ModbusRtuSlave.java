@@ -11,7 +11,6 @@ import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 import com.digitalpetri.modbus.requests.ModbusRequest;
 import com.digitalpetri.modbus.responses.ExceptionResponse;
 import com.digitalpetri.modbus.responses.ModbusResponse;
-import com.digitalpetri.modbus.slave.ServiceRequestHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -20,13 +19,12 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.SocketAddress;
 import java.util.Map;
@@ -41,7 +39,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ModbusRtuSlave {
 
     private final AtomicReference<ServiceRequestRtuHandler> requestHandler =
-        new AtomicReference<>(new ServiceRequestRtuHandler() {});
+            new AtomicReference<>(new ServiceRequestRtuHandler() {});
 
     private final Map<SocketAddress, Channel> serverChannels = new ConcurrentHashMap<>();
 
@@ -71,11 +69,13 @@ public class ModbusRtuSlave {
             }
         };
 
-        bootstrap.handler(new LoggingHandler(LogLevel.DEBUG))
-            .childHandler(initializer)
-            .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+        bootstrap.option(NioChannelOption.SO_BACKLOG, 1024)
+                .childOption(NioChannelOption.TCP_NODELAY, true)
+                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .childHandler(initializer)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
-        bootstrap.bind(host, port).addListener((ChannelFuture future) -> {
+        bootstrap.bind(port).addListener((ChannelFuture future) -> {
             if (future.isSuccess()) {
                 Channel channel = future.channel();
                 serverChannels.put(channel.localAddress(), channel);
@@ -176,13 +176,16 @@ public class ModbusRtuSlave {
             case ReadWriteMultipleRegisters:
                 handler.onReadWriteMultipleRegisters(ModbusRtuServiceRequest.of(payload, ctx.channel()));
                 break;
+            case Heartbeat:
+                log.info("receive Heartbeat package .......");
+                handler.onHeartbeatRequest(payload);
+                break;
 
             default:
                 /* Function code not currently supported */
                 ExceptionResponse response = new ExceptionResponse(
-                    payload.getModbusPdu().getFunctionCode(),
-                    ExceptionCode.IllegalFunction);
-
+                        payload.getModbusPdu().getFunctionCode(),
+                        ExceptionCode.IllegalFunction);
                 ctx.writeAndFlush(new ModbusRtuPayload(payload.getSiteId(),  response));
                 break;
         }
@@ -232,7 +235,7 @@ public class ModbusRtuSlave {
     }
 
     private static class ModbusRtuServiceRequest<Request extends ModbusRequest, Response extends ModbusResponse>
-        implements ServiceRequestRtuHandler.ServiceRequestRtu<Request, Response> {
+            implements ServiceRequestRtuHandler.ServiceRequestRtu<Request, Response> {
 
         private final int  siteId;
         private final Request request;
@@ -275,9 +278,9 @@ public class ModbusRtuSlave {
         ModbusRtuServiceRequest<Request, Response> of(ModbusRtuPayload payload, Channel channel) {
 
             return new ModbusRtuServiceRequest<>(
-                payload.getSiteId(),
-                (Request) payload.getModbusPdu(),
-                channel
+                    payload.getSiteId(),
+                    (Request) payload.getModbusPdu(),
+                    channel
             );
         }
 

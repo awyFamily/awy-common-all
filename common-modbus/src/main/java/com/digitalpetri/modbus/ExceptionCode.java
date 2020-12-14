@@ -28,7 +28,8 @@ public enum ExceptionCode {
     SlaveDeviceBusy(0x06),
     MemoryParityError(0x08),
     GatewayPathUnavailable(0x0A),
-    GatewayTargetDeviceFailedToResponse(0x0B);
+    GatewayTargetDeviceFailedToResponse(0x0B),
+    ;
 
     private final int code;
 

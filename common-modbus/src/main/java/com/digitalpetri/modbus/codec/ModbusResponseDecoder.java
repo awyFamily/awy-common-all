@@ -90,7 +90,6 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
 
             case ReadWriteMultipleRegisters:
                 return decodeReadWriteMultipleRegisters(buffer);
-
             default:
                 return new UnsupportedPdu(functionCode);
         }

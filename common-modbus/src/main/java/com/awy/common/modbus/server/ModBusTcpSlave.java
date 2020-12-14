@@ -19,6 +19,7 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
@@ -36,7 +37,7 @@ public class ModBusTcpSlave {
 
 
     private final AtomicReference<ServiceRequestHandler> requestHandler =
-        new AtomicReference<>(new ServiceRequestHandler() {});
+            new AtomicReference<>(new ServiceRequestHandler() {});
 
     private final Map<SocketAddress, Channel> serverChannels = new ConcurrentHashMap<>();
 
@@ -66,11 +67,13 @@ public class ModBusTcpSlave {
         };
 
 
-        bootstrap.handler(new LoggingHandler(LogLevel.DEBUG))
-            .childHandler(initializer)
-            .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+        bootstrap.option(NioChannelOption.SO_BACKLOG, 1024)
+                .childOption(NioChannelOption.TCP_NODELAY, true)
+                .handler(new LoggingHandler(LogLevel.DEBUG))
+                .childHandler(initializer)
+                .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
 
-        bootstrap.bind(host, port).addListener((ChannelFuture future) -> {
+        bootstrap.bind(port).addListener((ChannelFuture future) -> {
             if (future.isSuccess()) {
                 Channel channel = future.channel();
                 serverChannels.put(channel.localAddress(), channel);
@@ -168,8 +171,8 @@ public class ModBusTcpSlave {
             default:
                 /* Function code not currently supported */
                 ExceptionResponse response = new ExceptionResponse(
-                    payload.getModbusPdu().getFunctionCode(),
-                    ExceptionCode.IllegalFunction);
+                        payload.getModbusPdu().getFunctionCode(),
+                        ExceptionCode.IllegalFunction);
 
                 ctx.writeAndFlush(new ModbusTcpPayload(payload.getTransactionId(), payload.getUnitId(), response));
                 break;
@@ -218,7 +221,7 @@ public class ModBusTcpSlave {
     }
 
     private static class ModbusTcpServiceRequest<Request extends ModbusRequest, Response extends ModbusResponse>
-        implements ServiceRequestHandler.ServiceRequest<Request, Response> {
+            implements ServiceRequestHandler.ServiceRequest<Request, Response> {
 
         private final short transactionId;
         private final short unitId;
@@ -269,10 +272,10 @@ public class ModBusTcpSlave {
         ModbusTcpServiceRequest<Request, Response> of(ModbusTcpPayload payload, Channel channel) {
 
             return new ModbusTcpServiceRequest<>(
-                payload.getTransactionId(),
-                payload.getUnitId(),
-                (Request) payload.getModbusPdu(),
-                channel
+                    payload.getTransactionId(),
+                    payload.getUnitId(),
+                    (Request) payload.getModbusPdu(),
+                    channel
             );
         }
 

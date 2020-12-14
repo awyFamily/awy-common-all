@@ -17,6 +17,7 @@
 package com.awy.common.modbus.server.rtu;
 
 import com.digitalpetri.modbus.ExceptionCode;
+import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 import com.digitalpetri.modbus.requests.*;
 import com.digitalpetri.modbus.responses.*;
 import io.netty.channel.Channel;
@@ -72,6 +73,9 @@ public interface ServiceRequestRtuHandler {
     default void onReadWriteMultipleRegisters(ServiceRequestRtu<ReadWriteMultipleRegistersRequest, ReadWriteMultipleRegistersResponse> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
+    }
+
+    default void onHeartbeatRequest(ModbusRtuPayload payload) {
     }
 
 

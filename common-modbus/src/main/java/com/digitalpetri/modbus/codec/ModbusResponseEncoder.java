@@ -63,7 +63,6 @@ public class ModbusResponseEncoder implements ModbusPduEncoder {
 
                     case ReadWriteMultipleRegisters:
                         return encodeReadWriteMultipleRegisters((ReadWriteMultipleRegistersResponse) modbusPdu, buffer);
-
                     default:
                         throw new EncoderException("FunctionCode not supported: " + modbusPdu.getFunctionCode());
                 }
