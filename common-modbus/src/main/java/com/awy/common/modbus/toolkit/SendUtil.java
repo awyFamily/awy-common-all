@@ -24,7 +24,7 @@ public class SendUtil {
         if(message != null && channel != null){
             if(channel.isActive()){
                 channel.writeAndFlush(message);
-                ReferenceCountUtil.release(message);
+//                ReferenceCountUtil.release(message);
                 return true;
             }
         }

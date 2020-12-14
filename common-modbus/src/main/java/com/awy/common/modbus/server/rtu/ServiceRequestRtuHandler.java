@@ -25,52 +25,52 @@ import io.netty.util.ReferenceCountUtil;
 
 public interface ServiceRequestRtuHandler {
 
-    default void onReadHoldingRegisters(ServiceRequestRtu<ReadHoldingRegistersRequest, ReadHoldingRegistersResponse> service) {
+    default void onReadHoldingRegisters(ServiceRequestRtu<ReadHoldingRegistersResponse, ReadHoldingRegistersRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onReadInputRegisters(ServiceRequestRtu<ReadInputRegistersRequest, ReadInputRegistersResponse> service) {
+    default void onReadInputRegisters(ServiceRequestRtu<ReadInputRegistersResponse, ReadInputRegistersRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onReadCoils(ServiceRequestRtu<ReadCoilsRequest, ReadCoilsResponse> service) {
+    default void onReadCoils(ServiceRequestRtu<ReadCoilsResponse, ReadCoilsRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onReadDiscreteInputs(ServiceRequestRtu<ReadDiscreteInputsRequest, ReadDiscreteInputsResponse> service) {
+    default void onReadDiscreteInputs(ServiceRequestRtu<ReadDiscreteInputsResponse, ReadDiscreteInputsRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onWriteSingleCoil(ServiceRequestRtu<WriteSingleCoilRequest, WriteSingleCoilResponse> service) {
+    default void onWriteSingleCoil(ServiceRequestRtu<WriteSingleCoilResponse, WriteSingleCoilRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onWriteSingleRegister(ServiceRequestRtu<WriteSingleRegisterRequest, WriteSingleRegisterResponse> service) {
+    default void onWriteSingleRegister(ServiceRequestRtu<WriteSingleRegisterResponse, WriteSingleRegisterRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onWriteMultipleCoils(ServiceRequestRtu<WriteMultipleCoilsRequest, WriteMultipleCoilsResponse> service) {
+    default void onWriteMultipleCoils(ServiceRequestRtu<WriteMultipleCoilsResponse, WriteMultipleCoilsRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onWriteMultipleRegisters(ServiceRequestRtu<WriteMultipleRegistersRequest, WriteMultipleRegistersResponse> service) {
+    default void onWriteMultipleRegisters(ServiceRequestRtu<WriteMultipleRegistersResponse, WriteMultipleRegistersRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onMaskWriteRegister(ServiceRequestRtu<MaskWriteRegisterRequest, MaskWriteRegisterResponse> service) {
+    default void onMaskWriteRegister(ServiceRequestRtu<MaskWriteRegisterResponse, MaskWriteRegisterRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onReadWriteMultipleRegisters(ServiceRequestRtu<ReadWriteMultipleRegistersRequest, ReadWriteMultipleRegistersResponse> service) {
+    default void onReadWriteMultipleRegisters(ServiceRequestRtu<ReadWriteMultipleRegistersResponse, ReadWriteMultipleRegistersRequest> service) {
         service.sendException(ExceptionCode.IllegalFunction);
         ReferenceCountUtil.release(service.getRequest());
     }
@@ -82,7 +82,8 @@ public interface ServiceRequestRtuHandler {
     }
 
 
-    interface ServiceRequestRtu<Request extends ModbusRequest, Response extends ModbusResponse> {
+    //    interface ServiceRequestRtu<Request extends ModbusRequest, Response extends ModbusResponse> {
+    interface ServiceRequestRtu<Request extends ModbusResponse, Response extends ModbusRequest> {
 
         int getSiteId();
 

@@ -74,10 +74,14 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
                     //起始的 + 剩下的
 //                    int endIndex = buffer.readerIndex() + buffer.readableBytes();
                     //设置可读取指标为 结束下标
-                    buffer.readerIndex(endIndex);
+                    buffer.readerIndex((buffer.readerIndex() + buffer.readableBytes()));
                     log.info("receive unsupported site : {} code : {}",siteId,modbusPdu.getFunctionCode());
+                }else {
+                    //get crc . receive buffer
+                    log.info("current crc code : {}",Integer.toHexString(buffer.readUnsignedShort()));
                 }
                 out.add(new ModbusRtuPayload(siteId, modbusPdu));
+
             } catch (Throwable t) {
                 throw new Exception("error decoding header/pdu", t);
             }
