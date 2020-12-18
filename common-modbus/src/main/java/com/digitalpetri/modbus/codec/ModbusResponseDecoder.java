@@ -181,14 +181,14 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
      * @return
      */
     public RegistersAuthResponse decodeRegistersAuth(ByteBuf buffer){
-        int manufacturer = buffer.readUnsignedByte();
-        int equipmentSerialNumber = buffer.readUnsignedByte();
+        int manufacturer = buffer.readUnsignedShort();
+        int equipmentSerialNumber = buffer.readUnsignedShort();
         return new RegistersAuthResponse(manufacturer,equipmentSerialNumber);
     }
 
     public HeartbeatResponse decodeHeartbeat(ByteBuf buffer){
-        int manufacturer = buffer.readUnsignedByte();
-        int equipmentSerialNumber = buffer.readUnsignedByte();
+        int manufacturer = buffer.readUnsignedShort();
+        int equipmentSerialNumber = buffer.readUnsignedShort();
         return new HeartbeatResponse(manufacturer,equipmentSerialNumber);
     }
 

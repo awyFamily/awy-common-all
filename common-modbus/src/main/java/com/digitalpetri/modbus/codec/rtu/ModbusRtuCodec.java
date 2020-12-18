@@ -56,8 +56,6 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
-        int endIndex = buffer.readableBytes();
-
         log.info("package startIndex : {} , readableBytes : {}",buffer.readerIndex(),buffer.readableBytes());
         //一个响应包最少是6位
         while (buffer.readableBytes() >= packageLength) {
