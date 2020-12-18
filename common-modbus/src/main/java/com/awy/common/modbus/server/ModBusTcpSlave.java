@@ -204,13 +204,13 @@ public class ModBusTcpSlave {
             log.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getUnitId(),msg.getModbusPdu().getFunctionCode().toString());
 
             slave.onChannelRead(ctx, msg);
-            SessionContext.bindSession((int)msg.getUnitId(),ctx.channel());
+//            SessionContext.bindSession((int)msg.getUnitId(),ctx.channel());
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) {
             slave.onChannelInactive(ctx);
-            SessionContext.unBindSession(ctx.channel());
+//            SessionContext.unBindSession(ctx.channel());
         }
 
         @Override

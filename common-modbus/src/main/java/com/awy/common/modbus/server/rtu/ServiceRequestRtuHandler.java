@@ -17,11 +17,12 @@
 package com.awy.common.modbus.server.rtu;
 
 import com.digitalpetri.modbus.ExceptionCode;
-import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 import com.digitalpetri.modbus.requests.*;
 import com.digitalpetri.modbus.responses.*;
 import io.netty.channel.Channel;
 import io.netty.util.ReferenceCountUtil;
+
+//import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 
 public interface ServiceRequestRtuHandler {
 
@@ -75,10 +76,10 @@ public interface ServiceRequestRtuHandler {
         ReferenceCountUtil.release(service.getRequest());
     }
 
-    default void onEquipmentRegisterRequest(ModbusRtuPayload payload) {
-    }
+//    default void onEquipmentRegisterRequest(RegistersAuthResponse registersAuthResponse) {
+//    }
 
-    default void onHeartbeatRequest(ModbusRtuPayload payload) {
+    default void onHeartbeatRequest(HeartbeatResponse heartbeatResponse) {
     }
 
 

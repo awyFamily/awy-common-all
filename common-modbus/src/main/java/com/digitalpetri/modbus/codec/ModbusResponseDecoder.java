@@ -90,6 +90,13 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
 
             case ReadWriteMultipleRegisters:
                 return decodeReadWriteMultipleRegisters(buffer);
+
+            case EquipmentRegister:
+                return decodeRegistersAuth(buffer);
+
+            case Heartbeat:
+                return decodeHeartbeat(buffer);
+
             default:
                 return new UnsupportedPdu(functionCode);
         }
@@ -166,6 +173,23 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
         ByteBuf registers = buffer.readSlice(byteCount).retain();
 
         return new ReadWriteMultipleRegistersResponse(registers);
+    }
+
+    /**
+     * 注册认证
+     * @param buffer
+     * @return
+     */
+    public RegistersAuthResponse decodeRegistersAuth(ByteBuf buffer){
+        int manufacturer = buffer.readUnsignedByte();
+        int equipmentSerialNumber = buffer.readUnsignedByte();
+        return new RegistersAuthResponse(manufacturer,equipmentSerialNumber);
+    }
+
+    public HeartbeatResponse decodeHeartbeat(ByteBuf buffer){
+        int manufacturer = buffer.readUnsignedByte();
+        int equipmentSerialNumber = buffer.readUnsignedByte();
+        return new HeartbeatResponse(manufacturer,equipmentSerialNumber);
     }
 
 }

@@ -13,24 +13,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SessionContext {
 
-    private static final AttributeKey<Integer> SESSION = AttributeKey.newInstance("siteId");
+    private static final AttributeKey<ModbusSession> SESSION = AttributeKey.newInstance("session");
 
-    private static final Map<Integer, Channel> siteChannelMap = new ConcurrentHashMap<>();
+    private static final Map<String, Channel> siteChannelMap = new ConcurrentHashMap<>();
 
-    public static void bindSession(Integer siteId, Channel channel) {
-        if(channel != null){
+    public static void bindSession(ModbusSession session, Channel channel) {
+        if(channel != null && session != null){
             if(!hasLogin(channel)){
-                siteChannelMap.put(siteId,channel);
-                channel.attr(SESSION).set(siteId);
-                log.info("bind siteId : {} ....",siteId);
+                String sessionId = ModbusSession.getSessionId(session.getManufacturer(), session.getEquipmentSerialNumber());
+                siteChannelMap.put(sessionId,channel);
+                channel.attr(SESSION).set(session);
+                log.info("bind session : {} ....",session.toString());
             }
         }
     }
 
     public static void unBindSession(Channel channel) {
         if(hasLogin(channel)){
-            log.info("unbind siteId : {} ....",getSession(channel));
-            siteChannelMap.remove(getSession(channel));
+            ModbusSession session = getSession(channel);
+            log.info("unbind session : {} ....",session.toString());
+            siteChannelMap.remove(ModbusSession.getSessionId(session.getManufacturer(),session.getEquipmentSerialNumber()));
             channel.attr(SESSION).set(null);
 
         }
@@ -40,16 +42,16 @@ public class SessionContext {
         return channel.hasAttr(SESSION);
     }
 
-    public static Integer getSession(Channel channel) {
+    public static ModbusSession getSession(Channel channel) {
         return channel.attr(SESSION).get();
     }
 
-    public static Channel getChannel(Integer siteId) {
-        return siteChannelMap.get(siteId);
+    public static Channel getChannel(String sessionId) {
+        return siteChannelMap.get(sessionId);
     }
 
 
-    public static Map<Integer, Channel> getAllChannel(){
+    public static Map<String, Channel> getAllChannel(){
         return siteChannelMap;
     }
 

@@ -1,16 +1,20 @@
 package com.awy.common.modbus.server;
 
+import com.awy.common.modbus.server.context.ModbusSession;
 import com.awy.common.modbus.server.context.SessionContext;
 import com.awy.common.modbus.server.rtu.ServiceRequestRtuHandler;
 import com.codahale.metrics.Counter;
 import com.digitalpetri.modbus.ExceptionCode;
+import com.digitalpetri.modbus.ModbusPdu;
 import com.digitalpetri.modbus.codec.ModbusRequestEncoder;
 import com.digitalpetri.modbus.codec.ModbusResponseDecoder;
 import com.digitalpetri.modbus.codec.rtu.ModbusRtuCodec;
 import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 import com.digitalpetri.modbus.requests.ModbusRequest;
 import com.digitalpetri.modbus.responses.ExceptionResponse;
+import com.digitalpetri.modbus.responses.HeartbeatResponse;
 import com.digitalpetri.modbus.responses.ModbusResponse;
+import com.digitalpetri.modbus.responses.RegistersAuthResponse;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -178,11 +182,15 @@ public class ModbusRtuSlave {
                 break;
             case EquipmentRegister:
                 log.info("receive equipment register package .......");
-                handler.onEquipmentRegisterRequest(payload);
+                RegistersAuthResponse registersAuth = (RegistersAuthResponse)payload.getModbusPdu();
+                ModbusSession session = new ModbusSession(payload.getSiteId(),registersAuth.getManufacturer(),registersAuth.getEquipmentSerialNumber());
+                SessionContext.bindSession(session,ctx.channel());
+//                handler.onEquipmentRegisterRequest(payload);
                 break;
             case Heartbeat:
                 log.info("receive Heartbeat package .......");
-                handler.onHeartbeatRequest(payload);
+                HeartbeatResponse heartbeatResponse = (HeartbeatResponse)payload.getModbusPdu();
+                handler.onHeartbeatRequest(heartbeatResponse);
                 break;
 
             default:
@@ -222,7 +230,6 @@ public class ModbusRtuSlave {
             log.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getSiteId(),msg.getModbusPdu().getFunctionCode().toString());
 
             slave.onChannelRead(ctx, msg);
-            SessionContext.bindSession(msg.getSiteId(),ctx.channel());
         }
 
         @Override
