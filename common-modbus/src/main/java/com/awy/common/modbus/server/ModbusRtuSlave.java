@@ -190,7 +190,7 @@ public class ModbusRtuSlave {
             case Heartbeat:
                 log.info("receive Heartbeat package .......");
                 HeartbeatResponse heartbeatResponse = (HeartbeatResponse)payload.getModbusPdu();
-                handler.onHeartbeatRequest(heartbeatResponse);
+                handler.onHeartbeatRequest(payload.getSiteId(),heartbeatResponse);
                 break;
 
             default:

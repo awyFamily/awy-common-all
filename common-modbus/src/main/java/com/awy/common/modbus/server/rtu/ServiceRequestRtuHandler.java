@@ -79,7 +79,7 @@ public interface ServiceRequestRtuHandler {
 //    default void onEquipmentRegisterRequest(RegistersAuthResponse registersAuthResponse) {
 //    }
 
-    default void onHeartbeatRequest(HeartbeatResponse heartbeatResponse) {
+    default void onHeartbeatRequest(int siteId,HeartbeatResponse heartbeatResponse) {
     }
 
 
