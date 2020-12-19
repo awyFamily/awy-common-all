@@ -11,6 +11,7 @@ import lombok.Data;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
@@ -450,12 +451,14 @@ public abstract class AbstractExcelUtil<T>{
      * @return xlsx table
      */
     public Workbook createXssfWorkbook(){
-        return new XSSFWorkbook();
+        return new SXSSFWorkbook(new XSSFWorkbook());
+//        return new XSSFWorkbook();
     }
 
     public Workbook createXssfWorkbook(InputStream inputStream){
         try {
-            return new XSSFWorkbook(inputStream);
+//            return new XSSFWorkbook(inputStream);
+            return new SXSSFWorkbook(new XSSFWorkbook(inputStream));
         } catch (IOException e) {
             throw new RuntimeException("file type illegal",e);
         }
