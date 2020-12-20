@@ -16,5 +16,7 @@ public interface PoiPool {
 
     int DEFAULT_PAGE_SIZE = 65535;
 
+    int DEFAULT_SINGLE_FILE_ROWS = DEFAULT_PAGE_SIZE << 1;
+
 
 }
