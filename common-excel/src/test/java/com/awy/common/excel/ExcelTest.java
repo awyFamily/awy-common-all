@@ -1,16 +1,19 @@
 package com.awy.common.excel;
 
 import com.awy.common.excel.impl.StandardExcelUtil;
+import com.awy.common.util.utils.FileUtil;
 import org.apache.commons.compress.utils.Lists;
 
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class ExcelTest {
 
     public static void main(String[] args) throws Exception{
-        System.out.println(export()); //200000行 多线程 13736 单线程 18518
+        System.out.println(exportZip()); //200000行 多线程 13736 单线程 18518
 //        importNative();
 //        importRemote();
 //        importRemoteMap();
@@ -36,10 +39,28 @@ public class ExcelTest {
                 excelUtil.close(wb);*/
     }
 
-    private static String export(){
-        List<User>  list = Lists.newArrayList();
+    private static String exportZip(){
+        List<User>  list = getData();
         long start = System.currentTimeMillis();
-        for(int i =0;i<200000;i++){
+        String testExport = FileUtil.createHomeFolder("testExport");
+        File zipFile = new StandardExcelUtil().exportZipFile("测试",testExport, list, new String[]{"用户名", "年龄", "创建时间"}, new String[]{"name", "age", "createTime"},null);
+
+        System.out.println("生成Excel花费时间：" + (System.currentTimeMillis() - start));
+        System.out.println(zipFile.getAbsolutePath());
+        new StandardExcelUtil().deleteZip(testExport,zipFile);
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+
+    private static String export(){
+        List<User>  list = getData();
+        long start = System.currentTimeMillis();
+        /*for(int i =0;i<300000;i++){
             User user = new User();
             user.setAge(10+i);
             user.setName("aaa"+i);
@@ -47,12 +68,24 @@ public class ExcelTest {
             list.add(user);
         }
         long end = System.currentTimeMillis();
-        System.out.println("生成数据花费时间：" + (end - start));
+        System.out.println("生成数据花费时间：" + (end - start));*/
 
         String result = new StandardExcelUtil().exportFilePath("测试2222", list, new String[]{"用户名", "年龄", "创建时间"}, new String[]{"name", "age", "createTime"});
 
-        System.out.println("生成Excel花费时间：" + (System.currentTimeMillis() - end));
+        System.out.println("生成Excel花费时间：" + (System.currentTimeMillis() - start));
         return result;
+    }
+
+    private static List<User> getData(){
+        List<User>  list = Lists.newArrayList();
+        for(int i =0;i<300000;i++){
+            User user = new User();
+            user.setAge(10+i);
+            user.setName("aaa"+i);
+            user.setCreateTime(LocalDateTime.now());
+            list.add(user);
+        }
+        return list;
     }
 
     /**

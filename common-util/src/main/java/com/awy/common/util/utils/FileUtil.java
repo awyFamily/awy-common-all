@@ -24,7 +24,7 @@ public class FileUtil {
 
     /**
      * 读取并解析文件(使用utf-8字符集)
-     * @param filePath 文件相对路径
+     * @param filePath 文件相对路径(需要文件在当前项目上下文)
      * @param parsing 文件解析器
      * @return 文件解析列表
      */
@@ -34,7 +34,7 @@ public class FileUtil {
 
     /**
      * 读取并解析文件
-     * @param filePath 文件相对路径
+     * @param filePath 文件相对路径(需要文件在当前项目上下文)
      * @param parsing 文件解析器
      * @param charsetName 字符集
      * @return 文件解析列表
@@ -49,6 +49,23 @@ public class FileUtil {
     }
 
     /**
+     * 在桌面创建一个文件夹
+     * @param folderName
+     */
+    public static String createHomeFolder(String folderName){
+        folderName = FileSystemView.getFileSystemView().getHomeDirectory().getPath().concat(File.separator).concat(folderName);
+        createFolder(folderName);
+        return folderName;
+    }
+
+    public static void createFolder(String path){
+        File file = new File(path);
+        if(!file.exists()) {
+            file.mkdirs();
+        }
+    }
+
+    /**
      * 获取 folderName 下当前时间文件夹的文件名称
      * 例如: folderName = temp , fileName = test ,当前时间等于(2019-03-12)
      * 返回: /temp/20190312/test 的文件地址
@@ -57,10 +74,23 @@ public class FileUtil {
      * @return 文件绝对路径
      */
     public static String getCurrentDataFormatFilePath(String folderName,String fileName){
+        return getCurrentDataFormatFilePath(folderName,fileName,false);
+    }
+
+    /**
+     * 获取 folderName 下当前时间文件夹的文件名称
+     * 例如: folderName = temp , fileName = test ,当前时间等于(2019-03-12)
+     * 返回: /temp/20190312/test 的文件地址
+     * @param folderName 父文件名称
+     * @param fileName 需要返回的文件的名称
+     * @param isCleanOtherFile 是否清空当前文件夹的其他文件
+     * @return 文件绝对路径
+     */
+    public static String getCurrentDataFormatFilePath(String folderName,String fileName,boolean isCleanOtherFile){
         if(StrUtil.isEmpty(fileName)){
             fileName = UUID.randomUUID().toString();
         }
-        String filePath = createCurrentDataFormatFilePath(folderName,false);
+        String filePath = createCurrentDataFormatFilePath(folderName,isCleanOtherFile);
         return filePath.concat(File.separator).concat(fileName);
     }
 
@@ -81,14 +111,12 @@ public class FileUtil {
         SimpleDateFormat df = new SimpleDateFormat(DatePattern.PURE_DATE_PATTERN);
 
         //文件名称
-        String filePath = currentPath.concat(File.separator).concat(df.format(new Date()));
-        File file = new File(filePath);
-        if(!file.exists()) {
-            file.mkdirs();
-        }
+        String currentDateStr = df.format(new Date());
+        String filePath = currentPath.concat(File.separator).concat(currentDateStr);
+        createFolder(filePath);
         //删除子文件夹
         if(isCleanOtherFile){
-            delAllFile(currentPath,df.format(new Date()));
+            delAllFile(currentPath,currentDateStr);
         }
         return filePath;
     }
