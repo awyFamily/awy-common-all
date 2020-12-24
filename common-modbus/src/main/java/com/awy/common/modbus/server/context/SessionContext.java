@@ -11,7 +11,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yhw
  */
 @Slf4j
-public class SessionContext {
+public final class SessionContext {
+
+    private SessionContext(){}
 
     private static final AttributeKey<ModbusSession> SESSION = AttributeKey.newInstance("session");
 

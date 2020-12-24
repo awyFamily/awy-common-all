@@ -1,5 +1,6 @@
 package com.awy.common.modbus.server;
 
+import com.awy.common.modbus.server.context.ModBusFutureContext;
 import com.awy.common.modbus.server.context.ModbusSession;
 import com.awy.common.modbus.server.context.SessionContext;
 import com.awy.common.modbus.server.rtu.ServiceRequestRtuHandler;
@@ -131,6 +132,7 @@ public class ModbusRtuSlave {
         bootstrap.config().childGroup().shutdownGracefully();
     }
 
+
     /**
      * 读取消息
      * @param ctx
@@ -140,6 +142,8 @@ public class ModbusRtuSlave {
         ServiceRequestRtuHandler handler = requestHandler.get();
         if (handler == null) return;
 
+        //complete response
+        ModBusFutureContext.completeResponse(ctx,payload);
         switch (payload.getModbusPdu().getFunctionCode()) {
             case ReadCoils:
                 handler.onReadCoils(ModbusRtuServiceRequest.of(payload, ctx.channel()));
