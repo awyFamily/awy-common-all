@@ -55,6 +55,7 @@ public final class SendUtil {
     public static ModbusResponse sendRequestAwait(String sessionId, ModbusRequest message){
         Channel channel = SessionContext.getChannel(sessionId);
         if(channel != null && channel.isActive()){
+            log.info("send sessionId : {} ",sessionId);
             String uid = ModBusFutureContext.getUid(sessionId,message.getFunctionCode());
             CompletableFuture<ModbusResponse> future = new CompletableFuture<>();
             ModBusFutureContext.put(uid,future);

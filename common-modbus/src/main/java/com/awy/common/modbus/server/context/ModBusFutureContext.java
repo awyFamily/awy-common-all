@@ -41,13 +41,25 @@ public final class ModBusFutureContext {
 
 
     public static void completeResponse(ChannelHandlerContext ctx, ModbusRtuPayload payload){
-        ModbusSession session = SessionContext.getSession(ctx.channel());
-        if(session == null){
+        if(payload.getModbusPdu().getFunctionCode() == FunctionCode.EquipmentRegister || payload.getModbusPdu().getFunctionCode() == FunctionCode.Heartbeat ||
+                payload.getModbusPdu().getFunctionCode() == FunctionCode.IgnorePackage){
             return;
         }
+
+        ModbusSession session = SessionContext.getSession(ctx.channel());
+        if(session == null){
+            log.error("session is empty...");
+            return;
+        }
+
         String sessionId = ModbusSession.getSessionId(session.getManufacturer(), session.getEquipmentSerialNumber());
         String uid = ModBusFutureContext.getUid(sessionId, payload.getModbusPdu().getFunctionCode());
         ModBusFutureContext.completeFuture(uid,(ModbusResponse)payload.getModbusPdu());
+        /*CompletableFuture.runAsync(() -> {
+            String sessionId = ModbusSession.getSessionId(session.getManufacturer(), session.getEquipmentSerialNumber());
+            String uid = ModBusFutureContext.getUid(sessionId, payload.getModbusPdu().getFunctionCode());
+            ModBusFutureContext.completeFuture(uid,(ModbusResponse)payload.getModbusPdu());
+        });*/
     }
 
     public static void completeFuture(String uid,ModbusResponse response){

@@ -130,6 +130,7 @@ public class ModbusRtuSlave {
         serverChannels.clear();
         bootstrap.config().group().shutdownGracefully();
         bootstrap.config().childGroup().shutdownGracefully();
+        SessionContext.getAllChannel().clear();
     }
 
 

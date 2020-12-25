@@ -73,4 +73,31 @@ public class test {
         System.out.println(original.getUnsignedShort(4));
         System.out.println(original.getUnsignedShort(6));
     }
+
+
+    /**
+     * 读线圈
+     */
+    public void getReadTestCoils(){
+        //sn 线圈起始地址  数量
+        //url = url.concat("/readCoils").concat("/YB8A20430000000003").concat("/1").concat("/11");
+
+        //response: 2, 1, 2, 3, 5, 3d, f
+        //3(0000 0011)   5(0000 0101) ->  0000 0101 0000 0011 (对应 1,2,9,11 水阀打开)
+        //1 和 3 交互位置 ，从后往前数
+    }
+
+    /**
+     * 读寄存器
+     */
+    public void  getReadHoldingRegisters(){
+        ///readHoldingRegisters/{snNumber}/{address}/{number}
+        //url = url.concat("/readHoldingRegisters").concat("/YB8A20430000000003").concat("/605").concat("/2");
+        //2, 3, 2, 5d, 0, 2, 54, 52  -> 2, 3, 4, 0, a, 0, c, e9, 34
+
+
+        //request： 02 03 02 5D 00 02 54 52  (02 5D )起始地址  (00 02)寄存器数量
+        //response: 02 03 04 00 0A 00 0C E9 34   (04) 字节数   (00 0A) 寄存器值1 (00 0C)寄存器值2
+        //02 5D -> (00 0A)     02 5E ->  00 0C  -->  (D605 10   D606 12)
+    }
 }
