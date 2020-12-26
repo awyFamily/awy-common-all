@@ -231,9 +231,12 @@ public final class WebSocketClient {
     }
 
     private void pollMessage(){
-        for(int i = 0; i < messageRetryQueue.size(); i++){
+        while (!messageRetryQueue.isEmpty()){
             sendMsg(messageRetryQueue.poll());
         }
+        /*for(int i = 0; i < messageRetryQueue.size(); i++){
+
+        }*/
     }
 
     public static TextWebSocketFrame getMessage(Message message){
@@ -258,12 +261,20 @@ public final class WebSocketClient {
 
                 sleepTime(TimeUnit.MILLISECONDS,5000 - System.currentTimeMillis() % 1000);
 //                sleepTime(TimeUnit.SECONDS,15);
-
+                //重试多少次失败，不进行重试,释放资源
+                //重试成功则，重置重试次数
+                int retryNumber = 6;
                 while (!reconnectionThreadStop){
                     if(!channel.isActive()){
-                        log.info("retry connection ..... ");
-                        restart();
+                        if(retryNumber > 0){
+                            log.info("retry connection ..... ");
+                            restart();
+                            retryNumber--;
+                        }else {
+                            stop();
+                        }
                     }else {
+                        retryNumber = 6;
                         pollMessage();
                         channel.writeAndFlush(new PingWebSocketFrame());
                     }
@@ -291,18 +302,23 @@ public final class WebSocketClient {
         for (int i = 0; i < 15;i++){
 //            System.out.println(messageRetryQueue.offer(String.valueOf(i)));
             if(!messageRetryQueue.offer(String.valueOf(i))){
-                System.out.println(messageRetryQueue.poll());
+                System.out.println("丢弃：" + messageRetryQueue.poll());
                 messageRetryQueue.add(String.valueOf(i));
             }
-
         }
 
 
-        System.out.println(messageRetryQueue.size());
-        for (int i = 0; i < 30;i++){
+
+        System.out.println("size: " + messageRetryQueue.size());
+      /*  for (int i = 0; i < 30;i++){
             System.out.println(messageRetryQueue.poll());
-        }
-        System.out.println(messageRetryQueue.size());
+        }*/
+
+      while (!messageRetryQueue.isEmpty()){
+          System.out.println(messageRetryQueue.poll());
+      }
+//      System.out.println(System.currentTimeMillis() % 1000);
+//      System.out.println((5000 - System.currentTimeMillis() % 1000));
     }
 
 }
