@@ -1,6 +1,8 @@
 package com.awy.common.modbus.toolkit;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +93,58 @@ public final class RegistersCoilsValueUtil {
         return String.format("%08d", Integer.valueOf(code));
     }
 
+
+    //====================================================
+
+    /**
+     * 获取寄存器值ByteBuf
+     * @param values 寄存器值列表
+     * @return 寄存器值 ByteBuf
+     */
+    public static ByteBuf getWriteRegistersValues(short... values){
+        if(values == null || values.length <= 0){
+            return null;
+        }
+        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
+        ByteBuf original = allocator.directBuffer();
+        for (short value : values) {
+            original.writeShort(value);
+        }
+        return original;
+    }
+
+    /**
+     * 获取线圈值ByteBuf
+     * @param status 寄存器值列表(0-关 1-开)
+     * @return 线圈值 ByteBuf
+     */
+    public static ByteBuf getWriteCoilsStatus(int... status){
+        if(status == null || status.length <= 0){
+            return null;
+        }
+        //0000 0011  0000 0001(source)
+        //0000 0001   0000 0011 (result : High and low swap)
+        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
+        ByteBuf original = allocator.directBuffer();
+        StringBuilder sb = new StringBuilder();
+        int count = 0;
+        for(int i = 0; i < status.length; i++){
+            count++;
+            sb.append(status[i] == 0 ? 0 : 1);
+            if(i == (status.length - 1)){
+                original.writeByte(Integer.parseInt(toBinaryString(sb.reverse().toString()),2));
+                break;
+            }
+
+            if(count%8 == 0){
+                original.writeByte(Integer.parseInt(sb.reverse().toString(),2));
+                count = 0;
+                sb = new StringBuilder();
+            }
+        }
+        return original;
+    }
+
     //============= list Reverse =========================
     /**
      * 将列表反转
@@ -120,15 +174,23 @@ public final class RegistersCoilsValueUtil {
         return result;
     }
 
-/*    public static void main(String[] args) {
-        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
-        ByteBuf original = allocator.directBuffer();
-//        original.writeZero(8);
-        original.writeByte(3);
-        original.writeByte(5);
-//        List<Integer> result = getCoilsStatus(original);
-//        List<Integer> result = getCoilsStatus(original,20);
-        List<Integer> result = getRegistersValues(original);
-        System.out.println(result.toString());
+ /*   public static void main(String[] args) {
+//        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
+//        ByteBuf original = allocator.directBuffer();
+////        original.writeZero(8);
+//        original.writeByte(3);
+//        original.writeByte(5);
+////        List<Integer> result = getCoilsStatus(original);
+////        List<Integer> result = getCoilsStatus(original,20);
+//        List<Integer> result = getRegistersValues(original);
+//        System.out.println(result.toString());
+
+
+        //0000 0011  0000 0001
+        ByteBuf writeCoilsStatus = getWriteCoilsStatus(1, 1, 0, 0,   0, 0, 0, 0,   1, 0, 1,0, 1);
+        System.out.println(writeCoilsStatus.readableBytes());
+        System.out.println(Integer.toHexString(writeCoilsStatus.readUnsignedByte()));
+        System.out.println(Integer.toHexString(writeCoilsStatus.readUnsignedByte()));
+//        System.out.println(getCoilsStatus(writeCoilsStatus).toString());
     }*/
 }
