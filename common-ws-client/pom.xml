@@ -11,6 +11,10 @@
 
     <artifactId>common-ws-client</artifactId>
 
+    <description>
+       ***** <!-- 4.1.45.Final --> is a lettuce-core default netty version
+    </description>
+
     <properties>
         <java.version>11</java.version>
         <slf4j.version>1.7.25</slf4j.version>
@@ -30,6 +34,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <dependency>

@@ -296,29 +296,4 @@ public final class WebSocketClient {
     }
 
 
-    public static void main(String[] args) {
-        LinkedBlockingQueue<String> messageRetryQueue = new LinkedBlockingQueue <>(10);
-//        ConcurrentLinkedQueue<String> messageRetryQueue = new ConcurrentLinkedQueue <>();
-        for (int i = 0; i < 15;i++){
-//            System.out.println(messageRetryQueue.offer(String.valueOf(i)));
-            if(!messageRetryQueue.offer(String.valueOf(i))){
-                System.out.println("丢弃：" + messageRetryQueue.poll());
-                messageRetryQueue.add(String.valueOf(i));
-            }
-        }
-
-
-
-        System.out.println("size: " + messageRetryQueue.size());
-      /*  for (int i = 0; i < 30;i++){
-            System.out.println(messageRetryQueue.poll());
-        }*/
-
-      while (!messageRetryQueue.isEmpty()){
-          System.out.println(messageRetryQueue.poll());
-      }
-//      System.out.println(System.currentTimeMillis() % 1000);
-//      System.out.println((5000 - System.currentTimeMillis() % 1000));
-    }
-
 }
