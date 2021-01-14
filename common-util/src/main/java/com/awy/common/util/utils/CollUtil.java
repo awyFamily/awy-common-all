@@ -1,6 +1,5 @@
 package com.awy.common.util.utils;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 
 import java.util.Collection;
@@ -14,9 +13,9 @@ import java.util.stream.Collectors;
 /**
  * @author yhw
  */
-public final class ListUtil {
+public final class CollUtil extends cn.hutool.core.collection.CollUtil {
 
-    private ListUtil(){}
+    private CollUtil(){}
 
     public final static <T,K> Map<K,T>  conversionHashMap(Collection<T> collection, Function<? super T, ? extends K> groupKey){
         Map<? extends K, List<T>> map = collection.stream().filter(obj -> ObjectUtil.isNotNull(obj))
