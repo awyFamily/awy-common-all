@@ -18,6 +18,9 @@ public final class CollUtil extends cn.hutool.core.collection.CollUtil {
     private CollUtil(){}
 
     public final static <T,K> Map<K,T>  conversionHashMap(Collection<T> collection, Function<? super T, ? extends K> groupKey){
+        if(CollUtil.isEmpty(collection) || groupKey == null){
+            return new HashMap();
+        }
         Map<? extends K, List<T>> map = collection.stream().filter(obj -> ObjectUtil.isNotNull(obj))
                 .collect(Collectors.groupingBy(groupKey));
         if(CollUtil.isEmpty(map)){
@@ -32,12 +35,14 @@ public final class CollUtil extends cn.hutool.core.collection.CollUtil {
 
 
     public final static <T,K> Map<K,T>  conversionConcurrentMap(Collection<T> collection, Function<? super T, ? extends K> groupKey){
+        if(CollUtil.isEmpty(collection) || groupKey == null){
+            return new ConcurrentHashMap<>();
+        }
         Map<? extends K, List<T>> map = collection.stream().filter(obj -> ObjectUtil.isNotNull(obj))
                 .collect(Collectors.groupingByConcurrent(groupKey));
         if(CollUtil.isEmpty(map)){
             return new ConcurrentHashMap<>();
         }
-
         Map<K,T> resultMap = new ConcurrentHashMap<>();
         for (Map.Entry<? extends K, List<T>> entry : map.entrySet()) {
             resultMap.put(entry.getKey(),entry.getValue().get(0));
