@@ -39,7 +39,7 @@ public abstract class Message {
         this.uid = uid;
     }
 
-    private void setCmd(){}
+    private void setCmd(Byte cmd){}
 
     /**
      * 消息指令类型

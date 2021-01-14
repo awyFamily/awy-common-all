@@ -11,16 +11,16 @@ import java.util.function.Supplier;
  */
 public class Jdk8Builder<T> {
 
-    private final Supplier<T> instantiator;
+    private final Supplier<T> instance;
 
     private List<Consumer<T>> modifiers = new ArrayList<>();
 
-    public Jdk8Builder(Supplier<T> instantiator){
-        this.instantiator = instantiator;
+    public Jdk8Builder(Supplier<T> instance){
+        this.instance = instance;
     }
 
-    public static <T> Jdk8Builder<T> of(Supplier<T> instantiator){
-        return new Jdk8Builder<>(instantiator);
+    public static <T> Jdk8Builder<T> of(Supplier<T> instance){
+        return new Jdk8Builder<>(instance);
     }
 
     public <P1> Jdk8Builder<T> with(Consumer1<T,P1> consumer, P1 p1){
@@ -42,7 +42,7 @@ public class Jdk8Builder<T> {
     }
 
     public T build(){
-        T value = instantiator.get();
+        T value = instance.get();
         modifiers.forEach(modifier -> modifier.accept(value));
         modifiers.clear();
         return value;
