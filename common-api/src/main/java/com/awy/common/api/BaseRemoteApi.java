@@ -12,11 +12,24 @@ import java.util.Collection;
  */
 public abstract class BaseRemoteApi {
 
+    public <T> T getData(ApiResult<T> apiResult){
+        if(!this.isInvokeSuccess(apiResult)){
+            return null;
+        }
+        T data = apiResult.getData();
+        if(data instanceof Collection){
+            if(CollUtil.isEmpty((Collection<?>) data)){
+                return null;
+            }
+        }
+        return apiResult.getData();
+    }
+
     public boolean isInvokeSuccess(ApiResult apiResult){
         return apiResult != null && CommonConstant.RESPONSE_SUCCESS.equals(apiResult.getCode());
     }
 
     public boolean isInvokeSuccessInArray(ApiResult<? extends Collection> apiResult){
-        return this.isInvokeSuccess(apiResult) && CollUtil.isEmpty(apiResult.getData());
+        return this.isInvokeSuccess(apiResult) && CollUtil.isNotEmpty(apiResult.getData());
     }
 }
