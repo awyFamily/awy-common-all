@@ -8,6 +8,7 @@ import java.util.Collection;
 
 /**
  * 远程API抽象父类
+ * Copyright  awyFamily
  * @author yhw
  */
 public abstract class BaseRemoteApi {
