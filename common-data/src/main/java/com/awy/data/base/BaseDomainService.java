@@ -24,7 +24,7 @@ public abstract class BaseDomainService<M extends IDDDBaseRepository<PO>,DO,PO> 
     }
 
 
-    public abstract DO getInfo();
+    public abstract DO getInfo(Serializable id);
 
     @Transactional(rollbackFor = {Exception.class})
     public DO create(DO model) {
