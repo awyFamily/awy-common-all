@@ -23,6 +23,9 @@ public abstract class BaseDomainService<M extends IDDDBaseRepository<PO>,DO,PO> 
         return this.baseRepository;
     }
 
+
+    public abstract DO getInfo();
+
     @Transactional(rollbackFor = {Exception.class})
     public DO create(DO model) {
         PO po = this.beforeCreate(model);
