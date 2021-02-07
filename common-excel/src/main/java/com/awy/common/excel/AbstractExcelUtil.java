@@ -408,7 +408,7 @@ public abstract class AbstractExcelUtil<T>{
     }
 
     private Workbook getWorkbook( List<T> datas, String sheetName,CellStyle style,int sheetPageSize, String[] titles, String[] columns, Integer[] widths){
-        Workbook workbook = createXssfWorkbook();
+        Workbook workbook = createSXssfWorkbook();
         if(style == null){
             style = getDefaultCellStyle(workbook);
         }
@@ -485,7 +485,7 @@ public abstract class AbstractExcelUtil<T>{
     //=================================================== export multi sheet option =====================================================================
 
     public String  exportCustomize(String excelName, List<T> datas, String[] titles, Integer[] widths){
-        Workbook  workbook = createXssfWorkbook();
+        Workbook  workbook = createSXssfWorkbook();
 
         writeCustomizeData(workbook,datas,titles,widths);
         return getExportHomePath(excelName,PoiPool.EXPORT_EXCEL_PATH,workbook);
@@ -571,18 +571,24 @@ public abstract class AbstractExcelUtil<T>{
     //====================== create table option ==================================================
 
     /**
-     * 创建以【.xlsx】为后缀的表格
+     * 创建以【.xlsx】为后缀的表格(只写, Stream 的方式)
      * @return xlsx table
      */
-    public Workbook createXssfWorkbook(){
+    public Workbook createSXssfWorkbook(){
         return new SXSSFWorkbook(new XSSFWorkbook());
 //        return new XSSFWorkbook();
     }
 
+    /**
+     * 读取Excel
+     * @param inputStream 流
+     * @return workBook
+     */
     public Workbook createXssfWorkbook(InputStream inputStream){
         try {
-//            return new XSSFWorkbook(inputStream);
-            return new SXSSFWorkbook(new XSSFWorkbook(inputStream));
+            return new XSSFWorkbook(inputStream);
+            ////SXSSFSheet -> _xFromSxHash(读取的文件不可以读取行)  , _sxFromXHash(读取的文件可以读取行)
+            //return new SXSSFWorkbook(new XSSFWorkbook(inputStream));
         } catch (IOException e) {
             throw new RuntimeException("file type illegal",e);
         }
