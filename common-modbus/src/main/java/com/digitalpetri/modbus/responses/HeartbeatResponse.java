@@ -3,6 +3,12 @@ package com.digitalpetri.modbus.responses;
 import com.digitalpetri.modbus.FunctionCode;
 
 /**
+ * 02 4C 00 05 00 03 00 00
+ * 02 siteId
+ * 4c  cmd
+ * 00 05 manufacturer
+ * 00 03 equipmentSerialNumber
+ * 00 00 crc or Reserved(equipment type)
  * @author yhw
  */
 public class HeartbeatResponse extends  SimpleModbusResponse {
