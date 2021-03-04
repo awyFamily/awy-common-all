@@ -187,7 +187,9 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
     }
 
     public HeartbeatResponse decodeHeartbeat(ByteBuf buffer){
+        //2 字节 制造商编码
         int manufacturer = buffer.readUnsignedShort();
+        //2 字节 序列号
         int equipmentSerialNumber = buffer.readUnsignedShort();
         return new HeartbeatResponse(manufacturer,equipmentSerialNumber);
     }
