@@ -210,6 +210,8 @@ public class ModbusRtuSlave {
 
     private void onChannelInactive(ChannelHandlerContext ctx) {
         log.error("Master/client channel closed: {}", ctx.channel());
+        ///callback offline
+        requestHandler.get().onOffline(SessionContext.getSession(ctx.channel()));
     }
 
     private void onExceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
