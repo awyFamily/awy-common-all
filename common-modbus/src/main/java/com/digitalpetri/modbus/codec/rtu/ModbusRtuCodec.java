@@ -1,5 +1,7 @@
 package com.digitalpetri.modbus.codec.rtu;
 
+import com.awy.common.modbus.server.context.ModbusSession;
+import com.awy.common.modbus.server.context.SessionContext;
 import com.digitalpetri.modbus.ModbusPdu;
 import com.digitalpetri.modbus.UnsupportedPdu;
 import com.digitalpetri.modbus.codec.ModbusPduDecoder;
@@ -61,9 +63,21 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
         while (buffer.readableBytes() >= packageLength) {
             try {
                 //log
-                printReceiveBuffer(buffer);
+                this.printReceiveBuffer(buffer);
+                int siteId;
+                //Semi-packet skip
+                if(SessionContext.hasLogin(ctx.channel())){
+                    ModbusSession session = SessionContext.getSession(ctx.channel());
+                    siteId = buffer.getUnsignedByte(buffer.readerIndex());
+                    if(siteId != session.getSiteId()){
+                        //设置可读取指标为 结束下标
+                        buffer.readerIndex((buffer.readerIndex() + buffer.readableBytes()));
+                        log.info("unReading buffer ....");
+                        break;
+                    }
+                }
 
-                int siteId = buffer.readUnsignedByte();
+                siteId = buffer.readUnsignedByte();
                 //控制类型
                 ModbusPdu modbusPdu = decoder.decode(buffer);
                 //跳出读取(指令错误)
@@ -75,8 +89,14 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
                     buffer.readerIndex((buffer.readerIndex() + buffer.readableBytes()));
                     log.info("receive unsupported site : {} code : {}",siteId,modbusPdu.getFunctionCode());
                 }else {
-                    //get crc . receive buffer
-                    log.info("current crc code : {}",Integer.toHexString(buffer.readUnsignedShort()));
+                    if(buffer.readableBytes() == 2){
+                        //get crc . receive buffer
+                        log.info("current crc code : {}",Integer.toHexString(buffer.readUnsignedShort()));
+                    }else {
+                        //设置可读取指标为 结束下标
+                        buffer.readerIndex((buffer.readerIndex() + buffer.readableBytes()));
+                        log.info("receive remaining data  site : {} code : {}",siteId,modbusPdu.getFunctionCode());
+                    }
                 }
                 out.add(new ModbusRtuPayload(siteId, modbusPdu));
 
@@ -103,8 +123,9 @@ public class ModbusRtuCodec extends ByteToMessageCodec<ModbusRtuPayload> {
     private List<String>  getBufferHex(ByteBuf buffer){
         int readableBytes = buffer.readableBytes();//返回可读的字节数
         int startIndex = buffer.readerIndex();
+        int endIndex = (startIndex + readableBytes);
         List<String> list = new ArrayList<>();
-        for (int i = startIndex;i < readableBytes;i++){
+        for (int i = startIndex;i < endIndex;i++){
             list.add(Integer.toHexString(buffer.getUnsignedByte(i)));
         }
         return list;

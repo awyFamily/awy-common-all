@@ -37,7 +37,7 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
         if (FunctionCode.isExceptionCode(code)) {
             FunctionCode functionCode = FunctionCode
                     .fromCode(code - 0x80)
-                    .orElseThrow(() -> new DecoderException("invalid function code: " + (code - 0x80)));
+                    .orElseThrow(() -> new DecoderException("invalid function code(code - 0x80): " + (code - 0x80)));
 
             return decodeException(functionCode, buffer);
         } else {
@@ -181,7 +181,9 @@ public class ModbusResponseDecoder implements ModbusPduDecoder {
      * @return
      */
     public RegistersAuthResponse decodeRegistersAuth(ByteBuf buffer){
+        //2 字节 制造商编码
         int manufacturer = buffer.readUnsignedShort();
+        ////2 字节 序列号
         int equipmentSerialNumber = buffer.readUnsignedShort();
         return new RegistersAuthResponse(manufacturer,equipmentSerialNumber);
     }
