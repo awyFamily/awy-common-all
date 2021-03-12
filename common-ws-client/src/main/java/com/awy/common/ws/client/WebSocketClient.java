@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 客户端
+ * //lb:ws://ws-push-server
  * @author yhw
  */
 @Slf4j
