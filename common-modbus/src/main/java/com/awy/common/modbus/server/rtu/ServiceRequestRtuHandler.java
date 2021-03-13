@@ -16,6 +16,7 @@
 
 package com.awy.common.modbus.server.rtu;
 
+import com.awy.common.modbus.server.context.ModbusSession;
 import com.digitalpetri.modbus.ExceptionCode;
 import com.digitalpetri.modbus.requests.*;
 import com.digitalpetri.modbus.responses.*;
@@ -80,6 +81,9 @@ public interface ServiceRequestRtuHandler {
 //    }
 
     default void onHeartbeatRequest(int siteId,HeartbeatResponse heartbeatResponse) {
+    }
+
+    default void onOffline(ModbusSession modbusSession) {
     }
 
 

@@ -192,7 +192,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -99;
+        return -90;
     }
 
 }
