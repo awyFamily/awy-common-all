@@ -8,7 +8,10 @@ import cn.hutool.core.util.StrUtil;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.TimeUnit;
 
 public final class DateJdK8Util {
 
@@ -161,5 +164,31 @@ public final class DateJdK8Util {
 
     private static String formatLocalDateTime(LocalDateTime localDateTime,DateParser parser){
         return localDateTime.format(DateTimeFormatter.ofPattern(parser.getPattern()));
+    }
+
+    //==================================================================================================
+    /**
+     * localTime 转秒
+     * @param time 只能是时间格式，例如 HH:mm:ss、HH:mm、mm:ss 15:30:55、15:30、30:55
+     * @param formatter HH:mm:ss、HH:mm、mm:ss
+     * @return 秒数
+     */
+    public static long toLocalTimeSeconds(String time,DateTimeFormatter formatter){ ;
+        return toLocalTimeMilliseconds(LocalTime.parse(time, formatter)) / 1000;
+    }
+
+    public static long toLocalTimeMilliseconds(LocalTime time){
+        LocalDate nowDate = LocalDate.now();
+        long zeroPoint = toLocalTimeMilliseconds(LocalDateTime.of(nowDate, LocalTime.of(0, 0)));
+        long computeTime = toLocalTimeMilliseconds(time.atDate(nowDate));
+        return (computeTime - zeroPoint);
+    }
+
+    public static long toLocalTimeSeconds(LocalDateTime localDateTime){
+        return toLocalTimeMilliseconds(localDateTime) / 1000;
+    }
+
+    public static long toLocalTimeMilliseconds(LocalDateTime localDateTime){
+        return localDateTime.atZone(ZoneOffset.of("+8")).toInstant().toEpochMilli();
     }
 }
