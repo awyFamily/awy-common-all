@@ -7,7 +7,6 @@ public class StringMessageProcess implements MessageProcess<String> {
 
 	@Override
 	public DetailRes process(String message) {
-		System.out.println(message);
 		return new DetailRes(true, "",message);
 	}
 }

@@ -24,9 +24,9 @@ import java.io.IOException;
  * @author yhw
  */
 @Component
-public class RabbitComponent {
+public class RabbitWrapper {
 
-	private static Logger logger = LoggerFactory.getLogger(RabbitComponent.class);
+	private static Logger logger = LoggerFactory.getLogger(RabbitWrapper.class);
 
 	@Resource
 	private RabbitAdmin rabbitAdmin;
@@ -90,11 +90,13 @@ public class RabbitComponent {
 	}
 
 	/**
-	 * 发送消息Topic类型交换器增强(发送失败会自动重试)
-	 * @param exchange
+	 * 发送消息Topic类型交换器增强(不建议直接调用,
+	 * 发送失败会自动重试)
+	 * 建议直接使用：getMessageSender 获取消息发送对象
+	 * @param exchange 交换机名称
 	 * @param routing 路由key
-	 * @param message
-	 * @return
+	 * @param message 消息
+	 * @return 消息响应
 	 */
 	public DetailRes sendTopicPlus(String exchange,String routing,String queue,Object message){
 		MessageSender messageSender = getMessageSender(exchange,routing,queue, BuiltinExchangeType.TOPIC);
@@ -114,11 +116,13 @@ public class RabbitComponent {
 
 	/**
 	 * 发送重试消息(fail to retry sending)
+	 * 不建议直接使用
+	 * 建议直接使用：getMessageSender 获取消息发送对象
 	 * @param exchange 交换机
 	 * @param routing 路由key
 	 * @param queue 队列名称
 	 * @param message 消息体
-	 * @return
+	 * @return 发送消息状态
 	 */
 	public DetailRes sendDirectPlus(String exchange,String routing,String queue, Object message){
 		MessageSender messageSender = getMessageSender(exchange,routing,queue,BuiltinExchangeType.DIRECT);
@@ -148,35 +152,45 @@ public class RabbitComponent {
 
 	/**
 	 * 增强消费Topic交换器(使用所有增强消费,会一直阻塞 直到获取到消息才会返回)
+	 *  频繁获取消息,建议使用：getMessageConsumer
 	 */
+	@Deprecated
 	public String receiveTopicPlus(final String exchange,final String queue){
 		return receiveTopicPlus(exchange,"",queue);
 	}
 
 	/**
-	 * 增强消费Topic交换器
+	 * 增强消费Topic交换机(不建议使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 */
+	@Deprecated
 	public String receiveTopicPlus(final String exchange,final String routing,final String queue){
-		return receivePlus(exchange,routing,queue,BuiltinExchangeType.TOPIC);
+		return this.receivePlus(exchange,routing,queue,BuiltinExchangeType.TOPIC);
 	}
 
 	/**
-	 * Direct消费增强
+	 * Direct消费增强(不建议使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 */
+	@Deprecated
 	public String receiveDirectPlus(final String exchange,final String queue){
 		return receiveDirectPlus(exchange,"",queue);
 	}
 
 	/**
-	 * Direct消费增强
+	 * Direct消费增强(不建议使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 */
+	@Deprecated
 	public String receiveDirectPlus(final String exchange,final String routing,final String queue){
 		return receivePlus(exchange,routing,queue,BuiltinExchangeType.DIRECT);
 	}
 
 	/**
-	 * 消费增强
+	 * 消费增强(不推荐使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 */
+	@Deprecated
 	private String receivePlus(final String exchange, final String routing, final String queue,BuiltinExchangeType typeEnum){
 		MessageConsumer messageConsumer = getMessageConsumer(exchange,routing,queue,new StringMessageProcess(),typeEnum);
 		DetailRes result = messageConsumer.consume();
@@ -188,7 +202,8 @@ public class RabbitComponent {
 	}
 
 	/**
-	 * 定制消费增强
+	 * 定制消费增强(不建议使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 * @param exchange 交换机名称
 	 * @param queue 队列名称
 	 * @param typeEnum 交换机类型
@@ -201,7 +216,8 @@ public class RabbitComponent {
 	}
 
 	/**
-	 * 定制消费增强
+	 * 定制消费增强(不建议使用)
+	 * 频繁获取消息,建议使用：getMessageConsumer
 	 * @param exchange 交换机名称
 	 * @param routing 路由key
 	 * @param queue 队列名称
