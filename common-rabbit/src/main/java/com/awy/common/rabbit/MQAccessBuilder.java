@@ -171,6 +171,7 @@ public class MQAccessBuilder {
 
 			{
 				channel = connection.createChannel(false);
+//				channel.basicQos(1);
 			}
 
 			@Override
