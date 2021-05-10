@@ -2,6 +2,7 @@ package com.awy.common.mongo.component;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONObject;
+import com.awy.common.mongo.model.MIndexEnum;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mongodb.client.MongoCollection;
 import org.bson.Document;
@@ -11,9 +12,8 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author yhw
@@ -24,27 +24,62 @@ public class MongoComponent {
     @Resource
     MongoTemplate mongoTemplate;
 
+    public MongoCollection<Document> getCollection(String collectionName){
+        if(!mongoTemplate.collectionExists(collectionName)){
+            return null;
+        }
+        return mongoTemplate.getCollection(collectionName);
+    }
+
     public void createCollection(String collectionName){
         if(!mongoTemplate.collectionExists(collectionName)){
             mongoTemplate.createCollection(collectionName);
         }
     }
 
-    public void insert(Map<String,Object> map, String collectionName){
-        Document document = new Document(map);
-        getCollection(collectionName).insertOne(document);
+    /**
+     * 删除集合
+     * @param collectionName 集合名称
+     */
+    public void dropCollection(String collectionName){
+        if(mongoTemplate.collectionExists(collectionName)){
+            mongoTemplate.getCollection(collectionName).drop();
+        }
     }
 
-    public void insertMany(List<Map<String,Object>> list, String collectionName){
-        List<Document> docList = list.stream().map(map->{
-            return new Document(map);
-        }).collect(Collectors.toList());
-        getCollection(collectionName).insertMany(docList);
+    public void createIndex(String collectionName, String indexKey){
+        this.createIndex(collectionName,indexKey,MIndexEnum.asc,indexKey);
     }
 
-    public MongoCollection<Document> getCollection(String collectionName){
-        return mongoTemplate.getCollection(collectionName);
+    public void createIndex(String collectionName, String indexKey, MIndexEnum indexEnum){
+        this.createIndex(collectionName,indexKey,indexEnum,indexKey);
     }
+
+    public void createIndex(String collectionName, String indexKey, MIndexEnum indexEnum, String indexName){
+        MongoCollection<Document> collection = getCollection(collectionName);
+        if(collection != null){
+            mongoTemplate.indexOps(collectionName).ensureIndex(indexEnum.createIndex(indexKey,indexName));
+//            collection.createIndex(new Document(indexKey,indexEnum.getName())
+//                    ,new IndexOptions().background(false).name(indexName));
+        }
+    }
+
+    public <T> void insert(T object, String collectionName){
+        mongoTemplate.insert(object,collectionName);
+    }
+
+    public <T> void insert(Collection<T> list, String collectionName){
+        mongoTemplate.insert(list,collectionName);
+    }
+
+    public <T> void save(T object, String collectionName){
+        mongoTemplate.save(object,collectionName);
+    }
+
+    public <T> void save(Collection<T> list, String collectionName){
+        mongoTemplate.save(list,collectionName);
+    }
+
 
     /**
      * CriteriaDefinition criteria = Criteria.where("column").is("parameter");//.and("createdAt").gt(DateUtil.parse("2019-10-05"))
