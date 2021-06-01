@@ -6,7 +6,6 @@ import com.awy.common.modbus.server.context.SessionContext;
 import com.awy.common.modbus.server.rtu.ServiceRequestRtuHandler;
 import com.codahale.metrics.Counter;
 import com.digitalpetri.modbus.ExceptionCode;
-import com.digitalpetri.modbus.ModbusPdu;
 import com.digitalpetri.modbus.codec.ModbusRequestEncoder;
 import com.digitalpetri.modbus.codec.ModbusResponseDecoder;
 import com.digitalpetri.modbus.codec.rtu.ModbusRtuCodec;

@@ -53,7 +53,7 @@ public class LogInterceptor implements MethodInterceptor {
         //类名称(没有包名)
 //        System.out.println("class SimpleName" + userDeclaredMethod.getSimpleName());
         //前置增强逻辑
-        System.out.println("before我进来了");
+//        System.out.println("before我进来了");
         //获取方法上注解
         CloudLog cloudLog = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, CloudLog.class);
         if (cloudLog == null) {
@@ -73,14 +73,7 @@ public class LogInterceptor implements MethodInterceptor {
             userId = authUser.getUserId();
         }
 
-        //通过swagger 获取方法标注的信息(可拓展)
-        //ApiOperation apiOperation = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, ApiOperation.class);
-
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        eventPublisher.publishEvent(new LogNoteEvent(true,
-//                new LogMessage(userDeclaredMethod.getName(),cloudLog.logType().getCode(),SecurityUtil.getUser().getUsername(),SecurityUtil.getCurrentUserId(),getIpAddr(request),cloudLog.remark())));
-                new LogMessage(methodName,cloudLog.logType().getCode(),username,userId,getIpAddr(request),cloudLog.remark())));
-
+        //获取执行参数
         StringBuilder parameter = new StringBuilder();
         Object[] arguments = invocation.getArguments();
         if(arguments != null){
@@ -95,6 +88,14 @@ public class LogInterceptor implements MethodInterceptor {
             }
         }
 
+        //通过swagger 获取方法标注的信息(可拓展)
+        //ApiOperation apiOperation = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, ApiOperation.class);
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        eventPublisher.publishEvent(new LogNoteEvent(true,
+//                new LogMessage(userDeclaredMethod.getName(),cloudLog.logType().getCode(),SecurityUtil.getUser().getUsername(),SecurityUtil.getCurrentUserId(),getIpAddr(request),cloudLog.remark())));
+                new LogMessage(methodName,cloudLog.logType().getCode(),username,userId,getIpAddr(request),cloudLog.remark())));
+
         //获取返回类型
         /*Class<?> returnType = invocation.getMethod().getReturnType();
         //返回类型判断
@@ -106,7 +107,7 @@ public class LogInterceptor implements MethodInterceptor {
         //执行具体业务逻辑
         Object proceed = invocation.proceed();
         //执行后置增强逻辑（异常逻辑执行不了）
-        System.out.println("after我进来了");
+//        System.out.println("after我进来了");
         return proceed;
     }
 
