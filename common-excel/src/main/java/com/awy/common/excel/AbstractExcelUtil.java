@@ -72,6 +72,17 @@ public abstract class AbstractExcelUtil<T>{
         return readData(getImportWorkbook(path,PoiPool.IS_NATIVE_FILE,getFileSuffix(path)),columns);
     }
 
+    /**
+     * 通过输入流导入数据
+     * @param inputStream 数据流
+     * @param fileName 文件名称
+     * @param columns 列名
+     * @return 数据列表
+     */
+    public List<Map<String,Object>> importStream(InputStream inputStream,String fileName,String[] columns) {
+        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)), columns);
+    }
+
     //--------------------------- import get object list ---------------------------------------
 
     /**
@@ -107,6 +118,19 @@ public abstract class AbstractExcelUtil<T>{
         return readData(getImportWorkbook(path, PoiPool.IS_NATIVE_FILE, getFileSuffix(path)),columns,clazz);
     }
 
+    /**
+     * 输入流导入数据
+     * @param inputStream 本地文件路径
+     * @param fileName 文件名称
+     * @param columns 需要导出的列名
+     * @param clazz 对象名
+     * @return T 列表
+     */
+    public List<T> importStream(InputStream inputStream,String fileName,String[] columns,Class<T> clazz){
+//        return getResultList(importNative(path,columns),clazz);
+        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)),columns,clazz);
+    }
+
 
 
     //================================== import common option =======================================================
@@ -140,8 +164,29 @@ public abstract class AbstractExcelUtil<T>{
     }
 
     private Workbook getImportWorkbook(String path,Boolean isNativeFile,ExcelTypeEnum typeEnum){
-        Workbook workbook;
         try(InputStream inputStream = isNativeFile ? new FileInputStream(path) : uploadFile(path)){
+            /*switch (typeEnum){
+                case XSSF_WORK_BOOK:
+                    workbook = createXssfWorkbook(inputStream);
+                    break;
+                case HSSF_WORK_BOOK:
+                    workbook = createHssfWorkbook(inputStream);
+                    break;
+                default:
+                    throw new RuntimeException("excel type not exists");
+            }*/
+            return this.getImportWorkbook(inputStream,typeEnum);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Workbook getImportWorkbook(InputStream inputStream,ExcelTypeEnum typeEnum){
+        if(inputStream == null){
+            throw new RuntimeException("input stream is null");
+        }
+        Workbook workbook;
+        try(inputStream){
             switch (typeEnum){
                 case XSSF_WORK_BOOK:
                     workbook = createXssfWorkbook(inputStream);

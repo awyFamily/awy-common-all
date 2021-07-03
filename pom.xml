@@ -4,15 +4,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.awyFamily</groupId>
 	<artifactId>awy-common-all</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<description>spring boot cloud 相关封装组件</description>
 	<packaging>pom</packaging>
 
 
 	<properties>
 		<java.version>11</java.version>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>
+		<!-- https://docs.spring.io/spring-cloud/docs/Hoxton.SR11/reference/html/ -->
+<!--		<spring.boot.version>2.3.10.RELEASE</spring.boot.version>-->
+		<spring.boot.version>2.3.11.RELEASE</spring.boot.version>
+		<spring.cloud.version>Hoxton.SR11</spring.cloud.version>
+<!--		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>-->
+<!--		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>-->
 		<!--<alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>-->
 		<alibaba.cloud.version>2.2.0.RELEASE</alibaba.cloud.version>
 		<!-- nacos配置中心 0.2.1 对应的是1.1.1  -->
@@ -60,7 +64,7 @@
 		<org.apache.maven.plugins.version>3.8.0</org.apache.maven.plugins.version>
 		<docker.plugins.version>1.2.0</docker.plugins.version>
 <!--		<docker.plugins.version>1.2.0</docker.plugins.version>-->
-		<awy.common.version>1.0.0-SNAPSHOT</awy.common.version>
+		<awy.common.version>2.0.0-SNAPSHOT</awy.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -91,7 +95,6 @@
 		<!-- 日志 -->
 		<module>common-log</module>
 		<!-- swagger -->
-		<module>common-swagger-bp</module>
 		<module>common-swagger-layui</module>
 		<!--rabbitmq -->
 		<module>common-rabbit</module>
@@ -113,7 +116,6 @@
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
 		<module>common-modbus</module>
-        <module>common-code-generation</module>
 
     </modules>
 
