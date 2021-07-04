@@ -168,7 +168,7 @@ public class ReflexUtils extends ReflectUtil{
             }
             return "'"+value.toString()+"'";
         }
-        return "''";
+        return "NULL";
     }
 
 }
