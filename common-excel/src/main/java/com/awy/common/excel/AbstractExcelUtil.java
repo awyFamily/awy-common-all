@@ -229,15 +229,14 @@ public abstract class AbstractExcelUtil<T>{
                 result = cell.getNumericCellValue();
                 String str = Double.toString(cell.getNumericCellValue());
                 if(str.indexOf(".") == 1 && str.indexOf("E") != -1) {
-                    System.out.println(str);
                     //防止数字太长被转换成科学计数法
                     DecimalFormat df = new DecimalFormat("0");
-
                     result = df.format(cell.getNumericCellValue());
                 }
 
                 // 由于日期类型格式也被认为是数值型，此处判断是否是日期的格式，若时，则读取为日期类型
-                if(cell.getCellStyle().getDataFormat() > 0)  {
+                // org.apache.poi.ss.usermodel.BuiltinFormats
+                if(cell.getCellStyle().getDataFormat() > 0xd)  {
                     result = cell.getDateCellValue();
                 }
                 break;

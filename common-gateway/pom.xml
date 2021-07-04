@@ -32,11 +32,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.awyFamily</groupId>
-            <artifactId>common-swagger-bp</artifactId>
-            <version>${awy.common.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.awyFamily</groupId>-->
+<!--            <artifactId>common-swagger-bp</artifactId>-->
+<!--            <version>${awy.common.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.awyFamily</groupId>
