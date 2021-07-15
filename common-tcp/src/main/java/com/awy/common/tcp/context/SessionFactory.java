@@ -18,7 +18,7 @@ public class SessionFactory {
 
     private static final AttributeKey<BaseSession> SESSION = AttributeKey.newInstance("session");
 
-    private static final Map<String, Channel> siteChannelMap = new ConcurrentHashMap<>();
+    private static final Map<String, Channel> siteChannelMap  = new ConcurrentHashMap<>();
 
     public static void bindSession(BaseSession session, Channel channel) {
         if(channel != null && session != null){

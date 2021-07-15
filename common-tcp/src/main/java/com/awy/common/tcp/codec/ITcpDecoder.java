@@ -8,4 +8,5 @@ import io.netty.buffer.ByteBuf;
 public interface ITcpDecoder<T extends BaseMessage> {
 
     T decode(ByteBuf buffer);
+
 }

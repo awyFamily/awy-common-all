@@ -12,6 +12,8 @@ public interface ISessionLifecycle<T extends BaseSession> {
 
     void bind(Channel channel,T session);
 
+    void onHeartbeat(T session);
+
     void unbind(T session);
 
 

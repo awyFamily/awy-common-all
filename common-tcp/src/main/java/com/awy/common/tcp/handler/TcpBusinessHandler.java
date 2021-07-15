@@ -2,6 +2,8 @@ package com.awy.common.tcp.handler;
 
 import cn.hutool.core.collection.CollUtil;
 import com.awy.common.tcp.codec.BaseMessage;
+import com.awy.common.tcp.codec.HeartbeatMessage;
+import com.awy.common.tcp.codec.UnSupportMessage;
 import com.awy.common.tcp.context.BaseSession;
 import com.awy.common.tcp.context.ISessionLifecycle;
 import com.awy.common.tcp.context.SessionFactory;
@@ -41,11 +43,26 @@ public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage>
         String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
         String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");
         log.info("receive ip:port message : {}:{} . ",clientIp,clientPort);
+        if(msg instanceof HeartbeatMessage){
+            if(!SessionFactory.hasLogin(ctx.channel())){
+                ctx.channel().close();
+            }
+            lifecycle.onHeartbeat(SessionFactory.getSession(ctx.channel()));
+            return;
+        }
+
+        if(msg instanceof UnSupportMessage){
+            if(!SessionFactory.hasLogin(ctx.channel())){
+                ctx.channel().close();
+            }
+            return;
+        }
 
         BaseSession session = lifecycle.createSession(msg);
         if(session != null){
             if(!SessionFactory.hasLogin(ctx.channel())){
                 SessionFactory.bindSession(session,ctx.channel());
+                lifecycle.bind(ctx.channel(),session);
             }
 
             //process business
@@ -58,6 +75,8 @@ public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage>
         }else {
             ctx.channel().close();
         }
+
+
     }
 
     @Override

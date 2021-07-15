@@ -28,12 +28,13 @@ public class TcpCodecHandler extends ByteToMessageCodec<BaseMessage> {
     @Override
     protected void encode(ChannelHandlerContext ctx, BaseMessage msg, ByteBuf out) throws Exception {
         tcpEncoder.encode(msg,out);
-        printReceiveBuffer(out);
+        printSendBufferHex(out);
+
     }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
-        printSendBufferHex(in);
+        printReceiveBuffer(in);
 //        BaseMessage message = tcpDecoder.decode(in);
         out.add(tcpDecoder.decode(in));
 
