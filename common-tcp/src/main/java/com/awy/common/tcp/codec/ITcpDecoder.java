@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
  * @date 2021-07-14
  */
 public interface ITcpDecoder<T extends BaseMessage> {
+    //SimpleMessage
 
     T decode(ByteBuf buffer);
 

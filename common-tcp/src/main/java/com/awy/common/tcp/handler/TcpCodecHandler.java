@@ -3,6 +3,7 @@ package com.awy.common.tcp.handler;
 import com.awy.common.tcp.codec.BaseMessage;
 import com.awy.common.tcp.codec.ITcpDecoder;
 import com.awy.common.tcp.codec.ITcpEncoder;
+import com.awy.common.tcp.codec.SimpleMessage;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageCodec;
@@ -15,7 +16,7 @@ import java.util.List;
  * @date 2021-07-14
  */
 @Slf4j
-public class TcpCodecHandler extends ByteToMessageCodec<BaseMessage> {
+public class TcpCodecHandler extends ByteToMessageCodec<SimpleMessage> {
 
     private ITcpDecoder tcpDecoder;
     private ITcpEncoder tcpEncoder;
@@ -26,7 +27,7 @@ public class TcpCodecHandler extends ByteToMessageCodec<BaseMessage> {
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, BaseMessage msg, ByteBuf out){
+    protected void encode(ChannelHandlerContext ctx, SimpleMessage msg, ByteBuf out){
         tcpEncoder.encode(msg.getModel(),out);
         printSendBufferHex(out);
     }
