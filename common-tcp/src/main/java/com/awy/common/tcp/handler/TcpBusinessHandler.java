@@ -1,8 +1,8 @@
 package com.awy.common.tcp.handler;
 
 import cn.hutool.core.collection.CollUtil;
-import com.awy.common.tcp.codec.BaseMessage;
 import com.awy.common.tcp.codec.HeartbeatMessage;
+import com.awy.common.tcp.codec.SimpleMessage;
 import com.awy.common.tcp.codec.UnSupportMessage;
 import com.awy.common.tcp.context.BaseSession;
 import com.awy.common.tcp.context.ISessionLifecycle;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * @date 2021-07-14
  */
 @Slf4j
-public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage> {
+public class TcpBusinessHandler extends SimpleChannelInboundHandler<SimpleMessage> {
 
     private final ISessionLifecycle lifecycle;
     private final List<IBusinessProcess> processes;
@@ -39,7 +39,7 @@ public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage>
     }
 
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, BaseMessage msg) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, SimpleMessage msg) throws Exception {
         String clientRemoteAddress = ctx.channel().remoteAddress().toString();
         String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
         String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");

@@ -1,6 +1,5 @@
 package com.awy.common.tcp.codec;
 
-import com.awy.common.tcp.codec.response.SimpleResponse;
 import lombok.Data;
 
 /**
@@ -8,5 +7,5 @@ import lombok.Data;
  * @date 2021-07-15
  */
 @Data
-public class UnSupportMessage extends BaseMessage<SimpleResponse> {
+public class UnSupportMessage extends SimpleMessage {
 }

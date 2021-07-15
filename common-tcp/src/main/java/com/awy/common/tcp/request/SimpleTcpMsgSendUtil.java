@@ -74,6 +74,12 @@ public final class SimpleTcpMsgSendUtil {
                 return true;
             }
         }
+        if(message == null){
+            log.info("message is null..............");
+        }
+        if(channel == null){
+            log.info("channel is null.....................");
+        }
         return false;
     }
 }
