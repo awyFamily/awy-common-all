@@ -59,9 +59,11 @@ public final class SendUtil {
             String uid = ModBusFutureContext.getUid(sessionId,message.getFunctionCode());
             CompletableFuture<ModbusResponse> future = new CompletableFuture<>();
             ModBusFutureContext.put(uid,future);
-            sendMsgChannel(new ModbusRtuPayload(SessionContext.getSession(channel).getSiteId(),message), SessionContext.getChannel(sessionId));
+            boolean hasSend = sendMsgChannel(new ModbusRtuPayload(SessionContext.getSession(channel).getSiteId(),message), SessionContext.getChannel(sessionId));
             try {
-                return future.get(60, TimeUnit.SECONDS);
+                if(hasSend){
+                    return future.get(60, TimeUnit.SECONDS);
+                }
             } catch (InterruptedException e) {
                 log.error("InterruptedException : ",e);
             } catch (ExecutionException e) {

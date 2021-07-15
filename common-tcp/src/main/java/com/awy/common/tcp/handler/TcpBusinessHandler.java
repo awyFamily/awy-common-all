@@ -7,6 +7,7 @@ import com.awy.common.tcp.codec.UnSupportMessage;
 import com.awy.common.tcp.context.BaseSession;
 import com.awy.common.tcp.context.ISessionLifecycle;
 import com.awy.common.tcp.context.SessionFactory;
+import com.awy.common.tcp.request.SimpleTcpFutureContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage>
         String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
         String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");
         log.info("receive ip:port message : {}:{} . ",clientIp,clientPort);
+
         if(msg instanceof HeartbeatMessage){
             if(!SessionFactory.hasLogin(ctx.channel())){
                 ctx.channel().close();
@@ -58,25 +60,27 @@ public class TcpBusinessHandler extends SimpleChannelInboundHandler<BaseMessage>
             return;
         }
 
-        BaseSession session = lifecycle.createSession(msg);
-        if(session != null){
-            if(!SessionFactory.hasLogin(ctx.channel())){
+        //not login
+        if(!SessionFactory.hasLogin(ctx.channel())){
+            BaseSession session = lifecycle.createSession(msg);
+            if(session != null){
                 SessionFactory.bindSession(session,ctx.channel());
                 lifecycle.bind(ctx.channel(),session);
+            }else {
+                ctx.channel().close();
+                return;
             }
-
-            //process business
-            for (IBusinessProcess process : processes) {
-                if(process.pipeline(msg)){
-                    break;
-                }
-            }
-
-        }else {
-            ctx.channel().close();
         }
 
+        //
+        SimpleTcpFutureContext.completeResponse(ctx,msg);
 
+        //process business
+        for (IBusinessProcess process : processes) {
+            if(process.pipeline(msg)){
+                break;
+            }
+        }
     }
 
     @Override

@@ -62,7 +62,7 @@ public final class ModBusFutureContext {
         });*/
     }
 
-    public static void completeFuture(String uid,ModbusResponse response){
+    private static void completeFuture(String uid,ModbusResponse response){
         CompletableFuture<ModbusResponse> future = waitMap.get(uid);
         if(future == null){
             return;
