@@ -15,14 +15,9 @@ public final class SessionContext {
 
     private SessionContext(){}
 
-    static {
-        SESSION = AttributeKey.newInstance("session");
-        siteChannelMap = new ConcurrentHashMap<>();
-    }
+    private static final AttributeKey<ModbusSession> SESSION = AttributeKey.newInstance("session");;
 
-    private static final AttributeKey<ModbusSession> SESSION;
-
-    private static final Map<String, Channel> siteChannelMap;
+    private static final Map<String, Channel> siteChannelMap = new ConcurrentHashMap<>();
 
     public static void bindSession(ModbusSession session, Channel channel) {
         if(channel != null && session != null){

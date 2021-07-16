@@ -5,7 +5,6 @@ import com.awy.common.tcp.codec.response.BaseResponse;
 import com.awy.common.tcp.context.BaseSession;
 import com.awy.common.tcp.context.SessionFactory;
 import io.netty.channel.ChannelHandlerContext;
-import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yhw
  * @date 2021-07-15
  */
-@Slf4j
+//@Slf4j
 public final class SimpleTcpFutureContext {
 
     private SimpleTcpFutureContext(){}
@@ -52,7 +51,7 @@ public final class SimpleTcpFutureContext {
     public static void completeResponse(ChannelHandlerContext ctx, BaseMessage baseMessage){
         BaseSession session = SessionFactory.getSession(ctx.channel());
         if(session == null){
-            log.error("session is empty...");
+//            log.error("session is empty...");
             return;
         }
 
