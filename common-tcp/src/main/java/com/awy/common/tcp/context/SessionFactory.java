@@ -14,16 +14,26 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class SessionFactory {
 
-    private SessionFactory(){}
+    private static   final AttributeKey<BaseSession> SESSION  = AttributeKey.newInstance("session");
 
-    private static final AttributeKey<BaseSession> SESSION = AttributeKey.newInstance("session");
+    private  final Map<String, Channel> siteChannelMap;
 
-    private static final Map<String, Channel> siteChannelMap  = new ConcurrentHashMap<>();
+    private SessionFactory(){
+        siteChannelMap  = new ConcurrentHashMap<>();
+    }
+
+    public static SessionFactory getInstance(){
+        return InnerFactory.sessionFactory;
+    }
+
+    private static class InnerFactory{
+        private static SessionFactory sessionFactory = new SessionFactory();
+    }
 
     public static void bindSession(BaseSession session, Channel channel) {
         if(channel != null && session != null){
             if(!hasLogin(channel)){
-                siteChannelMap.put(session.getSessionId(),channel);
+                getInstance().siteChannelMap.put(session.getSessionId(),channel);
                 channel.attr(SESSION).set(session);
                 log.info("bind session : {} ....",session.toString());
             }
@@ -34,7 +44,7 @@ public class SessionFactory {
         if(hasLogin(channel)){
             BaseSession session = getSession(channel);
             log.info("unbind session : {} ....",session.toString());
-            siteChannelMap.remove(session.getSessionId());
+            getInstance().siteChannelMap.remove(session.getSessionId());
             channel.attr(SESSION).set(null);
 
         }
@@ -49,11 +59,11 @@ public class SessionFactory {
     }
 
     public static Channel getChannel(String sessionId) {
-        return siteChannelMap.get(sessionId);
+        return getInstance().siteChannelMap.get(sessionId);
     }
 
 
     public static Map<String, Channel> getAllChannel(){
-        return siteChannelMap;
+        return getInstance().siteChannelMap;
     }
 }

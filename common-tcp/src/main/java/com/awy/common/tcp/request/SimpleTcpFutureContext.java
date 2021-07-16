@@ -70,6 +70,7 @@ public final class SimpleTcpFutureContext {
         if(future == null){
             return;
         }
+//        log.info("complete uid:{}",uid);
         future.complete(response);
     }
 

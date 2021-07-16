@@ -43,11 +43,10 @@ public final class SimpleTcpMsgSendUtil {
     public static BaseResponse sendRequestAwait(String sessionId, BaseRequest message,long timeout,TimeUnit timeUnit){
         Channel channel = SessionFactory.getChannel(sessionId);
         if(channel != null && channel.isActive()){
-            log.info("send sessionId : {} ",sessionId);
             String uid = SimpleTcpFutureContext.getUid(sessionId,message.getMessageMark());
-
+//            log.info("send request uid:{}",uid);
             CompletableFuture<BaseResponse> future = new CompletableFuture<>();
-            SimpleTcpFutureContext.put(sessionId,future);
+            SimpleTcpFutureContext.put(uid,future);
             boolean hasSend = sendMsgChannel(message, SessionFactory.getChannel(sessionId));
             try {
                 if(hasSend){
