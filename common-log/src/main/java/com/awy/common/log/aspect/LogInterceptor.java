@@ -83,13 +83,11 @@ public class LogInterceptor implements MethodInterceptor {
             if(parameterSize == 1){
                 parameter.append(formatObj(arguments[0]));
             }else {
-                int notAppendIndex = parameterSize - 1;
                 for(int i = 0; i < parameterSize; i++){
                     parameter.append(formatObj(arguments[i]));
-                    if( i < notAppendIndex){
-                        parameter.append(",");
-                    }
+                    parameter.append(",");
                 }
+                parameter.delete(parameter.length() - 1,parameter.length());
             }
         }
 
