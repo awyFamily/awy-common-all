@@ -10,7 +10,7 @@ public interface SecurityConstant {
 
     String USER_ID = "user_id";
 
-    String PLAT_FROM_TYPE = "plat_from_type";
+    String PLAT_FROM_TYPE = "plat_from_types";
 
     String COMPANY_IDS = "company_ids";
 

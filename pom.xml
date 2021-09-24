@@ -73,14 +73,12 @@
 		<!-- 基础包 -->
 		<!-- API通用配置 -->
 		<module>common-api</module>
-		<!-- 服务通用配置 -->
-		<module>common-bom</module>
-		<!-- 服务客户端安全配置,用于资源服务器 -->
-		<module>common-security</module>
-		<!-- 安全配置相关工具类 -->
-		<module>common-security-util</module>
 		<!-- 通用工具包 -->
 		<module>common-util</module>
+		<!-- 服务通用配置 -->
+		<module>common-bom</module>
+		<!-- feign 有待验证 -->
+		<module>common-feign</module>
 		<!-- DiscoveryClient 工具包  -->
 		<module>common-discovery-client</module>
 		<!-- 邮件工具 -->
@@ -92,23 +90,26 @@
 		<module>common-mongo</module>
 		<!-- excel操作 -->
 		<module>common-excel</module>
-		<!-- 日志 -->
-		<module>common-log</module>
 		<!-- swagger -->
 		<module>common-swagger-layui</module>
 		<!--rabbitmq -->
 		<module>common-rabbit</module>
-
 		<!-- web公共包 -->
 		<module>common-web</module>
+		<!-- 日志 -->
+		<module>common-log</module>
+
+		<module>common-message-api</module>
+		<!-- 服务客户端安全配置,用于资源服务器 -->
+		<module>common-security</module>
+		<!-- 安全配置相关工具类 -->
+		<module>common-security-util</module>
 
 		<!-- 网关公共包 -->
 		<module>common-gateway</module>
 
-		<!-- feign 有待验证 -->
-		<module>common-feign</module>
 
-		<module>common-message-api</module>
+
 		<!-- 待开发 -->
 <!--		<module>common-rpc</module>-->
 
@@ -116,6 +117,7 @@
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
 		<module>common-modbus</module>
+
 
     </modules>
 
@@ -479,6 +481,7 @@
 						<target>${java.version}</target> <!--class文件编译版本-->
 						<encoding>${project.sourceEncoding}</encoding> <!-- 字符集编码-->
 						<skip>true</skip> <!-- 打包跳过测试 -->
+						<forceJavacCompilerUse>true</forceJavacCompilerUse><!--输出maven日志-->
 					</configuration>
 				</plugin>
 				<!--源码打包插件-->
