@@ -4,8 +4,8 @@ package com.awy.common.log.aspect;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.log.annotation.CloudLog;
-import com.awy.common.log.listener.LogNoteEvent;
 import com.awy.common.log.listener.LogMessage;
+import com.awy.common.log.listener.LogNoteEvent;
 import com.awy.common.security.oauth2.model.AuthUser;
 import com.awy.common.util.utils.DateJdK8Util;
 import com.awy.common.util.utils.SecurityUtil;
@@ -19,6 +19,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -76,7 +78,7 @@ public class LogInterceptor implements MethodInterceptor {
         //获取执行参数
         StringBuilder parameter = new StringBuilder();
         Object[] arguments = invocation.getArguments();
-        if(arguments != null){
+        if(arguments != null && arguments.length > 0) {
             int parameterSize = arguments.length;
             if(parameterSize == 1){
                 parameter.append(formatObj(arguments[0]));
@@ -85,6 +87,7 @@ public class LogInterceptor implements MethodInterceptor {
                     parameter.append(formatObj(arguments[i]));
                     parameter.append(",");
                 }
+                parameter.delete(parameter.length() - 1,parameter.length());
             }
         }
 
@@ -135,6 +138,10 @@ public class LogInterceptor implements MethodInterceptor {
                 formatStr = DateJdK8Util.formatLocalDateTime((LocalDateTime) argument);
             }else if(argument instanceof Boolean){
                 formatStr = argument.toString();
+            }else if(argument instanceof ServletRequest){
+                //ignore...
+            }else if(argument instanceof ServletResponse){
+                //ignore...
             }else {
                 formatStr = JSONUtil.parseObj(argument).toString();
             }

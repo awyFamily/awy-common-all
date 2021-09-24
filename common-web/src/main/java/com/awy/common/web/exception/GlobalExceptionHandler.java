@@ -6,6 +6,8 @@ import com.awy.common.util.constants.CommonConstant;
 import com.awy.common.util.model.ApiResult;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -29,18 +31,28 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ApiResult methodArgumentNotValidHandler(MethodArgumentNotValidException exception){
+        return this.validHandler(exception.getBindingResult());
+    }
+
+    @ExceptionHandler(value = BindException.class)
+    public ApiResult bindExceptionHandler(BindException exception){
+        return this.validHandler(exception.getBindingResult());
+    }
+
+    private ApiResult validHandler(BindingResult bindingResult){
         //按需重新封装需要返回的错误信息
         JSONArray jsonArray = new JSONArray();
         JSONObject errorJson;
-        //解析原错误信息，封装后返回，此处返回非法的字段名称，原始值，错误信息
-        for (FieldError fieldError : exception.getBindingResult().getFieldErrors()) {
-            errorJson = new JSONObject();
-            errorJson.put("defaultMessage",fieldError.getDefaultMessage());
-            errorJson.put("field",fieldError.getField());
-            errorJson.put("rejectedValue",fieldError.getRejectedValue());
-            jsonArray.add(errorJson);
+        if(bindingResult != null){
+            //解析原错误信息，封装后返回，此处返回非法的字段名称，原始值，错误信息
+            for (FieldError fieldError : bindingResult.getFieldErrors()) {
+                errorJson = new JSONObject();
+                errorJson.put("defaultMessage",fieldError.getDefaultMessage());
+                errorJson.put("field",fieldError.getField());
+                errorJson.put("rejectedValue",fieldError.getRejectedValue());
+                jsonArray.add(errorJson);
+            }
         }
-
         return ApiResult.getBuilder()
                 .setMessage(jsonArray.toString())
                 .setCode(CommonConstant.RESPONSE_ERROR)

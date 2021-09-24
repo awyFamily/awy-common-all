@@ -117,6 +117,7 @@
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
 		<module>common-modbus</module>
+        <module>common-tcp</module>
 
 
     </modules>
