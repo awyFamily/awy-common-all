@@ -95,8 +95,9 @@ public class MenuTree implements Serializable{
             return tree;
         }
 
+        --depth;
         for (MenuTree menuTree : child){
-            getChild(source,menuTree,(depth - 1));
+            getChild(source,menuTree,depth);
         }
 
         return tree;
