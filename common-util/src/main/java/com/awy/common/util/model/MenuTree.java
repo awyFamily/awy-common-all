@@ -80,8 +80,8 @@ public class MenuTree implements Serializable{
         return topTree.getChild();
     }
 
-    private static MenuTree getChild(List<MenuTree> source, MenuTree tree, int depch){
-        if(depch <= 0){
+    private static MenuTree getChild(List<MenuTree> source, MenuTree tree, int depth){
+        if(depth <= 0){
             return tree;
         }
 
@@ -96,7 +96,7 @@ public class MenuTree implements Serializable{
         }
 
         for (MenuTree menuTree : child){
-            getChild(source,menuTree,--depch);
+            getChild(source,menuTree,(depth - 1));
         }
 
         return tree;
