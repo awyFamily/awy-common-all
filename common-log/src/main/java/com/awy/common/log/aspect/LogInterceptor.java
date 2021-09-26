@@ -78,7 +78,7 @@ public class LogInterceptor implements MethodInterceptor {
         //获取执行参数
         StringBuilder parameter = new StringBuilder();
         Object[] arguments = invocation.getArguments();
-        if(arguments != null){
+        if(arguments != null && arguments.length > 0) {
             int parameterSize = arguments.length;
             if(parameterSize == 1){
                 parameter.append(formatObj(arguments[0]));
