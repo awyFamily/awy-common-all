@@ -104,15 +104,10 @@
 		<module>common-security</module>
 		<!-- 安全配置相关工具类 -->
 		<module>common-security-util</module>
-
 		<!-- 网关公共包 -->
 		<module>common-gateway</module>
-
-
-
 		<!-- 待开发 -->
 <!--		<module>common-rpc</module>-->
-
 		<!-- netty 实现 webSocket -->
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
@@ -459,7 +454,7 @@
 
 		<pluginManagement>
 			<plugins>
-				<!--spring boot打包插件-->
+				<!--spring boot打包插件 并设置 SpringBoot 打包插件不包含任何 Jar 依赖包-->
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
@@ -471,7 +466,53 @@
 							</goals>
 						</execution>
 					</executions>
+					<!-- 配置了下列排除 jar 依赖，需要同时启用 maven-jar-plugin,aven-dependency-plugin 插件 -->
+					<configuration>
+						<!-- 重写包含依赖，包含不存在的依赖，jar 里没有依赖。用于优化部署,docker layer 会使用缓存,当lib不改变时候,会提高docker打包速度 -->
+						<includes>
+							<include>
+								<groupId>nothing</groupId>
+								<artifactId>nothing</artifactId>
+							</include>
+						</includes>
+<!--						<layout></layout>-->
+					</configuration>
 				</plugin>
+				<!--设置应用 Main 参数启动依赖查找的地址指向外部 lib 文件夹-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<configuration>
+						<archive>
+							<manifest>
+								<addClasspath>true</addClasspath>
+								<!--  MANIFEST.MF 中 Class-Path 加入前缀-->
+								<classpathPrefix>lib/</classpathPrefix>
+							</manifest>
+							<!--<manifestEntries>
+								<Class-Path>./resources/</Class-Path>
+							</manifestEntries>-->
+						</archive>
+					</configuration>
+				</plugin>
+				<!--设置将 lib 拷贝到应用 Jar 外面-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>copy-dependencies</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/lib/</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
 				<!--编译插件-->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -502,7 +543,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
 				<!-- docker插件 -->
 				<plugin>
 					<groupId>com.spotify</groupId>
