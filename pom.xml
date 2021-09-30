@@ -580,6 +580,10 @@
 						</env>
 						<!-- 指定dockerFile所在路径-->
 						<dockerDirectory>${project.basedir}</dockerDirectory>
+						<!-- 设置 ARG 参数 ROOT_DIRECTORY=${project.build.directory} -->
+						<buildArgs>
+							<ROOT_DIRECTORY>${project.build.directory}</ROOT_DIRECTORY>
+						</buildArgs>
 						<!-- 启动容器执行命令 -->
 						<!--<entryPoint>["java", "-jar", "-Xmx 128M", "-Xms 128M", "/${project.build.finalName}.jar"]</entryPoint>-->
 						<resources>
