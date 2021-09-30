@@ -583,13 +583,14 @@
 						<!-- 启动容器执行命令 -->
 						<!--<entryPoint>["java", "-jar", "-Xmx 128M", "-Xms 128M", "/${project.build.finalName}.jar"]</entryPoint>-->
 						<resources>
-							<resource>
+							<!-- 实际使用,使用 copy , 当前 是 add 指令, 没有构建缓存 -->
+							<!--  resource.directory 指定需要复制的根目录,此处表示target目录 -->
+							<!--  resource.include 指定需要复制的文件 打包后的jar文件-->
+							<!--<resource>
 								<targetPath>/</targetPath>
-								<!-- 指定需要复制的根目录,此处表示target目录 -->
 								<directory>${project.build.directory}</directory>
-								<!-- 指定需要复制的文件 打包后的jar文件-->
 								<include>${project.build.finalName}.jar</include>
-							</resource>
+							</resource>-->
 						</resources>
 						<!-- 与maven配置文件setting.xml中的 server.id一致，用于推送镜像-->
 						<!--<serverId>docker-hub</serverId>-->
