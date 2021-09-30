@@ -486,7 +486,9 @@
 					<configuration>
 						<archive>
 							<manifest>
+								<!--是否要把第三方jar放到manifest的classpath中-->
 								<addClasspath>true</addClasspath>
+								<!--生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/-->
 								<!--  MANIFEST.MF 中 Class-Path 加入前缀-->
 								<classpathPrefix>lib/</classpathPrefix>
 							</manifest>
@@ -578,7 +580,7 @@
 						<env>
 							<TZ>Asia/Shanghai</TZ>
 						</env>
-						<!-- 指定dockerFile所在路径-->
+						<!-- 指定dockerFile所在路径,使用了此值,下方的镜像构建配置测不生效, 使用 dockerFile 文件进行构建, 建议放到 pom 一层(build 上下文)-->
 						<dockerDirectory>${project.basedir}</dockerDirectory>
 						<!-- 设置 ARG 参数 ROOT_DIRECTORY=${project.build.directory} -->
 						<buildArgs>
