@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -34,8 +35,49 @@ public class RedisWrapper {
 
     //============================== 字符串操作 =====================================
 
+    /**
+     * 获取缓存字符
+     * @param key 缓存key
+     * @return 缓存字符
+     */
     public String  getStr(String key){
         return getStringTemplate().get(key);
+    }
+
+    /**
+     * 获取缓存字符
+     * @param key 缓存key
+     * @param supplier 提供者
+     * @return 缓存字符
+     */
+    public String getStrAndSet(String key, Supplier<String> supplier) {
+        String result = getStringTemplate().get(key);
+        if (result == null) {
+            result = supplier.get();
+            if (result != null) {
+                this.setStr(key,result);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 获取缓存字符
+     * @param key 缓存key
+     * @param timeOut 超时时间
+     * @param timeUnit 超时单位
+     * @param supplier 提供者
+     * @return 缓存字符
+     */
+    public String getStrAndSetEx(String key, long timeOut, TimeUnit timeUnit, Supplier<String> supplier) {
+        String result = getStringTemplate().get(key);
+        if (result == null) {
+            result = supplier.get();
+            if (result != null) {
+                this.setStrEx(key,result,timeOut,timeUnit);
+            }
+        }
+        return result;
     }
 
 
@@ -51,8 +93,8 @@ public class RedisWrapper {
 
     /**
      * 超时保存
-     * @param key
-     * @param value
+     * @param key 缓存key
+     * @param value 缓存值
      * @param secondsTimeOut 过期秒数
      */
     public void setStrEx(String key,String value,long secondsTimeOut){
@@ -62,10 +104,10 @@ public class RedisWrapper {
 
     /**
      * 超时保存
-     * @param key
-     * @param value
-     * @param timeOut
-     * @param timeUnit
+     * @param key 缓存key
+     * @param value 缓存值
+     * @param timeOut 过期秒数
+     * @param timeUnit 时间单位
      */
     public void setStrEx(String key,String value,long timeOut,TimeUnit timeUnit){
         getStringTemplate().set(key, value, timeOut, timeUnit);
@@ -78,6 +120,13 @@ public class RedisWrapper {
 
     //====================== object =======================================
 
+    /**
+     * 获取缓存对象
+     * @param key 缓存key
+     * @param clazz 类型
+     * @param <T> 类型
+     * @return 缓存对象
+     */
     public <T> T  getObj(String key,Class<T> clazz){
         String value = this.getStr(key);
         try {
@@ -86,6 +135,46 @@ public class RedisWrapper {
             e.printStackTrace();
             return null;
         }
+    }
+
+    /**
+     * 获取缓存对象
+     * @param key 缓存key
+     * @param clazz 类型
+     * @param supplier 提供者
+     * @param <T> 类型
+     * @return 缓存对象
+     */
+    public <T> T getObjAndSet(String key, Class<T> clazz, Supplier<T> supplier) {
+        T obj = this.getObj(key, clazz);
+        if (obj == null) {
+            obj = supplier.get();
+            if (obj != null) {
+                this.setObj(key,obj);
+            }
+        }
+        return obj;
+    }
+
+    /**
+     * 获取缓存对象
+     * @param key 缓存key
+     * @param clazz 类型
+     * @param timeOut 超时时间
+     * @param timeUnit 超时单位
+     * @param supplier 提供者
+     * @param <T> 类型
+     * @return 缓存对象
+     */
+    public <T> T getObjAndSetEx(String key, Class<T> clazz, long timeOut, TimeUnit timeUnit, Supplier<T> supplier) {
+        T obj = this.getObj(key, clazz);
+        if (obj == null) {
+            obj = supplier.get();
+            if (obj != null) {
+                this.setObjEx(key,obj,timeOut,timeUnit);
+            }
+        }
+        return obj;
     }
 
     public void setObj(String key,Object value){
@@ -331,19 +420,4 @@ public class RedisWrapper {
         return this.getStringTemplate().bitField(key, bitFieldSubCommands);
     }
 
-
-
-
-    /*    public void test(String key){
-        ScanOptions scanOptions = ScanOptions.scanOptions().match(prefixKey).count(100).build();
-        redisTemplate.execute(new RedisCallback<String>(){
-            @Override
-            public String doInRedis(RedisConnection connection) throws DataAccessException {
-                RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-                connection.scan()
-                byte[] res = connection.rPop(serializer.serialize(key));
-                return serializer.deserialize(res);
-            }
-        });
-    }*/
 }
