@@ -72,5 +72,11 @@
             <artifactId>redisson</artifactId>
             <version>${redisson.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.awyFamily</groupId>
+            <artifactId>common-util</artifactId>
+            <version>${awy.common.version}</version>
+        </dependency>
     </dependencies>
 </project>

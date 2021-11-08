@@ -1,8 +1,7 @@
 package com.awy.common.redis;
 
 import com.awy.common.redis.data.ScanData;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.awy.common.util.utils.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.BitFieldSubCommands;
 import org.springframework.data.redis.core.*;
@@ -22,8 +21,6 @@ import java.util.stream.Stream;
  */
 @Component
 public class RedisWrapper {
-
-    protected static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     private  RedisTemplate redisTemplate;
@@ -129,12 +126,7 @@ public class RedisWrapper {
      */
     public <T> T  getObj(String key,Class<T> clazz){
         String value = this.getStr(key);
-        try {
-            return MAPPER.readValue(value,clazz);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-            return null;
-        }
+        return JsonUtil.fromJson(value,clazz);
     }
 
     /**
@@ -178,11 +170,7 @@ public class RedisWrapper {
     }
 
     public void setObj(String key,Object value){
-        try {
-            this.setStr(key, MAPPER.writeValueAsString(value));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        this.setStr(key, JsonUtil.toJson(value));
     }
 
     /**
@@ -193,11 +181,7 @@ public class RedisWrapper {
     }
 
     public void setObjEx(String key,Object value,long timeOut,TimeUnit timeUnit){
-        try {
-            this.setStrEx(key, MAPPER.writeValueAsString(value),timeOut,timeUnit);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        this.setStrEx(key, JsonUtil.toJson(value),timeOut,timeUnit);
     }
 
 
