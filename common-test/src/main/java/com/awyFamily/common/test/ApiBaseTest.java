@@ -18,10 +18,6 @@ import java.util.Map;
  */
 public abstract class ApiBaseTest {
 
-//    /**
-//     * token入参
-//     */
-//    private static JSONObject tokenParameters = new JSONObject();
 
     /**
      * 接口入参
@@ -133,7 +129,6 @@ public abstract class ApiBaseTest {
 
     public ApiBaseTest setBodyParams(Object obj) {
         if (obj != null) {
-//            parameters = JSONUtil.parseObj(obj);
             if (obj instanceof Collection) {
                 parameters = JSONUtil.parseArray(obj);
             }else {
