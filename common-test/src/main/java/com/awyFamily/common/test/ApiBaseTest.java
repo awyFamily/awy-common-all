@@ -4,7 +4,6 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.json.JSON;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -124,18 +123,6 @@ public abstract class ApiBaseTest {
         }
 
         responseResult = httpRequest.execute().body();
-    }
-
-
-    public ApiBaseTest setBodyParams(Object obj) {
-        if (obj != null) {
-            if (obj instanceof Collection) {
-                parameters = JSONUtil.parseArray(obj);
-            }else {
-                parameters = JSONUtil.parseObj(obj);
-            }
-        }
-        return this;
     }
 
     public ApiBaseTest post() {
