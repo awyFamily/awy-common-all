@@ -4,15 +4,19 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.awyFamily</groupId>
 	<artifactId>awy-common-all</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<description>spring boot cloud 相关封装组件</description>
 	<packaging>pom</packaging>
 
 
 	<properties>
 		<java.version>11</java.version>
-		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>
-		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>
+		<!-- https://docs.spring.io/spring-cloud/docs/Hoxton.SR11/reference/html/ -->
+<!--		<spring.boot.version>2.3.10.RELEASE</spring.boot.version>-->
+		<spring.boot.version>2.3.11.RELEASE</spring.boot.version>
+		<spring.cloud.version>Hoxton.SR11</spring.cloud.version>
+<!--		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>-->
+<!--		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>-->
 		<!--<alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>-->
 		<alibaba.cloud.version>2.2.0.RELEASE</alibaba.cloud.version>
 		<!-- nacos配置中心 0.2.1 对应的是1.1.1  -->
@@ -38,7 +42,7 @@
 		<swagger.version>2.9.2</swagger.version>
 		<swagger.annotations>1.5.20</swagger.annotations>
 		<jboss.spec.javax.annotation.version>1.0.2.Final</jboss.spec.javax.annotation.version>
-		<hutool.version>5.2.0</hutool.version>
+		<hutool.version>5.7.17</hutool.version>
 		<!-- 不安全 -->
 		<jackson.version>2.10.5.1</jackson.version>
 		<guava.version>29.0-jre</guava.version>
@@ -60,7 +64,7 @@
 		<org.apache.maven.plugins.version>3.8.0</org.apache.maven.plugins.version>
 		<docker.plugins.version>1.2.0</docker.plugins.version>
 <!--		<docker.plugins.version>1.2.0</docker.plugins.version>-->
-		<awy.common.version>1.0.0-SNAPSHOT</awy.common.version>
+		<awy.common.version>2.0.0-SNAPSHOT</awy.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
@@ -69,14 +73,12 @@
 		<!-- 基础包 -->
 		<!-- API通用配置 -->
 		<module>common-api</module>
-		<!-- 服务通用配置 -->
-		<module>common-bom</module>
-		<!-- 服务客户端安全配置,用于资源服务器 -->
-		<module>common-security</module>
-		<!-- 安全配置相关工具类 -->
-		<module>common-security-util</module>
 		<!-- 通用工具包 -->
 		<module>common-util</module>
+		<!-- 服务通用配置 -->
+		<module>common-bom</module>
+		<!-- feign 有待验证 -->
+		<module>common-feign</module>
 		<!-- DiscoveryClient 工具包  -->
 		<module>common-discovery-client</module>
 		<!-- 邮件工具 -->
@@ -88,33 +90,33 @@
 		<module>common-mongo</module>
 		<!-- excel操作 -->
 		<module>common-excel</module>
-		<!-- 日志 -->
-		<module>common-log</module>
 		<!-- swagger -->
-		<module>common-swagger-bp</module>
 		<module>common-swagger-layui</module>
 		<!--rabbitmq -->
 		<module>common-rabbit</module>
-
 		<!-- web公共包 -->
 		<module>common-web</module>
-
-		<!-- 网关公共包 -->
-		<module>common-gateway</module>
-
-		<!-- feign 有待验证 -->
-		<module>common-feign</module>
+		<!-- 日志 -->
+		<module>common-log</module>
 
 		<module>common-message-api</module>
+		<!-- 服务客户端安全配置,用于资源服务器 -->
+		<module>common-security</module>
+		<!-- 安全配置相关工具类 -->
+		<module>common-security-util</module>
+		<!-- 网关公共包 -->
+		<module>common-gateway</module>
 		<!-- 待开发 -->
 <!--		<module>common-rpc</module>-->
-
 		<!-- netty 实现 webSocket -->
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
 		<module>common-modbus</module>
+        <module>common-tcp</module>
+        <module>common-test</module>
 
-	</modules>
+
+    </modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -453,7 +455,7 @@
 
 		<pluginManagement>
 			<plugins>
-				<!--spring boot打包插件-->
+				<!--spring boot打包插件 并设置 SpringBoot 打包插件不包含任何 Jar 依赖包-->
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
@@ -465,7 +467,56 @@
 							</goals>
 						</execution>
 					</executions>
+					<!--
+					     配置了下列排除 jar 依赖，需要同时启用 maven-jar-plugin,aven-dependency-plugin 插件，
+					     重写包含依赖，包含不存在的依赖，jar 里没有依赖。用于优化部署,docker layer 会使用缓存,当lib不改变时候,会提高docker打包速度
+					 -->
+					<!--<configuration>
+						<includes>
+							<include>
+								<groupId>nothing</groupId>
+								<artifactId>nothing</artifactId>
+							</include>
+						</includes>
+					</configuration>-->
 				</plugin>
+				<!--设置应用 Main 参数启动依赖查找的地址指向外部 lib 文件夹-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<configuration>
+						<archive>
+							<manifest>
+								<!--是否要把第三方jar放到manifest的classpath中-->
+								<addClasspath>true</addClasspath>
+								<!--生成的manifest中classpath的前缀，因为要把第三方jar放到lib目录下，所以classpath的前缀是lib/-->
+								<!--  MANIFEST.MF 中 Class-Path 加入前缀-->
+								<classpathPrefix>lib/</classpathPrefix>
+							</manifest>
+							<!--<manifestEntries>
+								<Class-Path>./resources/</Class-Path>
+							</manifestEntries>-->
+						</archive>
+					</configuration>
+				</plugin>
+				<!--设置将 lib 拷贝到应用 Jar 外面-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>copy-dependencies</id>
+							<phase>prepare-package</phase>
+							<goals>
+								<goal>copy-dependencies</goal>
+							</goals>
+							<configuration>
+								<outputDirectory>${project.build.directory}/lib/</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+
 				<!--编译插件-->
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
@@ -476,6 +527,7 @@
 						<target>${java.version}</target> <!--class文件编译版本-->
 						<encoding>${project.sourceEncoding}</encoding> <!-- 字符集编码-->
 						<skip>true</skip> <!-- 打包跳过测试 -->
+						<forceJavacCompilerUse>true</forceJavacCompilerUse><!--输出maven日志-->
 					</configuration>
 				</plugin>
 				<!--源码打包插件-->
@@ -495,7 +547,6 @@
 						</execution>
 					</executions>
 				</plugin>
-
 				<!-- docker插件 -->
 				<plugin>
 					<groupId>com.spotify</groupId>
@@ -530,18 +581,23 @@
 						<env>
 							<TZ>Asia/Shanghai</TZ>
 						</env>
-						<!-- 指定dockerFile所在路径-->
+						<!-- 指定dockerFile所在路径,使用了此值,下方的镜像构建配置测不生效, 使用 dockerFile 文件进行构建, 建议放到 pom 一层(build 上下文)-->
 						<dockerDirectory>${project.basedir}</dockerDirectory>
+						<!-- 设置 ARG 参数 ROOT_DIRECTORY=${project.build.directory} -->
+						<buildArgs>
+							<ROOT_DIRECTORY>${project.build.directory}</ROOT_DIRECTORY>
+						</buildArgs>
 						<!-- 启动容器执行命令 -->
 						<!--<entryPoint>["java", "-jar", "-Xmx 128M", "-Xms 128M", "/${project.build.finalName}.jar"]</entryPoint>-->
 						<resources>
-							<resource>
+							<!-- 实际使用,使用 copy , 当前 是 add 指令, 没有构建缓存 -->
+							<!--  resource.directory 指定需要复制的根目录,此处表示target目录 -->
+							<!--  resource.include 指定需要复制的文件 打包后的jar文件-->
+							<!--<resource>
 								<targetPath>/</targetPath>
-								<!-- 指定需要复制的根目录,此处表示target目录 -->
 								<directory>${project.build.directory}</directory>
-								<!-- 指定需要复制的文件 打包后的jar文件-->
 								<include>${project.build.finalName}.jar</include>
-							</resource>
+							</resource>-->
 						</resources>
 						<!-- 与maven配置文件setting.xml中的 server.id一致，用于推送镜像-->
 						<!--<serverId>docker-hub</serverId>-->

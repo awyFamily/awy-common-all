@@ -4,8 +4,8 @@ package com.awy.common.log.aspect;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.log.annotation.CloudLog;
-import com.awy.common.log.listener.LogNoteEvent;
 import com.awy.common.log.listener.LogMessage;
+import com.awy.common.log.listener.LogNoteEvent;
 import com.awy.common.security.oauth2.model.AuthUser;
 import com.awy.common.util.utils.DateJdK8Util;
 import com.awy.common.util.utils.SecurityUtil;
@@ -19,6 +19,8 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.lang.reflect.Method;
@@ -53,7 +55,7 @@ public class LogInterceptor implements MethodInterceptor {
         //类名称(没有包名)
 //        System.out.println("class SimpleName" + userDeclaredMethod.getSimpleName());
         //前置增强逻辑
-        System.out.println("before我进来了");
+//        System.out.println("before我进来了");
         //获取方法上注解
         CloudLog cloudLog = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, CloudLog.class);
         if (cloudLog == null) {
@@ -73,17 +75,10 @@ public class LogInterceptor implements MethodInterceptor {
             userId = authUser.getUserId();
         }
 
-        //通过swagger 获取方法标注的信息(可拓展)
-        //ApiOperation apiOperation = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, ApiOperation.class);
-
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
-        eventPublisher.publishEvent(new LogNoteEvent(true,
-//                new LogMessage(userDeclaredMethod.getName(),cloudLog.logType().getCode(),SecurityUtil.getUser().getUsername(),SecurityUtil.getCurrentUserId(),getIpAddr(request),cloudLog.remark())));
-                new LogMessage(methodName,cloudLog.logType().getCode(),username,userId,getIpAddr(request),cloudLog.remark())));
-
+        //获取执行参数
         StringBuilder parameter = new StringBuilder();
         Object[] arguments = invocation.getArguments();
-        if(arguments != null){
+        if(arguments != null && arguments.length > 0) {
             int parameterSize = arguments.length;
             if(parameterSize == 1){
                 parameter.append(formatObj(arguments[0]));
@@ -92,8 +87,17 @@ public class LogInterceptor implements MethodInterceptor {
                     parameter.append(formatObj(arguments[i]));
                     parameter.append(",");
                 }
+                parameter.delete(parameter.length() - 1,parameter.length());
             }
         }
+
+        //通过swagger 获取方法标注的信息(可拓展)
+        //ApiOperation apiOperation = AnnotatedElementUtils.findMergedAnnotation(userDeclaredMethod, ApiOperation.class);
+
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        eventPublisher.publishEvent(new LogNoteEvent(true,
+//                new LogMessage(userDeclaredMethod.getName(),cloudLog.logType().getCode(),SecurityUtil.getUser().getUsername(),SecurityUtil.getCurrentUserId(),getIpAddr(request),cloudLog.remark())));
+                new LogMessage(methodName,cloudLog.logType().getCode(),username,userId,getIpAddr(request),cloudLog.remark())));
 
         //获取返回类型
         /*Class<?> returnType = invocation.getMethod().getReturnType();
@@ -106,7 +110,7 @@ public class LogInterceptor implements MethodInterceptor {
         //执行具体业务逻辑
         Object proceed = invocation.proceed();
         //执行后置增强逻辑（异常逻辑执行不了）
-        System.out.println("after我进来了");
+//        System.out.println("after我进来了");
         return proceed;
     }
 
@@ -134,6 +138,10 @@ public class LogInterceptor implements MethodInterceptor {
                 formatStr = DateJdK8Util.formatLocalDateTime((LocalDateTime) argument);
             }else if(argument instanceof Boolean){
                 formatStr = argument.toString();
+            }else if(argument instanceof ServletRequest){
+                //ignore...
+            }else if(argument instanceof ServletResponse){
+                //ignore...
             }else {
                 formatStr = JSONUtil.parseObj(argument).toString();
             }

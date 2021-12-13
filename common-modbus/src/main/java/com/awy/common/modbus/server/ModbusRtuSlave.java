@@ -6,7 +6,6 @@ import com.awy.common.modbus.server.context.SessionContext;
 import com.awy.common.modbus.server.rtu.ServiceRequestRtuHandler;
 import com.codahale.metrics.Counter;
 import com.digitalpetri.modbus.ExceptionCode;
-import com.digitalpetri.modbus.ModbusPdu;
 import com.digitalpetri.modbus.codec.ModbusRequestEncoder;
 import com.digitalpetri.modbus.codec.ModbusResponseDecoder;
 import com.digitalpetri.modbus.codec.rtu.ModbusRtuCodec;
@@ -219,6 +218,7 @@ public class ModbusRtuSlave {
         ctx.close();
     }
 
+    @ChannelHandler.Sharable
     @Slf4j
     private static class ModbusRtuSlaveHandler extends SimpleChannelInboundHandler<ModbusRtuPayload> {
 
@@ -235,7 +235,7 @@ public class ModbusRtuSlave {
             String clientIp = clientRemoteAddress.replaceAll(".*/(.*):.*", "$1");
             String clientPort = clientRemoteAddress.replaceAll(".*:(.*)", "$1");
             log.info("receive ip:port message : {}:{} . siteId : {} . functionCode : {} ",clientIp,clientPort,msg.getSiteId(),msg.getModbusPdu().getFunctionCode().toString());
-
+            log.info("current connection number : {}", slave.channelCounter.getCount());
             slave.onChannelRead(ctx, msg);
         }
 

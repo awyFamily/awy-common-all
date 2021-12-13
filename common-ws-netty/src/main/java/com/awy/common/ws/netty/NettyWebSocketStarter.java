@@ -162,7 +162,7 @@ public class NettyWebSocketStarter {
             ProcessManager.getInstance().addCmdProcessList(list);
             log.info("init im process repository success ! count [" + list.size() + "]");
         }catch (Exception e){
-            log.error("nit im process repository error",e);
+            log.error("init im process repository error",e);
             System.exit(0);
         }
     }

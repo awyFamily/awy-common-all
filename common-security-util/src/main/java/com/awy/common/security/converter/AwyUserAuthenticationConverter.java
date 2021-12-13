@@ -39,7 +39,7 @@ public class AwyUserAuthenticationConverter implements UserAuthenticationConvert
             authUser =   (AuthUser)principal;
             response.put(SecurityConstant.USER_ID, authUser.getUserId());
             response.put(SecurityConstant.COMPANY_IDS, authUser.getCompanyIds());
-            response.put(SecurityConstant.PLAT_FROM_TYPE, authUser.getPlatformType());
+            response.put(SecurityConstant.PLAT_FROM_TYPE, authUser.getPlatformTypes());
         }
 
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
@@ -63,11 +63,11 @@ public class AwyUserAuthenticationConverter implements UserAuthenticationConvert
 
             String username = (String) map.get(USERNAME);
             String userId = (String)map.get(SecurityConstant.USER_ID);
-            Integer platformType = (Integer)map.get(SecurityConstant.PLAT_FROM_TYPE);
+            List<Integer> platformTypes = (List<Integer>)map.get(SecurityConstant.PLAT_FROM_TYPE);
             List<Integer> companyIds = (List<Integer>)map.get(SecurityConstant.COMPANY_IDS);
 
             //Security User增强类
-            AuthUser user = new AuthUser(userId, platformType,companyIds, username, SecurityConstant.N_A,
+            AuthUser user = new AuthUser(userId, platformTypes,companyIds, username, SecurityConstant.N_A,
                     true, true, true, true, authorities);
             return new UsernamePasswordAuthenticationToken(user, SecurityConstant.N_A, authorities);
         }

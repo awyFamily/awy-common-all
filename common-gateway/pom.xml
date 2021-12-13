@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.awyFamily</groupId>
         <artifactId>awy-common-all</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>common-gateway</artifactId>
@@ -32,11 +32,11 @@
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.awyFamily</groupId>
-            <artifactId>common-swagger-bp</artifactId>
-            <version>${awy.common.version}</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.awyFamily</groupId>-->
+<!--            <artifactId>common-swagger-bp</artifactId>-->
+<!--            <version>${awy.common.version}</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.awyFamily</groupId>

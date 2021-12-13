@@ -17,14 +17,14 @@ public class AuthUser extends User {
 
     private String userId;
 
-    private Integer platformType;
+    private List<Integer> platformTypes;
 
     private List<Integer> companyIds;
 
-    public AuthUser(String userId,Integer platformType,List<Integer> companyIds, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
+    public AuthUser(String userId,List<Integer> platformTypes,List<Integer> companyIds, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.userId = userId;
-        this.platformType = platformType;
+        this.platformTypes = platformTypes;
         this.companyIds = companyIds;
     }
 

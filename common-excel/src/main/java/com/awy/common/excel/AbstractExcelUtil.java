@@ -72,6 +72,17 @@ public abstract class AbstractExcelUtil<T>{
         return readData(getImportWorkbook(path,PoiPool.IS_NATIVE_FILE,getFileSuffix(path)),columns);
     }
 
+    /**
+     * 通过输入流导入数据
+     * @param inputStream 数据流
+     * @param fileName 文件名称
+     * @param columns 列名
+     * @return 数据列表
+     */
+    public List<Map<String,Object>> importStream(InputStream inputStream,String fileName,String[] columns) {
+        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)), columns);
+    }
+
     //--------------------------- import get object list ---------------------------------------
 
     /**
@@ -107,6 +118,19 @@ public abstract class AbstractExcelUtil<T>{
         return readData(getImportWorkbook(path, PoiPool.IS_NATIVE_FILE, getFileSuffix(path)),columns,clazz);
     }
 
+    /**
+     * 输入流导入数据
+     * @param inputStream 本地文件路径
+     * @param fileName 文件名称
+     * @param columns 需要导出的列名
+     * @param clazz 对象名
+     * @return T 列表
+     */
+    public List<T> importStream(InputStream inputStream,String fileName,String[] columns,Class<T> clazz){
+//        return getResultList(importNative(path,columns),clazz);
+        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)),columns,clazz);
+    }
+
 
 
     //================================== import common option =======================================================
@@ -140,8 +164,29 @@ public abstract class AbstractExcelUtil<T>{
     }
 
     private Workbook getImportWorkbook(String path,Boolean isNativeFile,ExcelTypeEnum typeEnum){
-        Workbook workbook;
         try(InputStream inputStream = isNativeFile ? new FileInputStream(path) : uploadFile(path)){
+            /*switch (typeEnum){
+                case XSSF_WORK_BOOK:
+                    workbook = createXssfWorkbook(inputStream);
+                    break;
+                case HSSF_WORK_BOOK:
+                    workbook = createHssfWorkbook(inputStream);
+                    break;
+                default:
+                    throw new RuntimeException("excel type not exists");
+            }*/
+            return this.getImportWorkbook(inputStream,typeEnum);
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private Workbook getImportWorkbook(InputStream inputStream,ExcelTypeEnum typeEnum){
+        if(inputStream == null){
+            throw new RuntimeException("input stream is null");
+        }
+        Workbook workbook;
+        try(inputStream){
             switch (typeEnum){
                 case XSSF_WORK_BOOK:
                     workbook = createXssfWorkbook(inputStream);
@@ -184,15 +229,14 @@ public abstract class AbstractExcelUtil<T>{
                 result = cell.getNumericCellValue();
                 String str = Double.toString(cell.getNumericCellValue());
                 if(str.indexOf(".") == 1 && str.indexOf("E") != -1) {
-                    System.out.println(str);
                     //防止数字太长被转换成科学计数法
                     DecimalFormat df = new DecimalFormat("0");
-
                     result = df.format(cell.getNumericCellValue());
                 }
 
                 // 由于日期类型格式也被认为是数值型，此处判断是否是日期的格式，若时，则读取为日期类型
-                if(cell.getCellStyle().getDataFormat() > 0)  {
+                // org.apache.poi.ss.usermodel.BuiltinFormats
+                if(cell.getCellStyle().getDataFormat() > 0xd)  {
                     result = cell.getDateCellValue();
                 }
                 break;

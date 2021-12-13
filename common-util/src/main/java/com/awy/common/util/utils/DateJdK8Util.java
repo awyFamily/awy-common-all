@@ -157,6 +157,10 @@ public final class DateJdK8Util {
             return formatLocalDateTime(localDateTime, (DateParser)DatePattern.NORM_DATETIME_MINUTE_FORMAT);
         } else if (length >= "yyyy-MM-dd HH:mm:ss.SSS".length() - 2) {
             return formatLocalDateTime(localDateTime, (DateParser)DatePattern.NORM_DATETIME_MS_FORMAT);
+        } else if (length == "yyyyMMddHHmmss".length()) {
+            return formatLocalDateTime(localDateTime, DatePattern.PURE_DATETIME_FORMAT);
+        } else if (length == "yyyyMMddHHmmssSSS".length()) {
+            return formatLocalDateTime(localDateTime, DatePattern.PURE_DATETIME_MS_FORMAT);
         }
 
         return formatLocalDateTime(localDateTime,DatePattern.NORM_DATETIME_FORMAT);

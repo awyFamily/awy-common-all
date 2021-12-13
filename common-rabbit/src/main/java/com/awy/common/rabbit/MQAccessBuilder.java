@@ -1,9 +1,12 @@
 package com.awy.common.rabbit;
 
 
+import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.awy.common.rabbit.model.DetailRes;
 import com.awy.common.rabbit.model.MessageWithTime;
 import com.awy.common.rabbit.model.RabbitConstant;
+import com.awy.common.rabbit.process.StringMessageProcess;
 import com.rabbitmq.client.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +21,7 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -135,6 +139,20 @@ public class MQAccessBuilder {
 		return buildMessageConsumer(exchange, routingKey, queue, messageProcess, BuiltinExchangeType.TOPIC);
 	}
 
+	public boolean checkProcessGenericType(MessageProcess messageProcess){
+		Method[] process = messageProcess.getClass().getDeclaredMethods();
+		for (Method method :process) {
+			if("process".equals(method.getName())){
+				System.out.println(method.getName());
+				for (Class<?> cs : method.getParameterTypes()) {
+					if("java.lang.String".equals(cs.getName())){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
 
 	public <T> MessageConsumer buildMessageConsumer(String exchange, String routingKey, final String queue,
 													final MessageProcess<T> messageProcess, BuiltinExchangeType type) throws IOException {
@@ -147,12 +165,13 @@ public class MQAccessBuilder {
 		final MessagePropertiesConverter messagePropertiesConverter = new DefaultMessagePropertiesConverter();
 		//Serializable type
 		final MessageConverter messageConverter = new Jackson2JsonMessageConverter();
-
+		boolean hasString = checkProcessGenericType(messageProcess);
 		return new MessageConsumer() {
 			Channel channel;
 
 			{
 				channel = connection.createChannel(false);
+//				channel.basicQos(1);
 			}
 
 			@Override
@@ -177,7 +196,14 @@ public class MQAccessBuilder {
 							messagePropertiesConverter.toMessageProperties(response.getProps(), response.getEnvelope(), "UTF-8"));
 
 					//2 conversion assign model
-					T messageBean = (T) messageConverter.fromMessage(message);
+					T messageBean;
+					if(hasString){
+						messageBean = (T)new String(message.getBody());
+					}else {
+						messageBean = (T) messageConverter.fromMessage(message);
+					}
+
+//					T messageBean = (T) messageConverter.fromMessage(message);
 
 					//3
 					DetailRes detailRes;

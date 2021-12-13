@@ -16,11 +16,11 @@ public class test {
         original.writeShort(0);
         original.writeShort(0xFF00);
 
-       System.out.println(original.readerIndex());
-       System.out.println(original.readableBytes());
+        System.out.println(original.readerIndex());
+        System.out.println(original.readableBytes());
         original.readerIndex(3); //剩下还有3，起始是3，剩下可读的是3
-       System.out.println(original.readerIndex());
-       System.out.println(original.readableBytes());
+        System.out.println(original.readerIndex());
+        System.out.println(original.readableBytes());
 //       System.out.println(original.readerIndex());
         original.readerIndex(6); //剩下还有3，起始是3，剩下可读的是3
         System.out.println(original.readerIndex());
@@ -99,5 +99,87 @@ public class test {
         //request： 02 03 02 5D 00 02 54 52  (02 5D )起始地址  (00 02)寄存器数量
         //response: 02 03 04 00 0A 00 0C E9 34   (04) 字节数   (00 0A) 寄存器值1 (00 0C)寄存器值2
         //02 5D -> (00 0A)     02 5E ->  00 0C  -->  (D605 10   D606 12)
+    }
+
+
+    public static void main3(String[] args) {
+        String a = "fe, dc,  " +
+                "1, " +
+                "13, 39, 41, 31, 3c, 95, " +
+                "0, 0, 2, a1, " +
+                "3, " +
+                "0, 8, " +
+                "0, 0, 0, 29," +
+                " 0, 0, 1, ba," +
+                " 0";
+        ByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
+        ByteBuf byteBuf = allocator.directBuffer(32);
+        byteBuf.writeByte(0xfe);
+        byteBuf.writeByte(0xdc);
+
+        byteBuf.writeByte(0x01);
+
+        byteBuf.writeByte(0x13);
+        byteBuf.writeByte(0x39);
+        byteBuf.writeByte(0x41);
+        byteBuf.writeByte(0x31);
+        byteBuf.writeByte(0x3c);
+        byteBuf.writeByte(0x95);
+
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x02);
+        byteBuf.writeByte(0xa1);
+        byteBuf.writeByte(0x03);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x08);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x29);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x00);
+        byteBuf.writeByte(0x01);
+        byteBuf.writeByte(0xba);
+        byteBuf.writeByte(0x00);
+
+        if(byteBuf.readableBytes() == 1){
+            if(byteBuf.getUnsignedByte(byteBuf.readerIndex()) == 0){
+                byteBuf.readerIndex((byteBuf.readerIndex() + byteBuf.readableBytes()));
+                return;
+            }
+        }
+//        Message message = null;
+        while (byteBuf.readableBytes() >= 2) {
+//            if(!this.isTzhFrameHeader(byteBuf)){
+////            byteBuf.skipBytes(byteBuf.readableBytes());
+//                byteBuf.readerIndex((byteBuf.readerIndex() + byteBuf.readableBytes()));
+////                throw new RuntimeException("frame header error");
+//                return new UnSupportMessage();
+//            }
+            byteBuf.skipBytes(2);
+//            message = new Message();
+//            SimpleResponse response;
+//            //request response
+//            if(byteBuf.readableBytes() < 4){
+//                response = new AResponse(byteBuf.readUnsignedByte());
+//                byteBuf.readerIndex((byteBuf.readerIndex() + byteBuf.readableBytes()));
+//            }else {
+//                //take the initiative report
+//                message.setVersion(byteBuf.readUnsignedByte());
+//                byteBuf.skipBytes(6);
+////                message.setEquipmentId(this.getEquipmentId(byteBuf));
+//                message.setSession(byteBuf.readUnsignedInt());
+//                byteBuf.skipBytes(1);
+//                message.setDataLength(byteBuf.readUnsignedShort());
+//
+//                response = new BResponse((int)byteBuf.readUnsignedInt(), (int)byteBuf.readUnsignedInt());
+////                message.setModel(response);
+//                //check 1 bit
+//                byteBuf.skipBytes(1);
+//            }
+//            message.setModel(response);
+//            break;
+        }
     }
 }
