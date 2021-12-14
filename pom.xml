@@ -57,7 +57,7 @@
 		<jasypt.version>2.1.2</jasypt.version>
 		<!--日志-->
 		<slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.13.3</log4j.version>
+        <log4j.version>2.15.0</log4j.version>
 		<!-- 编码 -->
 		<project.sourceEncoding>UTF-8</project.sourceEncoding>
 		<!-- apache maven插件版本-->
@@ -608,7 +608,7 @@
 	</build>
 
 
-	<!-- maven releases版本重新上传时候 必须更新版本号 -->
+	<!-- maven releases 版本重新上传时候 必须更新版本号 -->
 	<distributionManagement>
 		<!-- 发布仓库 -->
 		<repository>
