@@ -28,6 +28,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -65,8 +66,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        List<String> hosts = request.getHeaders().get("X-Forwarded-For");
-        log.info("request: {} , X-Forwarded-For : {} ",request.getURI().getPath(),hosts);
+        log.info("request: {} , X-Real-IP : {} , X-Forwarded-For : {} ",request.getURI().getPath(),request.getHeaders().get("X-Real-IP"),request.getHeaders().get("X-Forwarded-For"));
+        List<String> hosts = this.getHosts(request);
         if (isWhiteList(hosts)) {
             return chain.filter(exchange);
         }
@@ -81,6 +82,15 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return getResponse(exchange);
         }
         return chain.filter(exchange);
+    }
+
+    private List<String> getHosts(ServerHttpRequest request) {
+        List<String> forwarded = request.getHeaders().get("X-Forwarded-For");
+        List<String> ips = request.getHeaders().get("X-Real-IP");
+        List<String> hosts = new ArrayList<>();
+        hosts.addAll(CollUtil.isEmpty(forwarded) ? new ArrayList<>(1) : forwarded);
+        hosts.addAll(CollUtil.isEmpty(ips) ? new ArrayList<>(1) : ips);
+        return hosts;
     }
 
     private boolean isWhiteList(List<String> hosts) {
