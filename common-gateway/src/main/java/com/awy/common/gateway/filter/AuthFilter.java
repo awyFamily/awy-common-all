@@ -62,11 +62,15 @@ public class AuthFilter implements GlobalFilter, Ordered {
     // -> DefaultAccessTokenConverter
     private static final String EXPIRES = "exp";
 
+    private static final String X_FORWARDED_FOR = "X-Forwarded-For";
+
+    private static final String X_REAL_IP = "X-Real-IP";
+
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-        log.info("request: {} , X-Real-IP : {} , X-Forwarded-For : {} ",request.getURI().getPath(),request.getHeaders().get("X-Real-IP"),request.getHeaders().get("X-Forwarded-For"));
+        log.info("request: {} , X-Real-IP : {} , X-Forwarded-For : {} ",request.getURI().getPath(),request.getHeaders().get(X_REAL_IP),request.getHeaders().get(X_FORWARDED_FOR));
         List<String> hosts = this.getHosts(request);
         if (isWhiteList(hosts)) {
             return chain.filter(exchange);
@@ -85,11 +89,9 @@ public class AuthFilter implements GlobalFilter, Ordered {
     }
 
     private List<String> getHosts(ServerHttpRequest request) {
-        List<String> forwarded = request.getHeaders().get("X-Forwarded-For");
-        List<String> ips = request.getHeaders().get("X-Real-IP");
         List<String> hosts = new ArrayList<>();
-        hosts.addAll(CollUtil.isEmpty(forwarded) ? new ArrayList<>(1) : forwarded);
-        hosts.addAll(CollUtil.isEmpty(ips) ? new ArrayList<>(1) : ips);
+        hosts.addAll(CollUtil.isEmpty(request.getHeaders().get(X_FORWARDED_FOR)) ? new ArrayList<>(0) : request.getHeaders().get(X_FORWARDED_FOR));
+        hosts.addAll(CollUtil.isEmpty(request.getHeaders().get(X_REAL_IP)) ? new ArrayList<>(0) : request.getHeaders().get(X_REAL_IP));
         return hosts;
     }
 
