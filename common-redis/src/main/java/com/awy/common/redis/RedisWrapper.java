@@ -184,6 +184,9 @@ public class RedisWrapper {
         this.setStrEx(key, JsonUtil.toJson(value),timeOut,timeUnit);
     }
 
+    public void expire(String key,final long timeout, final TimeUnit unit) {
+        this.redisTemplate.expire(key,timeout,unit);
+    }
 
 
 
@@ -211,14 +214,53 @@ public class RedisWrapper {
         return redisTemplate.opsForList();
     }
 
+    public <T> void rightPush(String key,T value) {
+        this.getListTemplate().rightPush(key,value);
+    }
 
+    public <T> void rightPushEx(String key,T value, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().rightPush(key,value);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
 
+    public <T> void rightPushAllEx(String key,List<T> values, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().rightPush(key,values);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> void leftPush(String key,T value) {
+        this.getListTemplate().leftPush(key,value);
+    }
+
+    public <T> void leftPushEx(String key,T value, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().leftPush(key,value);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> void leftPushAllEx(String key,List<T> values, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().leftPushAll(key,values);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> List<T> getList(String key, long start, long end) {
+        return (List<T>)this.getListTemplate().range(key, start, end);
+    }
+
+    public <T> List<T> getAllList(String key) {
+        return (List<T>)this.getListTemplate().range(key, 0, -1);
+    }
+
+    public void removeListValue(String key,Object value) {
+        this.removeListValue(key,value,0);
+    }
+
+    public void removeListValue(String key,Object value,long count) {
+        this.getListTemplate().remove(key,count,value);
+    }
 
     public SetOperations getSetTemplate(){
         return redisTemplate.opsForSet();
     }
-
-
 
 
     public ZSetOperations getZsetTemplate(){
@@ -229,6 +271,7 @@ public class RedisWrapper {
     public HyperLogLogOperations getHyperLogLog(){
         return redisTemplate.opsForHyperLogLog();
     }
+
 
     //============================= 删除操作 =======================================
 
