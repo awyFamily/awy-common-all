@@ -1,12 +1,20 @@
 package com.awy.data.kit;
 
 
+import cn.hutool.core.bean.BeanUtil;
+import com.awy.common.util.model.BasePageDTO;
+import com.awy.common.util.utils.CollUtil;
+import com.awy.common.util.utils.ReflexUtils;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
+import java.util.function.Function;
 
 import static com.awy.data.kit.InsertOrUpdateSql.*;
 
@@ -137,6 +145,60 @@ public final class SqlBatchKit {
        }catch (Exception e){
            throw new RuntimeException(e);
        }
+    }
+
+    /**
+     * 批量执行
+     * @param function 函数
+     * @param dto 查询参数
+     * @param result 响应结果
+     */
+    public static  <Q extends BasePageDTO,R> void batchQueryPage(Function<Q, Page<R>> function, Q dto, CopyOnWriteArrayList<R> result) {
+        ExecutorService batchExportJobPool = Executors.newFixedThreadPool(3);
+        batchQueryPage(function,dto,result,batchExportJobPool,100, TimeUnit.SECONDS);
+    }
+
+    /**
+     * 批量执行
+     * @param function 函数
+     * @param dto 查询参数
+     * @param result 响应结果
+     * @param batchExportJobPool 线程池
+     * @param timeout 超时时间
+     * @param unit 超时单位
+     */
+    public static  <Q extends BasePageDTO,R> void batchQueryPage(Function<Q, Page<R>> function, Q dto, CopyOnWriteArrayList<R> result,ExecutorService batchExportJobPool,long timeout, TimeUnit unit) {
+        List<CompletableFuture<Void>> futures = new ArrayList<>();
+        Page<R> page = function.apply(dto);
+        log.info("==================== listData size : " + page.getSize());
+        if (page != null && CollUtil.isNotEmpty(page.getRecords())) {
+            result.addAll(page.getRecords());
+            //need async
+            if (page.getPages() > 1) {
+                for (long i = 2; i < page.getPages(); i++) {
+                    Q q = ReflexUtils.newInstance(dto.getClass().getName());
+                    BeanUtil.copyProperties(dto,q);
+
+                    q.setCurrent(i);
+                    log.info("==================== 开始导出 第" + i + " 页 , size : " + page.getSize());
+                    CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+                        long begin = System.currentTimeMillis();
+                        Page<R> innerPage = function.apply(q);
+                        log.info(Thread.currentThread().getName() + "执行第 " + q.getCurrent() + "  页 ,  耗时 ：" + (System.currentTimeMillis() - begin) + "毫秒");
+                        result.addAll(innerPage.getRecords());
+                    },batchExportJobPool);
+                    futures.add(future);
+                }
+
+                try {
+                    for (CompletableFuture future : futures) {
+                        future.get(timeout, unit);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
 
