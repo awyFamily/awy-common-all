@@ -17,7 +17,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class SqlBatchKitTest {
 
-    public void batchQueryPageTest() {
+    public static void main(String[] args) {
+        batchQueryPageTest();
+    }
+
+    public static void batchQueryPageTest() {
         CopyOnWriteArrayList<PageVO> result = new CopyOnWriteArrayList<>();
         PageDTO dto = new PageDTO();
         dto.setSize(10);

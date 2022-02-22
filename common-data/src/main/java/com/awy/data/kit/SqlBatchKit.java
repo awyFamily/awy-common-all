@@ -156,6 +156,7 @@ public final class SqlBatchKit {
     public static  <Q extends BasePageDTO,R> void batchQueryPage(Function<Q, Page<R>> function, Q dto, CopyOnWriteArrayList<R> result) {
         ExecutorService batchExportJobPool = Executors.newFixedThreadPool(3);
         batchQueryPage(function,dto,result,batchExportJobPool,100, TimeUnit.SECONDS);
+        batchExportJobPool.shutdownNow();
     }
 
     /**
