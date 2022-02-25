@@ -157,6 +157,7 @@ public final class SqlBatchKit {
         ExecutorService batchExportJobPool = Executors.newFixedThreadPool(3);
         batchQueryPage(function,dto,result,batchExportJobPool,100, TimeUnit.SECONDS);
         batchExportJobPool.shutdownNow();
+//        batchExportJobPool.shutdown();
     }
 
     /**
