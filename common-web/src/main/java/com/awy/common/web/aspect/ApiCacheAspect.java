@@ -117,8 +117,9 @@ public class ApiCacheAspect implements Ordered {
         }
         try{
             String className = proceedingJoinPoint.getSignature().getDeclaringTypeName();
-            String[] split = StrUtil.split(className, ".");
-            String lastClassName = split[split.length -1];
+            List<String> split = StrUtil.split(className, ".");
+//            String lastClassName = split[split.length -1];
+            String lastClassName = split.get(split.size() -1);
             String methodName = proceedingJoinPoint.getSignature().getName();
 
             parameterKey.append(lastClassName);

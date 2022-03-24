@@ -29,11 +29,13 @@ public class GlobalExceptionHandler {
      * @param exception 异常详细信息
      * @return ApiResult
      */
+    @ResponseStatus(HttpStatus.PRECONDITION_REQUIRED)
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ApiResult methodArgumentNotValidHandler(MethodArgumentNotValidException exception){
         return this.validHandler(exception.getBindingResult());
     }
 
+    @ResponseStatus(HttpStatus.PRECONDITION_REQUIRED)
     @ExceptionHandler(value = BindException.class)
     public ApiResult bindExceptionHandler(BindException exception){
         return this.validHandler(exception.getBindingResult());
@@ -85,6 +87,7 @@ public class GlobalExceptionHandler {
                 .builder();
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = IllegalArgumentException.class)
     public ApiResult illegalArgumentException(IllegalArgumentException exception){
         return ApiResult.getBuilder()
@@ -94,6 +97,7 @@ public class GlobalExceptionHandler {
                 .builder();
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = NullPointerException.class)
     public ApiResult nullPointerException(NullPointerException exception){
         return ApiResult.getBuilder()
