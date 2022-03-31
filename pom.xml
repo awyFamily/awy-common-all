@@ -13,7 +13,7 @@
 		<java.version>11</java.version>
 		<!-- https://docs.spring.io/spring-cloud/docs/Hoxton.SR11/reference/html/ -->
 <!--		<spring.boot.version>2.3.10.RELEASE</spring.boot.version>-->
-		<spring.boot.version>2.3.11.RELEASE</spring.boot.version>
+		<spring.boot.version>2.5.12</spring.boot.version>
 		<spring.cloud.version>Hoxton.SR11</spring.cloud.version>
 <!--		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>-->
 <!--		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>-->
