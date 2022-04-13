@@ -1,5 +1,6 @@
 package com.awy.common.redis;
 
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.redis.data.ScanData;
 import com.awy.common.util.utils.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,10 +185,62 @@ public class RedisWrapper {
         this.setStrEx(key, JsonUtil.toJson(value),timeOut,timeUnit);
     }
 
-    public void expire(String key,final long timeout, final TimeUnit unit) {
-        this.redisTemplate.expire(key,timeout,unit);
+    //=============  atomic operator ======================
+
+    public Long decrement(String key) {
+        return this.getStringTemplate().decrement(key);
     }
 
+    public Long decrement(String key, long delta) {
+        return this.getStringTemplate().decrement(key,delta);
+    }
+
+    public Long decrementEx(String key,final long timeout) {
+        return this.decrementEx(key,1,timeout);
+    }
+
+    public Long decrementEx(String key, long delta, final long timeout) {
+        return this.decrementEx(key,timeout,delta,TimeUnit.SECONDS);
+    }
+
+    public Long decrementEx(String key, long delta, final long timeout, final TimeUnit unit) {
+        String exists = this.getStr(key);
+        Long result = (delta == 1) ? this.decrement(key) : this.decrement(key,delta);
+        if (StrUtil.isBlank(exists)) {
+            this.expire(key,timeout,unit);
+            return result;
+        }
+        return result;
+    }
+
+    public Long increment(String key) {
+        return this.getStringTemplate().increment(key);
+    }
+
+    public Long increment(String key, long delta) {
+        return this.getStringTemplate().increment(key,delta);
+    }
+
+    public Long incrementEx(String key,final long timeout) {
+        return this.incrementEx(key,1,timeout);
+    }
+
+    public Long incrementEx(String key, long delta, final long timeout) {
+        return this.incrementEx(key,timeout,delta,TimeUnit.SECONDS);
+    }
+
+    public Long incrementEx(String key, long delta, final long timeout, final TimeUnit unit) {
+        //expire <- ttl = -2 , forever <- ttl = -1
+        String exists = this.getStr(key);
+        Long result = (delta == 1) ? this.increment(key) : this.increment(key,delta);
+        if (StrUtil.isBlank(exists)) {
+            this.expire(key,timeout,unit);
+            return result;
+        }
+        return result;
+    }
+
+    //========================================
 
 
     //===================== map ================================
@@ -265,6 +318,10 @@ public class RedisWrapper {
 
     public ZSetOperations getZsetTemplate(){
         return redisTemplate.opsForZSet();
+    }
+
+    public void expire(String key,final long timeout, final TimeUnit unit) {
+        this.redisTemplate.expire(key,timeout,unit);
     }
 
     //================================ hyperLogLog ============================================
