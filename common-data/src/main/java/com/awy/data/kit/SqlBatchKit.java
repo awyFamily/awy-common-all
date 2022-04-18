@@ -84,8 +84,7 @@ public final class SqlBatchKit {
      * @param <T> 映射实体对象
      */
     public static <T> void  addBatch(JdbcTemplate jdbcTemplate, Class<T> t, List<T> list,boolean isAutoIncrement){
-        String ignoreId = isAutoIncrement ? "id" : null;
-        addBatch(jdbcTemplate,t,list,ignoreId);
+        addBatch(jdbcTemplate,t,list,isAutoIncrement ? "id" : "");
     }
 
     /**
