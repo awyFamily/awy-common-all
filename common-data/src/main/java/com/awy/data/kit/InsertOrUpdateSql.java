@@ -3,8 +3,9 @@ package com.awy.data.kit;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
-import com.google.common.collect.Lists;
 import com.awy.common.util.utils.ReflexUtils;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -122,10 +123,9 @@ public final class InsertOrUpdateSql {
      */
     public static <T> String getInsertSql(Class<T> t,List<T> list,String...ignoreColumn){
         StringBuilder sql = new StringBuilder();
-
         List<String> columnList = getColumnList(t, list, ignoreColumn);
         sql.append("insert into ");
-        sql.append(toUnderlineCase(t.getSimpleName()));//表名
+        sql.append(getTableName(t));//表名
         sql.append(" (");
         sql.append(columnList.stream().map(str->toUnderlineCase(str)).collect(Collectors.joining(",")));//列名
         sql.append(") values");
@@ -175,6 +175,14 @@ public final class InsertOrUpdateSql {
         return sql.toString();
     }
 
+
+    private static <T> String getTableName(Class<T> t) {
+        TableName annotation = t.getAnnotation(TableName.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
+        return toUnderlineCase(t.getSimpleName());
+    }
     //==================================================================================
     /**
      * 批量修改(请确保list对象中主键列值不能为空)
@@ -204,7 +212,7 @@ public final class InsertOrUpdateSql {
         List<String> columnList = getColumnList(t, list, ignoreColumn);
 
         sql.append("UPDATE ");
-        sql.append(toUnderlineCase(t.getSimpleName()));//表名
+        sql.append(getTableName(t));//表名
         sql.append(" SET ");
         //修改内容
         sql.append(getUpdateSqlStr(primaryKey,list,columnList));
