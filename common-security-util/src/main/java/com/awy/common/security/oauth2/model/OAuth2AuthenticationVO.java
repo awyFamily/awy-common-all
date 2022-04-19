@@ -21,6 +21,7 @@ public class OAuth2AuthenticationVO {
     private String token_type;
     private String refresh_token;
     private Set<String> scope;
+    private int expiresIn;
     private String license;
     private String plat_from_type;
     private String user_id;
@@ -40,6 +41,7 @@ public class OAuth2AuthenticationVO {
         this.access_token = accessToken.getValue();
         this.token_type = accessToken.getTokenType();
         this.refresh_token = accessToken.getRefreshToken().getValue();
+        this.expiresIn = accessToken.getExpiresIn();
         this.scope = accessToken.getScope();
         this.license = accessToken.getAdditionalInformation().get("license") != null ? accessToken.getAdditionalInformation().get("license").toString() : null;
         this.user_id = accessToken.getAdditionalInformation().get("user_id") != null ? accessToken.getAdditionalInformation().get("user_id").toString() : null;

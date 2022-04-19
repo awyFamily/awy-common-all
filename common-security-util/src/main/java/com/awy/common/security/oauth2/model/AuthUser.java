@@ -27,6 +27,15 @@ public class AuthUser extends User {
 
     private List<String> permissions;
 
+    public AuthUser(String userId, String username, String password,List<Integer> platformTypes,List<Integer> companyIds,List<String> roles,List<String> permissions){
+        super(username, password, true, true, true, true, new ArrayList<>());
+        this.userId = userId;
+        this.platformTypes = platformTypes;
+        this.companyIds = companyIds;
+        this.roles = roles;
+        this.permissions = permissions;
+    }
+
     public AuthUser(String userId, String username, String password, boolean enabled, boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         this(userId,null,null,username,password,enabled,accountNonExpired,credentialsNonExpired,accountNonLocked,authorities);
     }
