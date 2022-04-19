@@ -57,28 +57,23 @@ public class AuthUser extends User {
         this.permissions = permissions;
     }
 
-    public static AuthUser getAuthoritiesMode(AuthUser authUser) {
-        if(authUser == null){
-            return null;
-        }
-
+    public static AuthUser getAuthoritiesMode(String userId, String username, String password,List<Integer> platformTypes,List<Integer> companyIds,List<String> auth_roles,List<String> permissions) {
         Set<GrantedAuthority> authorities = new HashSet<>();
         List<String> roles = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(authUser.getRoles())){
-            for (String role : authUser.getRoles()) {
+        if(CollectionUtil.isNotEmpty(auth_roles)){
+            for (String role : auth_roles) {
                 authorities.add(new SimpleGrantedAuthority(SecurityConstant.ROLE_OAUTH_PERFIX.concat(role)));
                 roles.add(SecurityConstant.ROLE_OAUTH_PERFIX.concat(role));
             }
         }
-        List<String> permissions = new ArrayList<>();
-        if(CollectionUtil.isNotEmpty(authUser.getPermissions())){
-            for (String permissionKey : authUser.getPermissions()) {
+        if(CollectionUtil.isNotEmpty(permissions)){
+            for (String permissionKey : permissions) {
                 authorities.add(new SimpleGrantedAuthority(permissionKey));
                 permissions.add(permissionKey);
             }
         }
 
-        return new AuthUser(authUser.getUserId(),authUser.getPlatformTypes(),authUser.getCompanyIds(), roles, permissions, authUser.getUsername(),authUser.getPassword(),
+        return new AuthUser(userId,platformTypes,companyIds, roles, permissions, username,password,
                 true, true, true, true, authorities);
     }
 

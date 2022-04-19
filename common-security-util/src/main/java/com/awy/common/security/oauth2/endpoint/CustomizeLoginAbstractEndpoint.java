@@ -118,7 +118,7 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
             throw new InvalidGrantException("user not exists");
         }
 
-        UserDetails userDetails = AuthUser.getAuthoritiesMode(authUser);
+        UserDetails userDetails = authUser;
         Authentication userAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         //
