@@ -45,7 +45,6 @@ public abstract class LoginAbstractEndpoint extends AbstractEndpoint {
         super.afterPropertiesSet();
     }
 
-
     public OAuth2AccessToken getOAuth2AccessToken(String username,String password)  {
 
         Map<String, String> parameters = getParameters(username,password);

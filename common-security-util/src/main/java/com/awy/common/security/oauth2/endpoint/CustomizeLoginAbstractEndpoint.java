@@ -3,7 +3,7 @@ package com.awy.common.security.oauth2.endpoint;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.security.oauth2.model.AuthUser;
-import com.awy.common.security.oauth2.model.CustomAuthDTO;
+import com.awy.common.security.oauth2.model.CustomizeAuthDTO;
 import com.awy.common.security.oauth2.model.OAuth2AuthenticationVO;
 import com.awy.common.util.constants.SecurityConstant;
 import com.awy.common.util.utils.CollUtil;
@@ -29,7 +29,7 @@ import java.util.Map;
  * @date 2022-04-19
  */
 @Slf4j
-public abstract class CustomLoginAbstractEndpoint<T extends CustomAuthDTO>  {
+public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>  {
 
     @Autowired
     private AuthorizationServerTokenServices authorizationServerTokenServices;
@@ -102,6 +102,8 @@ public abstract class CustomLoginAbstractEndpoint<T extends CustomAuthDTO>  {
      */
     public abstract AuthUser getAuthUser(T dto);
 
+    public abstract IAuthLogService getAuthLogService();
+
     /**
      * get oauth Authentication info
      * @param dto          wx dto
@@ -118,6 +120,11 @@ public abstract class CustomLoginAbstractEndpoint<T extends CustomAuthDTO>  {
 
         UserDetails userDetails = AuthUser.getAuthoritiesMode(authUser);
         Authentication userAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+        //
+        if (this.getAuthLogService() != null) {
+            this.getAuthLogService().insertLoginLog(authUser,SecurityConstant.CUSTOMIZE_AUTH_METHOD,dto.getCustomizeAuthName());
+        }
 
         //client info
         OAuth2Request storedOAuth2Request = new OAuth2Request(tokenRequest.getRequestParameters(), client.getClientId(), client.getAuthorities(), true, client.getScope(),

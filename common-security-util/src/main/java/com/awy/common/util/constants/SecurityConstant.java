@@ -24,4 +24,6 @@ public interface SecurityConstant {
 
     String CLIENT_SECRET = "client_secret";
 
+    String CUSTOMIZE_AUTH_METHOD = "customizeAuth";
+
 }
