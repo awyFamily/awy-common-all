@@ -42,7 +42,7 @@ public abstract class CustomLoginAbstractEndpoint<T extends CustomAuthDTO>  {
     public abstract String getClientId();
 
 
-    public OAuth2AuthenticationVO postAccessToken(T dto) {
+    public OAuth2AuthenticationVO getOAuth2AccessToken(T dto) {
         if (StrUtil.isEmpty(this.getClientId())) {
             log.error("client Id isEmpty. please setting clientId parameter !");
             throw new InvalidClientException("client Id isEmpty. please setting clientId parameter !");

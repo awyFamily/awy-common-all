@@ -90,7 +90,6 @@ public abstract class LoginAbstractEndpoint extends AbstractEndpoint {
         return token;
     }
 
-
     private Map<String, String>  getParameters(String username,String password){
         Map<String, String> parameters = new HashMap<>();
         parameters.put("username",username);
