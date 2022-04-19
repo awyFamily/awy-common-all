@@ -102,7 +102,7 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
      */
     public abstract AuthUser getAuthUser(T dto);
 
-    public abstract IAuthLogService getAuthLogService();
+    public abstract IAuthLogSaveAdapt getAuthLogService();
 
     /**
      * get oauth Authentication info
