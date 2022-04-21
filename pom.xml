@@ -44,7 +44,8 @@
 		<swagger.version>2.9.2</swagger.version>
 		<swagger.annotations>1.5.20</swagger.annotations>
 		<jboss.spec.javax.annotation.version>1.0.2.Final</jboss.spec.javax.annotation.version>
-		<hutool.version>5.7.17</hutool.version>
+<!--		<hutool.version>5.7.17</hutool.version>-->
+		<hutool.version>5.8.0.M2</hutool.version>
 		<!-- 不安全 -->
 		<jackson.version>2.10.2</jackson.version>
 		<guava.version>[30.0-jre,)</guava.version>
