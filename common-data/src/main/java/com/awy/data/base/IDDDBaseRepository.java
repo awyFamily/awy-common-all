@@ -5,15 +5,15 @@ import java.util.Collection;
 
 public interface IDDDBaseRepository<T> {
 
-    boolean insert(T t);
+    int insert(T t);
 
-    boolean insertBatch(Collection<T> list);
+    int insertBatch(Collection<T> list);
 
-    boolean updateById(T t);
+    int updateById(T t);
 
-    boolean deleteById(Serializable id);
+    int deleteById(Serializable id);
 
-    boolean deleteByIds(Collection<Serializable> ids);
+    int deleteByIds(Collection<Serializable> ids);
 
     T getById(Serializable id);
 
