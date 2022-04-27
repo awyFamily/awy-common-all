@@ -58,7 +58,7 @@ public class BaseRepositoryImpl<M extends BaseMapper<T>,T> implements IDDDBaseRe
     }
 
     @Override
-    public int deleteByIds(Collection<Serializable> ids) {
+    public int deleteByIds(Collection<? extends Serializable> ids) {
         if (CollUtil.isEmpty(ids)) {
             return 0;
         }

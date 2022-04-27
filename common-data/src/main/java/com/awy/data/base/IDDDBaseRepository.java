@@ -13,7 +13,7 @@ public interface IDDDBaseRepository<T> {
 
     int deleteById(Serializable id);
 
-    int deleteByIds(Collection<Serializable> ids);
+    int deleteByIds(Collection<? extends Serializable> ids);
 
     T getById(Serializable id);
 
