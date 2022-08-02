@@ -15,6 +15,12 @@ public class MemoryFloatValueRule extends FloatValueRule {
 
     private Map<String,String> lastConditionMap;
 
+    public MemoryFloatValueRule(String name, int priority) {
+        super(name, priority);
+        this.conditionRepository = new ConcurrentHashMap<>();
+        this.lastConditionMap = new ConcurrentHashMap<>();
+    }
+
     public MemoryFloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {
         super(name, priority,lastCachePrefix,conditionCacheKey);
         this.conditionRepository = new ConcurrentHashMap<>();

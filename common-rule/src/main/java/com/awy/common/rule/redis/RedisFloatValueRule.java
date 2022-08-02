@@ -17,6 +17,11 @@ public class RedisFloatValueRule extends FloatValueRule {
     private StringRedisTemplate redisTemplate;
 
 
+    public RedisFloatValueRule(String name, int priority,StringRedisTemplate redisTemplate) {
+        super(name, priority);
+        this.redisTemplate = redisTemplate;
+    }
+
     public RedisFloatValueRule(String name, int priority, String lastCachePrefix, String conditionCacheKey, StringRedisTemplate redisTemplate) {
         super(name, priority,lastCachePrefix,conditionCacheKey);
         this.redisTemplate = redisTemplate;

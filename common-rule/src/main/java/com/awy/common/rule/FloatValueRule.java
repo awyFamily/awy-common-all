@@ -19,6 +19,9 @@ public abstract class FloatValueRule extends AbstractRule {
     @Getter
     private String conditionCacheKey;
 
+    public FloatValueRule(String name, int priority) {
+        this(name,priority,"default","last:float:value","condition:cache:key");
+    }
 
     public FloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {
         this(name,priority,"default",lastCachePrefix,conditionCacheKey);
