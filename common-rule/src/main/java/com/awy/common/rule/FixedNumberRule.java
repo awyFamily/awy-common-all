@@ -1,5 +1,6 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.enums.RuleTypeEnum;
 import lombok.Setter;
 
 /**
@@ -18,6 +19,11 @@ public abstract class FixedNumberRule extends AbstractRule {
     public FixedNumberRule(String name,int priority,int fixedNumber, String groupName) {
         super(name,priority,groupName);
         this.fixedNumber = fixedNumber;
+    }
+
+    @Override
+    public RuleTypeEnum getType() {
+        return RuleTypeEnum.FIXED_NUMBER;
     }
 
     public abstract int getNumber(String key);

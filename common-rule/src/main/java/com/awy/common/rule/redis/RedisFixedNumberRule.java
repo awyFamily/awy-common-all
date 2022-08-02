@@ -4,6 +4,7 @@ import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.FixedNumberRule;
+import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.concurrent.TimeUnit;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RedisFixedNumberRule extends FixedNumberRule {
 
+    @Setter
     private StringRedisTemplate redisTemplate;
     private long timeout;
 

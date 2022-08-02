@@ -3,6 +3,8 @@ package com.awy.common.rule;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.awy.common.rule.enums.RuleTypeEnum;
+import lombok.Getter;
 
 import java.util.Map;
 
@@ -11,18 +13,33 @@ import java.util.Map;
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class ValueConditionRule extends AbstractRule {
+public abstract class FloatValueRule extends AbstractRule {
 
-    public ValueConditionRule(String name,int priority) {
-        this(name,priority,"default");
+    private String lastCachePrefix;
+    @Getter
+    private String conditionCacheKey;
+
+
+    public FloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {
+        this(name,priority,"default",lastCachePrefix,conditionCacheKey);
     }
 
-    public ValueConditionRule(String name,int priority, String groupName) {
+    public FloatValueRule(String name, int priority, String groupName,String lastCachePrefix, String conditionCacheKey) {
         super(name,priority,groupName);
+        this.lastCachePrefix = lastCachePrefix;
+        this.conditionCacheKey = conditionCacheKey;
     }
 
+    public String getLastCacheKey(String key) {
+        return lastCachePrefix.concat(":").concat(key);
+    }
 
-    public abstract String getLastCondition(String key,String conditionKey);
+    @Override
+    public RuleTypeEnum getType() {
+        return RuleTypeEnum.FLOAT_VALUE;
+    }
+
+    public abstract String getLastCondition(String key, String conditionKey);
 
     public abstract Boolean putLastCondition(String key,String conditionKey,String condition);
 

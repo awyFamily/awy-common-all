@@ -38,4 +38,8 @@ public abstract class AbstractRule implements IRule {
     public void setPriority(int priority) {
         this.priority = priority;
     }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

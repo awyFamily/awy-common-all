@@ -1,6 +1,7 @@
 package com.awy.common.rule;
 
 import cn.hutool.core.util.StrUtil;
+import com.awy.common.rule.enums.RuleTypeEnum;
 
 /**
  * @author yhw
@@ -14,6 +15,11 @@ public abstract class TimerRule extends AbstractRule {
 
     public TimerRule(String name, int priority, String groupName) {
         super(name,priority,groupName);
+    }
+
+    @Override
+    public RuleTypeEnum getType() {
+        return RuleTypeEnum.TIMER;
     }
 
     public abstract String getCache(String key);
