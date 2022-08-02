@@ -12,7 +12,11 @@ public abstract class FixedNumberRule extends AbstractRule {
     private int fixedNumber;
 
     public FixedNumberRule(String name,int priority,int fixedNumber) {
-        super(name,priority);
+        this(name,priority,fixedNumber,"default");
+    }
+
+    public FixedNumberRule(String name,int priority,int fixedNumber, String groupName) {
+        super(name,priority,groupName);
         this.fixedNumber = fixedNumber;
     }
 

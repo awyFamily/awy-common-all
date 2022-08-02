@@ -9,7 +9,11 @@ import cn.hutool.core.util.StrUtil;
 public abstract class TimerRule extends AbstractRule {
 
     public TimerRule(String name, int priority) {
-        super(name,priority);
+        this(name,priority,"default");
+    }
+
+    public TimerRule(String name, int priority, String groupName) {
+        super(name,priority,groupName);
     }
 
     public abstract String getCache(String key);

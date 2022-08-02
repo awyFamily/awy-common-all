@@ -8,6 +8,8 @@ public interface IRule {
 
     String getName();
 
+    String getGroupName();
+
     boolean isSupport(String key,String condition);
 
     int getPriority();

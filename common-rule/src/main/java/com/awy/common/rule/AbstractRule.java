@@ -7,11 +7,18 @@ package com.awy.common.rule;
 public abstract class AbstractRule implements IRule {
 
     private String name;
+    private String groupName;
     private int priority;
 
-    public AbstractRule(String name, int priority) {
+    public AbstractRule(String name, int priority, String groupName) {
         this.name = name;
+        this.groupName = groupName;
         this.priority = priority;
+    }
+
+    @Override
+    public String getGroupName() {
+        return this.groupName;
     }
 
     @Override

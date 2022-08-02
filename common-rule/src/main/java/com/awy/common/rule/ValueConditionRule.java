@@ -7,14 +7,20 @@ import cn.hutool.json.JSONUtil;
 import java.util.Map;
 
 /**
+ * 浮动
  * @author yhw
  * @date 2022-08-01
  */
 public abstract class ValueConditionRule extends AbstractRule {
 
     public ValueConditionRule(String name,int priority) {
-        super(name,priority);
+        this(name,priority,"default");
     }
+
+    public ValueConditionRule(String name,int priority, String groupName) {
+        super(name,priority,groupName);
+    }
+
 
     public abstract String getLastCondition(String key,String conditionKey);
 
