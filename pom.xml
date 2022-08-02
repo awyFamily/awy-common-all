@@ -117,6 +117,7 @@
 		<module>common-modbus</module>
         <module>common-tcp</module>
         <module>common-test</module>
+        <module>common-rule</module>
 
 
     </modules>
