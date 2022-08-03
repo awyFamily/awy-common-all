@@ -1,8 +1,10 @@
 package com.awy.common.rule.redis;
 
 import com.awy.common.rule.TimerRule;
+import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -11,8 +13,15 @@ import java.util.concurrent.TimeUnit;
  */
 public class RedisTimerRule extends TimerRule {
 
+    @Setter
     private StringRedisTemplate redisTemplate;
     private long timeout;
+
+
+    public RedisTimerRule(String name, int priority, long timeout) {
+        super(name, priority);
+        this.timeout = timeout;
+    }
 
     public RedisTimerRule(String name, int priority, long timeout,StringRedisTemplate redisTemplate) {
         super(name, priority);

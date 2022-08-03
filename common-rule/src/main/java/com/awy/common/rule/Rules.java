@@ -25,6 +25,10 @@ public class Rules {
         repository.put(rule.getName(),rule);
     }
 
+    public void unRegistry(IRule rule) {
+        repository.remove(rule.getName());
+    }
+
     public List<IRule>  getRulesByGroupName(String groupName) {
         List<IRule> rules = new ArrayList<>();
         for (Map.Entry<String, IRule> entry : repository.entrySet()) {

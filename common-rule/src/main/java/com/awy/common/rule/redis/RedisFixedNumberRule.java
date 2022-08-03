@@ -20,6 +20,11 @@ public class RedisFixedNumberRule extends FixedNumberRule {
     private StringRedisTemplate redisTemplate;
     private long timeout;
 
+    public RedisFixedNumberRule(String name, int priority, int fixedNumber, long timeout) {
+        super(name, priority, fixedNumber);
+        this.timeout = timeout;
+    }
+
     public RedisFixedNumberRule(String name, int priority, int fixedNumber, long timeout, StringRedisTemplate redisTemplate) {
         super(name, priority, fixedNumber);
         this.timeout = timeout;

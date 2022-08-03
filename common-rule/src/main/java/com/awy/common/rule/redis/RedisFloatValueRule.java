@@ -3,6 +3,7 @@ package com.awy.common.rule.redis;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.FloatValueRule;
+import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.HashMap;
@@ -14,7 +15,12 @@ import java.util.Map;
  */
 public class RedisFloatValueRule extends FloatValueRule {
 
+    @Setter
     private StringRedisTemplate redisTemplate;
+
+    public RedisFloatValueRule(String name, int priority) {
+        super(name, priority);
+    }
 
 
     public RedisFloatValueRule(String name, int priority,StringRedisTemplate redisTemplate) {
