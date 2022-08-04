@@ -1,5 +1,6 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.memory.MemoryRuleFactory;
 import com.awy.common.rule.model.RuleModel;
 import com.awy.common.util.utils.CollUtil;
@@ -82,6 +83,10 @@ public class Rules {
             if (!rule.isSupport(key,content)) {
                 log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 return false;
+            }
+            //当前节点满足,直接跳出
+            if (RuleChainNodeTypeNum.one_success == rule.getChainNodeType()) {
+                break;
             }
         }
         for (IRule rule : rules) {

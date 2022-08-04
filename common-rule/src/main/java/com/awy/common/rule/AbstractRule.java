@@ -1,5 +1,6 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.model.RuleConfigModel;
 
 /**
@@ -12,11 +13,14 @@ public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T
     private String groupName;
     private int priority;
 
+    private RuleChainNodeTypeNum chainNodeTypeNum;
+
     public AbstractRule(String name, int priority, String groupName) {
         this.name = name;
         this.groupName = groupName;
         this.priority = priority;
     }
+
 
     @Override
     public String getGroupName() {
@@ -33,6 +37,15 @@ public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T
         return this.priority;
     }
 
+
+    @Override
+    public RuleChainNodeTypeNum getChainNodeType() {
+        if (this.chainNodeTypeNum == null) {
+            return RuleChainNodeTypeNum.all_success;
+        }
+        return this.chainNodeTypeNum;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -43,5 +56,9 @@ public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T
 
     public void setGroupName(String groupName) {
         this.groupName = groupName;
+    }
+
+    public void setChainNodeTypeNum(RuleChainNodeTypeNum chainNodeTypeNum) {
+        this.chainNodeTypeNum = chainNodeTypeNum;
     }
 }

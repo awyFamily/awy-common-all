@@ -2,7 +2,9 @@ package com.awy.common.rule.memory;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.FixedNumberRule;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.model.FixedNumberRuleModel;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -49,6 +51,13 @@ public class MemoryFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel>
 
     @Override
     public void buildRuleConfig(FixedNumberRuleModel model) {
+        if (model == null) {
+            return;
+        }
+        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
+            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
+            setChainNodeTypeNum(ruleChainNodeTypeNum);
+        }
         this.timeout = model.getTimeout();
         setFixedNumber(model.getFixedNumber());
     }

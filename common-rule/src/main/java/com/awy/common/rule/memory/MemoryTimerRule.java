@@ -2,7 +2,9 @@ package com.awy.common.rule.memory;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.TimerRule;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.model.TimerRuleModel;
 
 /**
@@ -40,7 +42,14 @@ public class MemoryTimerRule extends TimerRule<TimerRuleModel> {
     }
 
     @Override
-    public void buildRuleConfig(TimerRuleModel timerRuleModel) {
-        this.setTimeout(timerRuleModel.getTimeout());
+    public void buildRuleConfig(TimerRuleModel model) {
+        if (model == null) {
+            return;
+        }
+        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
+            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
+            setChainNodeTypeNum(ruleChainNodeTypeNum);
+        }
+        this.setTimeout(model.getTimeout());
     }
 }

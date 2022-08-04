@@ -1,5 +1,6 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.model.RuleConfigModel;
 
@@ -14,6 +15,8 @@ public interface IRule<T extends RuleConfigModel> {
     String getName();
 
     String getGroupName();
+
+    RuleChainNodeTypeNum getChainNodeType();
 
     boolean isSupport(String key,String condition);
 

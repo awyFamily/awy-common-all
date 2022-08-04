@@ -3,6 +3,7 @@ package com.awy.common.rule;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.model.FloatValueRuleModel;
 import lombok.Getter;
@@ -122,6 +123,10 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
     public void buildRuleConfig(FloatValueRuleModel model) {
         if (model == null) {
             return;
+        }
+        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
+            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
+            setChainNodeTypeNum(ruleChainNodeTypeNum);
         }
         if (StrUtil.isNotBlank(model.getLastCachePrefix())) {
             setLastCachePrefix(model.getLastCachePrefix());

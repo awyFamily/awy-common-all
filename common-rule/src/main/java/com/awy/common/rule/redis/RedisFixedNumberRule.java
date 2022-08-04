@@ -2,6 +2,7 @@ package com.awy.common.rule.redis;
 
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.FixedNumberRule;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.model.FixedNumberRuleModel;
 import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -50,6 +51,13 @@ public class RedisFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel> 
 
     @Override
     public void buildRuleConfig(FixedNumberRuleModel model) {
+        if (model == null) {
+            return;
+        }
+        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
+            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
+            setChainNodeTypeNum(ruleChainNodeTypeNum);
+        }
         setFixedNumber(model.getFixedNumber());
         setTimeout(model.getTimeout());
     }
