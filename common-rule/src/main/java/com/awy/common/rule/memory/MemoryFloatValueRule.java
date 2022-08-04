@@ -1,6 +1,7 @@
 package com.awy.common.rule.memory;
 
 import com.awy.common.rule.FloatValueRule;
+import com.awy.common.rule.model.FloatValueRuleModel;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author yhw
  * @date 2022-08-02
  */
-public class MemoryFloatValueRule extends FloatValueRule {
+public class MemoryFloatValueRule extends FloatValueRule<FloatValueRuleModel> {
 
     private Map<String,Float> conditionRepository;
 
@@ -21,8 +22,8 @@ public class MemoryFloatValueRule extends FloatValueRule {
         this.lastConditionMap = new ConcurrentHashMap<>();
     }
 
-    public MemoryFloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {
-        super(name, priority,lastCachePrefix,conditionCacheKey);
+    public MemoryFloatValueRule(String name, int priority,String groupName) {
+        super(name, priority,groupName);
         this.conditionRepository = new ConcurrentHashMap<>();
         this.lastConditionMap = new ConcurrentHashMap<>();
     }
@@ -47,5 +48,11 @@ public class MemoryFloatValueRule extends FloatValueRule {
     public Boolean addCondition(String conditionKey, Float value) {
         this.conditionRepository.put(conditionKey,value);
         return true;
+    }
+
+    @Override
+    public void buildRuleConfig(FloatValueRuleModel model) {
+        setLastCachePrefix(model.getLastCachePrefix());
+        setConditionCacheKey(model.getConditionCacheKey());
     }
 }

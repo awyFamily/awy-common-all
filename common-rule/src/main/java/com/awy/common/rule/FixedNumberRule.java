@@ -7,7 +7,7 @@ import lombok.Setter;
  * @author yhw
  * @date 2022-08-02
  */
-public abstract class FixedNumberRule extends AbstractRule {
+public abstract class FixedNumberRule<T> extends AbstractRule<T> {
 
     @Setter
     private int fixedNumber;

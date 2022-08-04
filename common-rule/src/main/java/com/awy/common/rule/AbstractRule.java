@@ -4,7 +4,7 @@ package com.awy.common.rule;
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class AbstractRule implements IRule {
+public abstract class AbstractRule<T> implements IRule<T> {
 
     private String name;
     private String groupName;

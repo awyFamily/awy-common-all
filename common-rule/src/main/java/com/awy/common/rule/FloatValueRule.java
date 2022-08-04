@@ -5,6 +5,7 @@ import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -13,14 +14,20 @@ import java.util.Map;
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class FloatValueRule extends AbstractRule {
+public abstract class FloatValueRule<T> extends AbstractRule<T> {
 
+    @Setter
     private String lastCachePrefix;
+    @Setter
     @Getter
     private String conditionCacheKey;
 
     public FloatValueRule(String name, int priority) {
-        this(name,priority,"default","last:float:value","condition:cache:key");
+        this(name,priority,"default");
+    }
+
+    public FloatValueRule(String name, int priority,String groupName) {
+        this(name,priority,groupName,"last:float:value","condition:cache:key");
     }
 
     public FloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {

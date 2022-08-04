@@ -2,12 +2,18 @@ package com.awy.common.rule;
 
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.enums.RuleTypeEnum;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class TimerRule extends AbstractRule {
+public abstract class TimerRule<T> extends AbstractRule<T> {
+
+    @Getter
+    @Setter
+    private long timeout;
 
     public TimerRule(String name, int priority) {
         this(name,priority,"default");
@@ -15,6 +21,7 @@ public abstract class TimerRule extends AbstractRule {
 
     public TimerRule(String name, int priority, String groupName) {
         super(name,priority,groupName);
+        this.timeout = timeout;
     }
 
     @Override

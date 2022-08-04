@@ -1,33 +1,31 @@
 package com.awy.common.rule.redis;
 
-import cn.hutool.cache.CacheUtil;
-import cn.hutool.cache.impl.TimedCache;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.FixedNumberRule;
+import com.awy.common.rule.model.FixedNumberRuleModel;
 import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author yhw
  * @date 2022-08-02
  */
-public class RedisFixedNumberRule extends FixedNumberRule {
+public class RedisFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel> {
 
     @Setter
     private StringRedisTemplate redisTemplate;
+    @Setter
     private long timeout;
 
-    public RedisFixedNumberRule(String name, int priority, int fixedNumber, long timeout) {
-        super(name, priority, fixedNumber);
-        this.timeout = timeout;
+    public RedisFixedNumberRule(String name, int priority, StringRedisTemplate redisTemplate) {
+        this(name,priority,"default",redisTemplate);
     }
 
-    public RedisFixedNumberRule(String name, int priority, int fixedNumber, long timeout, StringRedisTemplate redisTemplate) {
-        super(name, priority, fixedNumber);
-        this.timeout = timeout;
+    public RedisFixedNumberRule(String name, int priority, String groupName, StringRedisTemplate redisTemplate) {
+        super(name, priority, 3,groupName);
+        this.timeout = 60;
         this.redisTemplate = redisTemplate;
     }
 
@@ -48,5 +46,11 @@ public class RedisFixedNumberRule extends FixedNumberRule {
         }
         redisTemplate.opsForValue().set(key,"1",timeout,TimeUnit.SECONDS);
         return true;
+    }
+
+    @Override
+    public void buildRuleConfig(FixedNumberRuleModel model) {
+        setFixedNumber(model.getFixedNumber());
+        setTimeout(model.getTimeout());
     }
 }

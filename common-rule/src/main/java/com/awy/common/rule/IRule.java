@@ -1,12 +1,13 @@
 package com.awy.common.rule;
 
 import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.model.RuleConfigModel;
 
 /**
  * @author yhw
  * @date 2022-08-01
  */
-public interface IRule {
+public interface IRule<T extends RuleConfigModel> {
 
     RuleTypeEnum getType();
 
@@ -17,5 +18,7 @@ public interface IRule {
     boolean isSupport(String key,String condition);
 
     int getPriority();
+
+    void buildRuleConfig(T model);
 
 }
