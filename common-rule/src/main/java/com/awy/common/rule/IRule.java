@@ -17,6 +17,10 @@ public interface IRule<T extends RuleConfigModel> {
 
     boolean isSupport(String key,String condition);
 
+    boolean successCallback(String key,String condition);
+
+    boolean handler(String key,String condition);
+
     int getPriority();
 
     void buildRuleConfig(T model);

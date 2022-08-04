@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -29,7 +28,6 @@ public class MemoryRuleFactoryTest {
         ruleFactory = new MemoryRuleFactory();
     }
 
-
     @Test
     public void floatValueRuleTest() {
         IRule rule = ruleFactory.create(getFloatValueRuleModel());
@@ -37,42 +35,42 @@ public class MemoryRuleFactoryTest {
         Map<String,String> floatMap = new HashMap<>();
         floatMap.put("a","10");
 //        System.err.printf("first trigger : %s \n", rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
-        Assert.assertTrue(rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertTrue(rule.handler("ABC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","13");
         //condition not met
-        Assert.assertFalse(rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertFalse(rule.handler("ABC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","14");
-        Assert.assertFalse(rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertFalse(rule.handler("ABC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","15");
         //condition is met
-        Assert.assertTrue(rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertTrue(rule.handler("ABC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","16");
         //condition not met
-        Assert.assertFalse(rule.isSupport("ABC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertFalse(rule.handler("ABC",JSONUtil.toJsonStr(floatMap)));
 
         //new key
         floatMap = new HashMap<>();
         floatMap.put("a","10");
         //first trigger
-        Assert.assertTrue(rule.isSupport("BCC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertTrue(rule.handler("BCC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","16");
         //condition is met
-        Assert.assertTrue(rule.isSupport("BCC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertTrue(rule.handler("BCC",JSONUtil.toJsonStr(floatMap)));
 
         floatMap = new HashMap<>();
         floatMap.put("a","10");
         //condition is met
-        Assert.assertTrue(rule.isSupport("BCC",JSONUtil.toJsonStr(floatMap)));
+        Assert.assertTrue(rule.handler("BCC",JSONUtil.toJsonStr(floatMap)));
     }
 
     private RuleModel getFloatValueRuleModel() {
@@ -94,31 +92,31 @@ public class MemoryRuleFactoryTest {
         IRule rule = ruleFactory.create(getFixedNumberRuleModel());
 
         long start = System.currentTimeMillis();
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("true : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("false : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertFalse(rule.isSupport("ABC","1"));
+        Assert.assertFalse(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("true : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(1);
         System.out.println("true : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("false : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertFalse(rule.isSupport("ABC","1"));
+        Assert.assertFalse(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("true : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
     }
 
     private RuleModel getFixedNumberRuleModel() {
@@ -139,15 +137,15 @@ public class MemoryRuleFactoryTest {
         IRule rule = ruleFactory.create(getTimerRuleModel());
 
         long start = System.currentTimeMillis();
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(2);
         System.out.println("false : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertFalse(rule.isSupport("ABC","1"));
+        Assert.assertFalse(rule.handler("ABC","1"));
 
         TimeUnit.SECONDS.sleep(3);
         System.out.println("true : " + (System.currentTimeMillis() - start) / 1000);
-        Assert.assertTrue(rule.isSupport("ABC","1"));
+        Assert.assertTrue(rule.handler("ABC","1"));
     }
 
 

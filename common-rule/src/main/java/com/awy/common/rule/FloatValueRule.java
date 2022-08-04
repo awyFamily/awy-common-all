@@ -76,14 +76,46 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
                     lastConditionValue = Float.valueOf(lastConditionStr);
                     //区间(last 上下浮动数值)
                     if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue) {
-                        result = putLastCondition(key,conditionKey, json.getStr(conditionKey));
+                        result = true;
                     }
                 } else {
-                    result = putLastCondition(key,conditionKey, json.getStr(conditionKey));
+                    result = true;
                 }
             }
         }
         return result;
+    }
+
+    @Override
+    public boolean successCallback(String key, String condition) {
+        JSONObject json = JSONUtil.parseObj(condition);
+        Float conditionValue,lastConditionValue;
+        String lastConditionStr;
+        Map<String, Float> conditionMap = getConditionMap();
+        for (String conditionKey : json.keySet()) {
+            conditionValue = conditionMap.get(conditionKey);
+            if (conditionValue != null && json.getFloat(conditionKey) != null) {
+                lastConditionStr = getLastCondition(key,conditionKey);
+                if (StrUtil.isNotBlank(lastConditionStr)) {
+                    lastConditionValue = Float.valueOf(lastConditionStr);
+                    //区间(last 上下浮动数值)
+                    if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue) {
+                        putLastCondition(key,conditionKey, json.getStr(conditionKey));
+                    }
+                } else {
+                    putLastCondition(key,conditionKey, json.getStr(conditionKey));
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean handler(String key, String condition) {
+        if(isSupport(key, condition)) {
+            return successCallback(key, condition);
+        }
+        return false;
     }
 
     @Override

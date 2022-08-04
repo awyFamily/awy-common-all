@@ -22,7 +22,6 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
 
     public TimerRule(String name, int priority, String groupName) {
         super(name,priority,groupName);
-        this.timeout = timeout;
     }
 
     @Override
@@ -42,10 +41,20 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
      */
     @Override
     public boolean isSupport(String key,String condition) {
-        if (StrUtil.isNotBlank(getCache(key))) {
-            return false;
-        }
+        return StrUtil.isBlank(getCache(key));
+    }
+
+    @Override
+    public boolean successCallback(String key, String condition) {
         return putCache(key);
+    }
+
+    @Override
+    public boolean handler(String key, String condition) {
+        if(isSupport(key, condition)) {
+            return successCallback(key, condition);
+        }
+        return false;
     }
 
 }

@@ -39,10 +39,19 @@ public abstract class FixedNumberRule<T extends RuleConfigModel> extends Abstrac
      */
     @Override
     public boolean isSupport(String key,String condition) {
-        if (getNumber(key) >= this.fixedNumber) {
-            return false;
-        }
+        return getNumber(key) < this.fixedNumber;
+    }
+
+    @Override
+    public boolean successCallback(String key, String condition) {
         return increment(key);
     }
 
+    @Override
+    public boolean handler(String key, String condition) {
+        if(isSupport(key, condition)) {
+            return successCallback(key, condition);
+        }
+        return false;
+    }
 }
