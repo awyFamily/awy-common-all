@@ -1,13 +1,14 @@
 package com.awy.common.rule;
 
 import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Setter;
 
 /**
  * @author yhw
  * @date 2022-08-02
  */
-public abstract class FixedNumberRule<T> extends AbstractRule<T> {
+public abstract class FixedNumberRule<T extends RuleConfigModel> extends AbstractRule<T> {
 
     @Setter
     private int fixedNumber;

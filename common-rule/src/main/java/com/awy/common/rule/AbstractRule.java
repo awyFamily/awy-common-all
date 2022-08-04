@@ -1,10 +1,12 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.model.RuleConfigModel;
+
 /**
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class AbstractRule<T> implements IRule<T> {
+public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T> {
 
     private String name;
     private String groupName;

@@ -2,6 +2,7 @@ package com.awy.common.rule;
 
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import lombok.Setter;
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class TimerRule<T> extends AbstractRule<T> {
+public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<T> {
 
     @Getter
     @Setter

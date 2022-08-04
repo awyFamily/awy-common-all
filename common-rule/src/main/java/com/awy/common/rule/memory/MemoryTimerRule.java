@@ -14,16 +14,12 @@ public class MemoryTimerRule extends TimerRule<TimerRuleModel> {
     private TimedCache<String,String> cache;
 
     public MemoryTimerRule(String name, int priority) {
-        this(name,priority,60);
+        this(name,priority,"default");
     }
 
-    public MemoryTimerRule(String name, int priority,long timeout) {
-        super(name, priority,timeout);
-        this.cache = CacheUtil.newTimedCache(timeout * 1000);
-    }
 
     public MemoryTimerRule(String name, int priority,String groupName) {
-        super(name, priority,groupName,60);
+        super(name, priority,groupName);
         this.cache = CacheUtil.newTimedCache(getTimeout() * 1000);
     }
 

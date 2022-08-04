@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +15,7 @@ import java.util.Map;
  * @author yhw
  * @date 2022-08-01
  */
-public abstract class FloatValueRule<T> extends AbstractRule<T> {
+public abstract class FloatValueRule<T extends RuleConfigModel> extends AbstractRule<T> {
 
     @Setter
     private String lastCachePrefix;
