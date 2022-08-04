@@ -29,7 +29,7 @@ public class MemoryFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel>
 
     @Override
     public int getNumber(String key) {
-        AtomicInteger number = map.get(key);
+        AtomicInteger number = map.get(key,false);
         if (number == null) {
             number = new AtomicInteger(0);
         }

@@ -30,7 +30,7 @@ public class MemoryTimerRule extends TimerRule<TimerRuleModel> {
 
     @Override
     public String getCache(String key) {
-        return this.cache.get(key);
+        return this.cache.get(key,false);
     }
 
     @Override

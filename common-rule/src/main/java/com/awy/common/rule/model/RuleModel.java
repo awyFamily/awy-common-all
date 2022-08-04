@@ -22,7 +22,7 @@ public class RuleModel {
     private String expand;
 
     public <T> T getExpandBean(Class<T> clazz) {
-        if (StrUtil.isNotBlank(this.expand)) {
+        if (StrUtil.isBlank(this.expand)) {
             return null;
         }
         return JSONUtil.toBean(this.expand,clazz);

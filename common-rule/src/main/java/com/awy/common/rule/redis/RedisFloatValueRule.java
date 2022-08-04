@@ -1,6 +1,7 @@
 package com.awy.common.rule.redis;
 
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.FloatValueRule;
 import com.awy.common.rule.model.FloatValueRuleModel;
@@ -14,7 +15,7 @@ import java.util.Map;
  * @author yhw
  * @date 2022-08-02
  */
-public class RedisFloatValueRule extends FloatValueRule<FloatValueRuleModel> {
+public class RedisFloatValueRule extends FloatValueRule {
 
     @Setter
     private StringRedisTemplate redisTemplate;
@@ -57,9 +58,4 @@ public class RedisFloatValueRule extends FloatValueRule<FloatValueRuleModel> {
         return true;
     }
 
-    @Override
-    public void buildRuleConfig(FloatValueRuleModel model) {
-        setLastCachePrefix(model.getLastCachePrefix());
-        setConditionCacheKey(model.getConditionCacheKey());
-    }
 }

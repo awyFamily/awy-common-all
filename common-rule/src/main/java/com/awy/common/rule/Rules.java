@@ -29,6 +29,10 @@ public class Rules {
         repository.remove(rule.getName());
     }
 
+    public IRule  getRulesByName(String name) {
+        return repository.get(name);
+    }
+
     public List<IRule>  getRulesByGroupName(String groupName) {
         List<IRule> rules = new ArrayList<>();
         for (Map.Entry<String, IRule> entry : repository.entrySet()) {
