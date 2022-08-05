@@ -49,7 +49,7 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
 
     public abstract Boolean putLastCondition(String key,String conditionKey,String condition);
 
-    public abstract Map<String,Float> getConditionMap();
+    public abstract Map<String,Number> getConditionMap();
 
     public abstract Boolean addCondition(String conditionKey,Float value);
 
@@ -60,9 +60,10 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
         }
         JSONObject json = JSONUtil.parseObj(condition);
         boolean result = false;
-        Float conditionValue,lastConditionValue;
+        Number conditionValue;
+        Float lastConditionValue;
         String lastConditionStr;
-        Map<String, Float> conditionMap = getConditionMap();
+        Map<String, Number> conditionMap = getConditionMap();
         for (String conditionKey : json.keySet()) {
             conditionValue = conditionMap.get(conditionKey);
             if (conditionValue != null && json.getFloat(conditionKey) != null) {
@@ -70,7 +71,7 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
                 if (StrUtil.isNotBlank(lastConditionStr)) {
                     lastConditionValue = Float.valueOf(lastConditionStr);
                     //区间(last 上下浮动数值)
-                    if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue) {
+                    if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue.floatValue()) {
                         result = true;
                     }
                 } else {
@@ -84,9 +85,10 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
     @Override
     public boolean successCallback(String key, String condition) {
         JSONObject json = JSONUtil.parseObj(condition);
-        Float conditionValue,lastConditionValue;
+        Number conditionValue;
+        Float lastConditionValue;
         String lastConditionStr;
-        Map<String, Float> conditionMap = getConditionMap();
+        Map<String, Number> conditionMap = getConditionMap();
         for (String conditionKey : json.keySet()) {
             conditionValue = conditionMap.get(conditionKey);
             if (conditionValue != null && json.getFloat(conditionKey) != null) {
@@ -94,7 +96,7 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
                 if (StrUtil.isNotBlank(lastConditionStr)) {
                     lastConditionValue = Float.valueOf(lastConditionStr);
                     //区间(last 上下浮动数值)
-                    if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue) {
+                    if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue.floatValue()) {
                         putLastCondition(key,conditionKey, json.getStr(conditionKey));
                     }
                 } else {

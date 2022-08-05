@@ -45,7 +45,7 @@ public class RedisFloatValueRule extends FloatValueRule {
     }
 
     @Override
-    public Map<String, Float> getConditionMap() {
+    public Map<String, Number> getConditionMap() {
         String conditionMapStr = this.redisTemplate.opsForValue().get(getConditionCacheKey());
         if (StrUtil.isNotBlank(conditionMapStr)) {
             return JSONUtil.toBean(conditionMapStr,HashMap.class);
@@ -55,7 +55,7 @@ public class RedisFloatValueRule extends FloatValueRule {
 
     @Override
     public Boolean addCondition(String conditionKey, Float value) {
-        Map<String, Float> conditionMap = getConditionMap();
+        Map<String, Number> conditionMap = getConditionMap();
         conditionMap.put(conditionKey, value);
         this.redisTemplate.opsForValue().set(getConditionCacheKey(),JSONUtil.toJsonStr(conditionMap));
         return true;

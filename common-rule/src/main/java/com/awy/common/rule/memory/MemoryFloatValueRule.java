@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class MemoryFloatValueRule extends FloatValueRule {
 
-    private Map<String,Float> conditionRepository;
+    private Map<String,Number> conditionRepository;
 
     private Map<String,String> lastConditionMap;
 
@@ -42,7 +42,7 @@ public class MemoryFloatValueRule extends FloatValueRule {
     }
 
     @Override
-    public Map<String, Float> getConditionMap() {
+    public Map<String, Number> getConditionMap() {
         return this.conditionRepository;
     }
 
