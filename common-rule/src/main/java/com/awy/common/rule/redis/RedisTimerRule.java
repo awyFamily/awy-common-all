@@ -17,7 +17,6 @@ public class RedisTimerRule extends TimerRule<TimerRuleModel> {
     @Setter
     private StringRedisTemplate redisTemplate;
 
-
     public RedisTimerRule(String name, int priority,StringRedisTemplate redisTemplate) {
         this(name, priority,"default",RuleChainNodeTypeNum.fail_end,redisTemplate);
     }
@@ -33,12 +32,12 @@ public class RedisTimerRule extends TimerRule<TimerRuleModel> {
 
     @Override
     public String getCache(String key) {
-        return redisTemplate.opsForValue().get(key);
+        return redisTemplate.opsForValue().get(getLastCacheKey(key));
     }
 
     @Override
     public Boolean putCache(String key) {
-        redisTemplate.opsForValue().set(key,"1", getTimeout(), TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(getLastCacheKey(key),"1", getTimeout(), TimeUnit.SECONDS);
         return true;
     }
 
@@ -48,5 +47,6 @@ public class RedisTimerRule extends TimerRule<TimerRuleModel> {
             return;
         }
         this.setTimeout(model.getTimeout());
+        this.setLastCachePrefix(model.getLastCachePrefix());
     }
 }

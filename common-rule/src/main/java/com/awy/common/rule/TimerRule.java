@@ -17,6 +17,13 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
     @Setter
     private long timeout;
 
+    @Setter
+    private String lastCachePrefix;
+
+    public String getLastCacheKey(String key) {
+        return lastCachePrefix.concat(":").concat(key);
+    }
+
     public TimerRule(String name, int priority) {
         this(name,priority,"default");
     }
