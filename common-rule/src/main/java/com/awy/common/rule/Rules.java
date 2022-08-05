@@ -101,7 +101,7 @@ public class Rules {
                 support = false;
             }
             if (RuleChainNodeTypeNum.fail_end == rule.getChainNodeType() && !support) {
-                log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                log.debug("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 return false;
             } else if (RuleChainNodeTypeNum.success_end == rule.getChainNodeType() && support) {
                 //当前节点满足,直接跳出
@@ -117,12 +117,12 @@ public class Rules {
                     break;
                 }
                 //错误忽略逻辑
-                log.error("not met condition , fail ignore , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                log.debug("not met condition , fail ignore , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 continue;
             }
             //
             if (!support) {
-                log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                log.debug("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 return false;
             }
         }
