@@ -1,6 +1,7 @@
 package com.awy.common.rule;
 
 import cn.hutool.json.JSONUtil;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.memory.MemoryFixedNumberRule;
 import com.awy.common.rule.model.FixedNumberRuleModel;
@@ -14,6 +15,7 @@ import org.junit.Test;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yhw
@@ -62,7 +64,7 @@ public class RulesTest {
     }
 
     @Test
-    public void isSupportByGroupTest() {
+    public void isSupportByGroup2Test() {
         //场景1(单个规则)： 当针对一个事件, n 分钟只允许触发 1 次
         //        rules.registry(getTimerRuleModel());
 
@@ -94,7 +96,6 @@ public class RulesTest {
         floatMap.put("a","20");
         Assert.assertFalse(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
     }
-
 
     private RuleModel getFixedNumberRuleModel() {
         FixedNumberRuleModel fixedNumberRuleModel = new FixedNumberRuleModel();
@@ -134,6 +135,76 @@ public class RulesTest {
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
         return model;
     }
+
+    @Test
+    public void isSupportByGroup3Test() throws Exception {
+        //场景3(多个规则组合使用)： 当满足浮动值,则直接判断成功;
+        //当浮动值条件为空时候或不满足时, 则需要按超时触发(同时会更新浮动值条件)
+        rules.registry(getFloatValueRuleModel3());
+        rules.registry(getTimerRuleModel3());
+
+        Map<String,String> floatMap = new HashMap<>();
+        floatMap.put("a","10");
+        Assert.assertTrue(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+
+        floatMap = new HashMap<>();
+        floatMap.put("a","15");
+        Assert.assertTrue(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+
+        floatMap = new HashMap<>();
+        floatMap.put("a","15");
+        Assert.assertFalse(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+
+        floatMap = new HashMap<>();
+        floatMap.put("a","20");
+        Assert.assertTrue(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+
+        floatMap = new HashMap<>();
+        floatMap.put("a","20");
+        Assert.assertFalse(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+
+        TimeUnit.SECONDS.sleep(6);
+
+        floatMap = new HashMap<>();
+//        floatMap.put("a","20");
+        //Assert.assertTrue
+        Assert.assertTrue(rules.isSupportByGroup("default","ABC",JSONUtil.toJsonStr(floatMap)));
+    }
+
+    private RuleModel getFloatValueRuleModel3() {
+        FloatValueRuleModel floatValueRuleModel = new FloatValueRuleModel();
+        Map<String,String> floatMap = new HashMap<>();
+        floatMap.put("a","5");
+        floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
+        floatValueRuleModel.setRuleChainNodeType(RuleChainNodeTypeNum.success_end_fail_continue.getId());
+
+        RuleModel model = new RuleModel();
+        model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setName("2");
+        model.setPriority(2);
+        model.setExpand(JSONUtil.toJsonStr(floatValueRuleModel));
+        return model;
+    }
+
+    private RuleModel getTimerRuleModel3() {
+        TimerRuleModel timerRuleModel = new TimerRuleModel();
+        timerRuleModel.setTimeout(3L);
+//        timerRuleModel.setRuleChainNodeType(RuleChainNodeTypeNum.one_success.getId());
+
+        RuleModel model = new RuleModel();
+        model.setRuleType(RuleTypeEnum.TIMER.getId());
+        model.setName("3");
+        model.setPriority(3);
+        model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
+        return model;
+    }
+
+    @Test
+    public void isSupportByGroup4Test() throws Exception {
+        rules.registry(getFloatValueRuleModel3());
+        rules.registry(getTimerRuleModel3());
+    }
+
 
 
 }

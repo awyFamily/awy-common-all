@@ -41,7 +41,7 @@ public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T
     @Override
     public RuleChainNodeTypeNum getChainNodeType() {
         if (this.chainNodeTypeNum == null) {
-            return RuleChainNodeTypeNum.all_success;
+            return RuleChainNodeTypeNum.fail_end;
         }
         return this.chainNodeTypeNum;
     }

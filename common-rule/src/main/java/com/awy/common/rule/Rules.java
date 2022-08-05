@@ -79,14 +79,33 @@ public class Rules {
         if (CollUtil.isEmpty(rules)) {
             return true;
         }
+        boolean support;
         for (IRule rule : rules) {
-            if (!rule.isSupport(key,content)) {
+            support = rule.isSupport(key, content);
+            if (RuleChainNodeTypeNum.fail_end == rule.getChainNodeType() && !support) {
                 log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 return false;
-            }
-            //当前节点满足,直接跳出
-            if (RuleChainNodeTypeNum.one_success == rule.getChainNodeType()) {
+            } else if (RuleChainNodeTypeNum.success_end == rule.getChainNodeType() && support) {
+                //当前节点满足,直接跳出
+                log.info("met condition , end process , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 break;
+            } else if (RuleChainNodeTypeNum.fail_continue == rule.getChainNodeType()) {
+                //忽略此次错误
+                log.error("not met condition , fail ignore , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                continue;
+            } else if (RuleChainNodeTypeNum.success_end_fail_continue == rule.getChainNodeType()) {
+                if (support) {
+                    log.info("met condition , end process , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                    break;
+                }
+                //错误忽略逻辑
+                log.error("not met condition , fail ignore , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                continue;
+            }
+            //
+            if (!support) {
+                log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
+                return false;
             }
         }
         for (IRule rule : rules) {
