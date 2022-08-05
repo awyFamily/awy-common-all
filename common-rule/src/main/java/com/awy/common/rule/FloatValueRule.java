@@ -19,27 +19,21 @@ import java.util.Map;
 public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
 
     @Setter
-    private String lastCachePrefix;
+    private String lastCachePrefix = "last:float:value";
     @Setter
     @Getter
-    private String conditionCacheKey;
+    private String conditionCacheKey = "condition:cache:key";
 
     public FloatValueRule(String name, int priority) {
         this(name,priority,"default");
     }
 
     public FloatValueRule(String name, int priority,String groupName) {
-        this(name,priority,groupName,"last:float:value","condition:cache:key");
-    }
-
-    public FloatValueRule(String name, int priority,String lastCachePrefix, String conditionCacheKey) {
-        this(name,priority,"default",lastCachePrefix,conditionCacheKey);
-    }
-
-    public FloatValueRule(String name, int priority, String groupName,String lastCachePrefix, String conditionCacheKey) {
         super(name,priority,groupName);
-        this.lastCachePrefix = lastCachePrefix;
-        this.conditionCacheKey = conditionCacheKey;
+    }
+
+    public FloatValueRule(String name, int priority,String groupName,RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        super(name,priority,groupName,ruleChainNodeTypeNum);
     }
 
     public String getLastCacheKey(String key) {
@@ -123,10 +117,6 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
     public void buildRuleConfig(FloatValueRuleModel model) {
         if (model == null) {
             return;
-        }
-        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
-            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
-            setChainNodeTypeNum(ruleChainNodeTypeNum);
         }
         if (StrUtil.isNotBlank(model.getLastCachePrefix())) {
             setLastCachePrefix(model.getLastCachePrefix());

@@ -2,7 +2,6 @@ package com.awy.common.rule.memory;
 
 import cn.hutool.cache.CacheUtil;
 import cn.hutool.cache.impl.TimedCache;
-import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.FixedNumberRule;
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.model.FixedNumberRuleModel;
@@ -20,12 +19,15 @@ public class MemoryFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel>
     private long timeout = 60;
 
     public MemoryFixedNumberRule(String name, int priority) {
-        super(name, priority, 3);
-        map = CacheUtil.newTimedCache(this.timeout * 1000);
+        this(name, priority,"default");
     }
 
     public MemoryFixedNumberRule(String name, int priority, String groupName) {
-        super(name, priority, 3,groupName);
+        this(name, priority,groupName,RuleChainNodeTypeNum.fail_end);
+    }
+
+    public MemoryFixedNumberRule(String name, int priority, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        super(name,priority,3,groupName,ruleChainNodeTypeNum);
         map = CacheUtil.newTimedCache(this.timeout * 1000);
     }
 
@@ -53,10 +55,6 @@ public class MemoryFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel>
     public void buildRuleConfig(FixedNumberRuleModel model) {
         if (model == null) {
             return;
-        }
-        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
-            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
-            setChainNodeTypeNum(ruleChainNodeTypeNum);
         }
         this.timeout = model.getTimeout();
         setFixedNumber(model.getFixedNumber());

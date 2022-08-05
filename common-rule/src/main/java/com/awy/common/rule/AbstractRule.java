@@ -21,6 +21,13 @@ public abstract class AbstractRule<T extends RuleConfigModel> implements IRule<T
         this.priority = priority;
     }
 
+    public AbstractRule(String name, int priority, String groupName,RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        this.name = name;
+        this.groupName = groupName;
+        this.priority = priority;
+        this.chainNodeTypeNum = ruleChainNodeTypeNum;
+    }
+
 
     @Override
     public String getGroupName() {

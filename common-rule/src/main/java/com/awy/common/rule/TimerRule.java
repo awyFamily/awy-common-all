@@ -1,6 +1,7 @@
 package com.awy.common.rule;
 
 import cn.hutool.core.util.StrUtil;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Getter;
@@ -22,6 +23,10 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
 
     public TimerRule(String name, int priority, String groupName) {
         super(name,priority,groupName);
+    }
+
+    public TimerRule(String name, int priority, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        super(name,priority,groupName,ruleChainNodeTypeNum);
     }
 
     @Override

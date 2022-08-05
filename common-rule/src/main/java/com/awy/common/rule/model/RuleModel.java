@@ -19,6 +19,8 @@ public class RuleModel {
 
     private String ruleType;
 
+    private String ruleChainNodeType;
+
     private String expand;
 
     public <T> T getExpandBean(Class<T> clazz) {

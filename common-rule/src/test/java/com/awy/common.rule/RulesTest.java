@@ -193,10 +193,10 @@ public class RulesTest {
         Map<String,String> floatMap = new HashMap<>();
         floatMap.put("a","5");
         floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
-        floatValueRuleModel.setRuleChainNodeType(RuleChainNodeTypeNum.success_end_fail_continue.getId());
 
         RuleModel model = new RuleModel();
         model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setRuleChainNodeType(RuleChainNodeTypeNum.success_end_fail_continue.getId());
         model.setName("2");
         model.setPriority(2);
         model.setExpand(JSONUtil.toJsonStr(floatValueRuleModel));

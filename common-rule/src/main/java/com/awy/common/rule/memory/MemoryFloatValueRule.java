@@ -1,6 +1,7 @@
 package com.awy.common.rule.memory;
 
 import com.awy.common.rule.FloatValueRule;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,13 +17,15 @@ public class MemoryFloatValueRule extends FloatValueRule {
     private Map<String,String> lastConditionMap;
 
     public MemoryFloatValueRule(String name, int priority) {
-        super(name, priority);
-        this.conditionRepository = new ConcurrentHashMap<>();
-        this.lastConditionMap = new ConcurrentHashMap<>();
+        this(name, priority,"default");
     }
 
     public MemoryFloatValueRule(String name, int priority,String groupName) {
-        super(name, priority,groupName);
+        this(name, priority,groupName,RuleChainNodeTypeNum.fail_end);
+    }
+
+    public MemoryFloatValueRule(String name, int priority, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        super(name, priority,groupName,ruleChainNodeTypeNum);
         this.conditionRepository = new ConcurrentHashMap<>();
         this.lastConditionMap = new ConcurrentHashMap<>();
     }

@@ -1,10 +1,9 @@
 package com.awy.common.rule.redis;
 
 import cn.hutool.core.util.StrUtil;
-import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.FloatValueRule;
-import com.awy.common.rule.model.FloatValueRuleModel;
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import lombok.Setter;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -25,10 +24,14 @@ public class RedisFloatValueRule extends FloatValueRule {
     }
 
     public RedisFloatValueRule(String name, int priority, String groupName,StringRedisTemplate redisTemplate) {
-        super(name, priority,groupName);
-        this.redisTemplate = redisTemplate;
-
+        this(name, priority,groupName,RuleChainNodeTypeNum.fail_end,redisTemplate);
     }
+
+    public RedisFloatValueRule(String name, int priority, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum, StringRedisTemplate redisTemplate) {
+        super(name, priority,groupName,ruleChainNodeTypeNum);
+        this.redisTemplate = redisTemplate;
+    }
+
 
     @Override
     public String getLastCondition(String key,String conditionKey) {

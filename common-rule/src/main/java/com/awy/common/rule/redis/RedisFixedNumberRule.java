@@ -25,7 +25,11 @@ public class RedisFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel> 
     }
 
     public RedisFixedNumberRule(String name, int priority, String groupName, StringRedisTemplate redisTemplate) {
-        super(name, priority, 3,groupName);
+        this(name, priority,groupName,RuleChainNodeTypeNum.fail_end,redisTemplate);
+    }
+
+    public RedisFixedNumberRule(String name, int priority, String groupName,RuleChainNodeTypeNum ruleChainNodeTypeNum, StringRedisTemplate redisTemplate) {
+        super(name, priority, 3,groupName,ruleChainNodeTypeNum);
         this.timeout = 60;
         this.redisTemplate = redisTemplate;
     }
@@ -53,10 +57,6 @@ public class RedisFixedNumberRule extends FixedNumberRule<FixedNumberRuleModel> 
     public void buildRuleConfig(FixedNumberRuleModel model) {
         if (model == null) {
             return;
-        }
-        if (StrUtil.isNotBlank(model.getRuleChainNodeType())) {
-            RuleChainNodeTypeNum ruleChainNodeTypeNum = RuleChainNodeTypeNum.valueOf(model.getRuleChainNodeType());
-            setChainNodeTypeNum(ruleChainNodeTypeNum);
         }
         setFixedNumber(model.getFixedNumber());
         setTimeout(model.getTimeout());

@@ -9,7 +9,4 @@ import lombok.Data;
 @Data
 public class RuleConfigModel {
 
-
-    private String ruleChainNodeType;
-
 }

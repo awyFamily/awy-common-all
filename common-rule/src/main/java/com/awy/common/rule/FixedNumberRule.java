@@ -1,5 +1,6 @@
 package com.awy.common.rule;
 
+import com.awy.common.rule.enums.RuleChainNodeTypeNum;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Setter;
@@ -19,6 +20,11 @@ public abstract class FixedNumberRule<T extends RuleConfigModel> extends Abstrac
 
     public FixedNumberRule(String name,int priority,int fixedNumber, String groupName) {
         super(name,priority,groupName);
+        this.fixedNumber = fixedNumber;
+    }
+
+    public FixedNumberRule(String name, int priority, int fixedNumber, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum) {
+        super(name,priority,groupName,ruleChainNodeTypeNum);
         this.fixedNumber = fixedNumber;
     }
 
