@@ -50,7 +50,20 @@ public class Rules {
     }
 
     public void unRegistry(String name) {
+
         repository.remove(name);
+    }
+
+    public void unRegistryByGroupName(String groupName) {
+        List<IRule> rules = new ArrayList<>();
+        for (Map.Entry<String, IRule> entry : repository.entrySet()) {
+            if (groupName.equals(entry.getValue().getGroupName())) {
+                rules.add(entry.getValue());
+            }
+        }
+        for (IRule rule : rules) {
+            repository.remove(rule.getName());
+        }
     }
 
     public void unRegistry(IRule rule) {
