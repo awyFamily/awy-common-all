@@ -94,7 +94,12 @@ public class Rules {
         }
         boolean support;
         for (IRule rule : rules) {
-            support = rule.isSupport(key, content);
+            try {
+                support = rule.isSupport(key, content);
+            } catch (Exception e) {
+                log.error("trigger error,rule type : {} ,rule name : {} , message : {}",rule.getType(),rule.getName(),e);
+                support = false;
+            }
             if (RuleChainNodeTypeNum.fail_end == rule.getChainNodeType() && !support) {
                 log.info("not met condition , rule type : {} ,rule name : {}",rule.getType(),rule.getName());
                 return false;
