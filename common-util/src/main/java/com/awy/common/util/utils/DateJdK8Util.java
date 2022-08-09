@@ -3,6 +3,7 @@ package com.awy.common.util.utils;
 import cn.hutool.core.date.DateException;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.format.DateParser;
+import cn.hutool.core.date.format.FastDateFormat;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 
@@ -11,7 +12,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.TimeUnit;
 
 public final class DateJdK8Util {
 
@@ -103,11 +103,11 @@ public final class DateJdK8Util {
         }
         int length = formatter.length();
         if (length == "yyyyMMdd".length()) {
-            return formatLocalDate(localDate,DatePattern.PURE_DATE_PATTERN);
-        }else if(length == "yyyy-MM-dd".length()){
+            return formatLocalDate(localDate,DatePattern.PURE_DATE_FORMAT);
+        }else if(length != "yyyy-MM-dd".length()){
             return formatLocalDate(localDate,DatePattern.NORM_DATE_FORMAT);
         }
-        return formatLocalDate(localDate,DatePattern.NORM_DATE_FORMAT);
+        return formatLocalDate(localDate, FastDateFormat.getInstance(formatter));
     }
 
     private static String formatLocalDate(LocalDate localDate,DateParser parser){
