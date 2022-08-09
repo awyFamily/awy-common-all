@@ -102,6 +102,10 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
      */
     public abstract AuthUser getAuthUser(T dto);
 
+    /**
+     * save log service
+     * @return
+     */
     public abstract IAuthLogSaveAdapt getAuthLogService();
 
     /**
@@ -121,7 +125,7 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
         UserDetails userDetails = authUser;
         Authentication userAuthentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-        //
+        //save log
         if (this.getAuthLogService() != null) {
             this.getAuthLogService().insertLoginLog(authUser,SecurityConstant.CUSTOMIZE_AUTH_METHOD,dto.getCustomizeAuthName());
         }

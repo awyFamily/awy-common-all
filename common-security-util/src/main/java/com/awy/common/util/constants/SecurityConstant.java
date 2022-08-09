@@ -12,6 +12,10 @@ public interface SecurityConstant {
 
     String PLAT_FROM_TYPE = "plat_from_types";
 
+    String ROLES = "roles";
+
+    String PERMISSIONS = "permissions";
+
     String COMPANY_IDS = "company_ids";
 
     String N_A = "N/A";
