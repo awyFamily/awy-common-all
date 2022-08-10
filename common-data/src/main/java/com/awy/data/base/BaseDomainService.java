@@ -59,14 +59,14 @@ public abstract class BaseDomainService<M extends IDDDBaseRepository<PO>,F exten
 
     @Transactional(rollbackFor = {Exception.class})
     public DO modify(DO model) {
-        this.beforeModify(model);
-        PO po = this.getBaseFactory().edit(model);
+        PO po = this.beforeModify(model);
+        po = this.getBaseFactory().edit(model,po);
         this.getRepository().updateById(po);
         this.afterModify(model,po);
         return model;
     }
 
-    protected abstract  void beforeModify(DO model);
+    protected abstract  PO beforeModify(DO model);
 
     protected abstract  void afterModify(DO model,PO po);
 

@@ -11,7 +11,7 @@ public abstract class BaseFactory<DO,PO> {
 
     public abstract PO create(DO domainEntity);
 
-    public abstract PO edit(DO domainEntity);
+    public abstract PO edit(DO domainEntity,PO po);
 
     public DO getSimpleInfo(PO po) {
         DO domainEntity = (DO)ReflexUtils.getClassAllField(po.getClass());
