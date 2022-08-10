@@ -1,5 +1,8 @@
 package com.awy.common.util.utils;
 
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -74,7 +77,14 @@ public class NumberUtil extends cn.hutool.core.util.NumberUtil {
     }
 
     private static BigDecimal getRoundBigDecimal(String source,int newScale,RoundingMode mode) {
-        return new BigDecimal(source).setScale(newScale, mode);
+        Assert.isFalse(StrUtil.isBlank(source),"source is empty");
+        return getBigDecimal(new BigDecimal(source),newScale,mode);
+    }
+
+    private static BigDecimal getBigDecimal(BigDecimal bigDecimal,int newScale,RoundingMode mode) {
+        Assert.isFalse(bigDecimal == null,"bigDecimal is null");
+        Assert.isFalse(mode == null,"RoundingMode is null");
+        return bigDecimal.setScale(newScale, mode);
     }
 
 }
