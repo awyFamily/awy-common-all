@@ -116,16 +116,17 @@ public final class InsertOrUpdateSql {
     /**
      * 大数据批量新增,不需要setID(hasDelete默认为false,新增请忽略创建，修改时间)
      * @param t 实体名
+     * @param tableName 实体名
      * @param list 新增对应的实体集合
      * @param ignoreColumn 忽略的列
      * @return 批量新增SQL语句
      * @author yhw
      */
-    public static <T> String getInsertSql(Class<T> t,List<T> list,String...ignoreColumn){
+    public static <T> String getInsertSql(Class<T> t,String tableName,List<T> list,String...ignoreColumn){
         StringBuilder sql = new StringBuilder();
         List<String> columnList = getColumnList(t, list, ignoreColumn);
         sql.append("insert into ");
-        sql.append(getTableName(t));//表名
+        sql.append(StrUtil.isBlank(tableName) ? getTableName(t) : tableName);//表名
         sql.append(" (");
         sql.append(columnList.stream().map(str->toUnderlineCase(str)).collect(Collectors.joining(",")));//列名
         sql.append(") values");
@@ -186,14 +187,15 @@ public final class InsertOrUpdateSql {
     //==================================================================================
     /**
      * 批量修改(请确保list对象中主键列值不能为空)
-     * @param t 实体类名
+     * @param tableName 实体类名
      * @param primaryKey 主键列名(不传递默认主键ID)
+     * @param t 实体类名
      * @param list 修改对应的实体集合
      * @param ignoreColumn 忽略的列
      * @return 批量修改SQL语句
      * @author yhw
      */
-    public static <T> String getUpdateSql(Class<T> t,String primaryKey,List<T> list,String...ignoreColumn) {
+    public static <T> String getUpdateSql(String tableName,String primaryKey,Class<T> t,List<T> list,String...ignoreColumn) {
         long start = System.currentTimeMillis();
         StringBuilder sql = new StringBuilder();
 
@@ -212,7 +214,7 @@ public final class InsertOrUpdateSql {
         List<String> columnList = getColumnList(t, list, ignoreColumn);
 
         sql.append("UPDATE ");
-        sql.append(getTableName(t));//表名
+        sql.append(StrUtil.isBlank(tableName) ? getTableName(t) : tableName);//表名
         sql.append(" SET ");
         //修改内容
         sql.append(getUpdateSqlStr(primaryKey,list,columnList));

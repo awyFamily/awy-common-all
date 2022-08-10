@@ -61,7 +61,11 @@ public final class SqlBatchKit {
      * @param <T> 映射实体对象
      */
     public static <T> void updateBatch(JdbcTemplate jdbcTemplate,Class<T> t,String primaryKey,List<T> list,String...ignoreColumn){
-        jdbcTemplate.update(getUpdateSql(t,primaryKey,list,ignoreColumn));
+        updateBatch(jdbcTemplate, t, null, primaryKey, list, ignoreColumn);
+    }
+
+    public static <T> void updateBatch(JdbcTemplate jdbcTemplate,Class<T> t,String tableName,String primaryKey,List<T> list,String...ignoreColumn){
+        jdbcTemplate.update(getUpdateSql(tableName,primaryKey,t,list,ignoreColumn));
     }
 
     /**
@@ -96,7 +100,11 @@ public final class SqlBatchKit {
      * @param <T> 映射实体对象
      */
     public static <T> void  addBatch(JdbcTemplate jdbcTemplate, Class<T> t, List<T> list, String...ignoreColumn){
-        jdbcTemplate.update(getInsertSql(t,list,ignoreColumn));
+        addBatch(jdbcTemplate,null, t, list, ignoreColumn);
+    }
+
+    public static <T> void  addBatch(JdbcTemplate jdbcTemplate, String tableName, Class<T> t, List<T> list, String...ignoreColumn){
+        jdbcTemplate.update(getInsertSql(t,tableName,list,ignoreColumn));
     }
 
 

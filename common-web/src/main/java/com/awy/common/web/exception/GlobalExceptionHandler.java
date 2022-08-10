@@ -100,6 +100,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(value = NullPointerException.class)
     public ApiResult nullPointerException(NullPointerException exception){
+        exception.printStackTrace();
         return ApiResult.getBuilder()
                 .setMessage("空指针异常,请联系后台管理员")
                 .setCode(CommonConstant.RESPONSE_ERROR)
