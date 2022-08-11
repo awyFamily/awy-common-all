@@ -1,8 +1,5 @@
 package com.awy.data.base;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.awy.common.util.utils.ReflexUtils;
-
 /**
  * @author yhw
  * @date 2022-04-26
@@ -13,11 +10,9 @@ public abstract class BaseFactory<DO,PO> {
 
     public abstract PO edit(DO domainEntity,PO po);
 
-    public DO getSimpleInfo(PO po) {
-        DO domainEntity = (DO)ReflexUtils.getClassAllField(po.getClass());
-        BeanUtil.copyProperties(po,domainEntity);
-        return domainEntity;
-    }
+    private DO model;
+
+    public abstract DO getSimpleInfo(PO po);
 
     public DO getInfo(PO po) {
         DO domainEntity =  this.getSimpleInfo(po);
