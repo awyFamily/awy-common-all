@@ -1,17 +1,19 @@
 package com.awy.common.rule;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.memory.MemoryRuleFactory;
-import com.awy.common.rule.model.FixedNumberRuleModel;
-import com.awy.common.rule.model.FloatValueRuleModel;
-import com.awy.common.rule.model.RuleModel;
-import com.awy.common.rule.model.TimerRuleModel;
+import com.awy.common.rule.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -159,5 +161,78 @@ public class MemoryRuleFactoryTest {
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
         return model;
+    }
+
+
+    @Test
+    public void spElRuleTest() {
+        SpElModel spElModel = new SpElModel();
+        spElModel.setHasAndConCondition(false);
+        List<SpElSimpleModel> modelStrs = new ArrayList<>();
+        SpElSimpleModel spElSimpleModel = SpElSimpleModel.create("at","32",">").or("12","<");
+        modelStrs.add(spElSimpleModel);
+        spElSimpleModel = SpElSimpleModel.create("ah","32",">").or("12","<");
+        modelStrs.add(spElSimpleModel);
+        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+
+        RuleModel model = new RuleModel();
+        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setName("3");
+        model.setPriority(3);
+        model.setExpand(JSONUtil.toJsonStr(spElModel));
+
+        IRule rule = ruleFactory.create(model);
+        JSONObject condition = new JSONObject();
+        condition.putOpt("at","10");
+        condition.putOpt("ah","31");
+        Assert.assertTrue(rule.handler("a",condition.toString()));
+    }
+
+    @Test
+    public void spElRuleTest1() {
+        SpElModel spElModel = new SpElModel();
+        spElModel.setHasAndConCondition(true);
+        List<SpElSimpleModel> modelStrs = new ArrayList<>();
+        SpElSimpleModel spElSimpleModel = SpElSimpleModel.create("at","32",">").or("12","<");
+        modelStrs.add(spElSimpleModel);
+        spElSimpleModel = SpElSimpleModel.create("ah","32",">").or("12","<");
+        modelStrs.add(spElSimpleModel);
+        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+
+        RuleModel model = new RuleModel();
+        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setName("3");
+        model.setPriority(3);
+        model.setExpand(JSONUtil.toJsonStr(spElModel));
+
+        IRule rule = ruleFactory.create(model);
+        JSONObject condition = new JSONObject();
+        condition.putOpt("at","10");
+        condition.putOpt("ah","31");
+        Assert.assertFalse(rule.handler("a",condition.toString()));
+    }
+
+    @Test
+    public void spElRuleTest2() {
+        SpElModel spElModel = new SpElModel();
+        spElModel.setHasAndConCondition(true);
+        List<SpElSimpleModel> modelStrs = new ArrayList<>();
+        SpElSimpleModel spElSimpleModel = SpElSimpleModel.create("at","32",">");
+        modelStrs.add(spElSimpleModel);
+        spElSimpleModel = SpElSimpleModel.create("ah","32",">");
+        modelStrs.add(spElSimpleModel);
+        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+
+        RuleModel model = new RuleModel();
+        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setName("3");
+        model.setPriority(3);
+        model.setExpand(JSONUtil.toJsonStr(spElModel));
+
+        IRule rule = ruleFactory.create(model);
+        JSONObject condition = new JSONObject();
+        condition.putOpt("at","33");
+        condition.putOpt("ah","31");
+        Assert.assertFalse(rule.handler("a",condition.toString()));
     }
 }

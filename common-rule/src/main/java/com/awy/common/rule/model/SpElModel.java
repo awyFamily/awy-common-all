@@ -10,16 +10,16 @@ import lombok.Data;
 public class SpElModel extends RuleConfigModel {
 
     /**
-     * or
-     * and
+     * false  = or
+     * true = and
      */
-    private String conCondition;
+    private Boolean hasAndConCondition = false;
 
     private String conditionCacheKey;
 
     /**
-     * {"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"},
-     * {"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"}
+     * [{"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"},
+     * {"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"}]
      */
     private String els;
 }

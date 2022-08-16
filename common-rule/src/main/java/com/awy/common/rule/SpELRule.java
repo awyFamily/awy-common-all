@@ -21,7 +21,7 @@ import java.util.Map;
 public abstract class SpELRule extends AbstractRule<SpElModel> {
 
     @Setter
-    private String conCondition;
+    private Boolean andConCondition;
 
     private ExpressionParser parser;
 
@@ -56,16 +56,19 @@ public abstract class SpELRule extends AbstractRule<SpElModel> {
             if (model != null) {
                 model.setCKey(json.getStr(conditionKey));
                 hasSuccess = parser.parseExpression(model.toSpElStr()).getValue(Boolean.class);
-                if (hasSuccess) {
-                    return true;
+                //add condition
+                if (this.andConCondition) {
+                    if (!hasSuccess) {
+                        return false;
+                    }
+                } else {
+                    if (hasSuccess) {
+                        return true;
+                    }
                 }
-                if ("and".equals(conCondition)) {
-                    return false;
-                }
-
             }
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -86,15 +89,11 @@ public abstract class SpELRule extends AbstractRule<SpElModel> {
         if (model == null) {
             return;
         }
-        if (StrUtil.isNotBlank(model.getConCondition())) {
-            setConCondition(model.getConCondition());
-        }
+        setAndConCondition(model.getHasAndConCondition());
         if (StrUtil.isNotBlank(model.getEls())) {
-            List<String> array = StrUtil.split(model.getEls(), ",");
-            SpElSimpleModel spElSimpleModel;
-            for (String str : array) {
-                spElSimpleModel = JSONUtil.toBean(str,SpElSimpleModel.class);
-                addCondition(spElSimpleModel);
+            List<SpElSimpleModel> array = JSONUtil.parseArray(model.getEls()).toList(SpElSimpleModel.class);
+            for (SpElSimpleModel simpleModel : array) {
+                addCondition(simpleModel);
             }
         }
     }
