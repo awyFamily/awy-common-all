@@ -46,6 +46,10 @@ public class RedisRuleFactory implements RuleFactory {
                 model = ruleModel.getExpandBean(FloatValueRuleModel.class);
                 rule = new RedisFloatValueRule(ruleModel.getName(),ruleModel.getPriority(),ruleModel.getGroupName(),ruleChainNodeTypeNum,redisTemplate);
                 break;
+            case SP_EL:
+                model = ruleModel.getExpandBean(SpElModel.class);
+                rule = new RedisSpElRule(ruleModel.getName(),ruleModel.getPriority(),ruleModel.getGroupName(),ruleChainNodeTypeNum,redisTemplate);
+                break;
             default:
                 break;
         }

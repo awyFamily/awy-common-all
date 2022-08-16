@@ -59,11 +59,11 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
             return false;
         }
         JSONObject json = JSONUtil.parseObj(condition);
-        boolean result = false;
         Number conditionValue;
         Float lastConditionValue;
         String lastConditionStr;
         Map<String, Number> conditionMap = getConditionMap();
+        //只要满足其中一个(或为第一次触发)，则返回 true
         for (String conditionKey : json.keySet()) {
             conditionValue = conditionMap.get(conditionKey);
             if (conditionValue != null && json.getFloat(conditionKey) != null) {
@@ -72,14 +72,14 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
                     lastConditionValue = Float.valueOf(lastConditionStr);
                     //区间(last 上下浮动数值)
                     if (Math.abs(json.getFloat(conditionKey) - lastConditionValue) >= conditionValue.floatValue()) {
-                        result = true;
+                        return true;
                     }
                 } else {
-                    result = true;
+                    return true;
                 }
             }
         }
-        return result;
+        return false;
     }
 
     @Override

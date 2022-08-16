@@ -14,6 +14,7 @@ public enum RuleTypeEnum {
     TIMER("时间(间隔时间)"),
     FIXED_NUMBER("固定次数(某段时间内)"),
     FLOAT_VALUE("浮动值"),
+    SP_EL("EL表达式"),
     ;
 
     public String getId() {

@@ -18,6 +18,12 @@ public interface IRule<T extends RuleConfigModel> {
 
     RuleChainNodeTypeNum getChainNodeType();
 
+    /**
+     * 是否支持
+     * @param key 标识
+     * @param condition 需要判断条件的数据
+     * @return 布尔值
+     */
     boolean isSupport(String key,String condition);
 
     boolean successCallback(String key,String condition);

@@ -38,6 +38,10 @@ public class MemoryRuleFactory implements RuleFactory {
                 model = ruleModel.getExpandBean(FloatValueRuleModel.class);
                 rule = new MemoryFloatValueRule(ruleModel.getName(),ruleModel.getPriority(),ruleModel.getGroupName(),ruleChainNodeTypeNum);
                 break;
+            case SP_EL:
+                model = ruleModel.getExpandBean(SpElModel.class);
+                rule = new MemorySpElRule(ruleModel.getName(),ruleModel.getPriority(),ruleModel.getGroupName(),ruleChainNodeTypeNum);
+                break;
             default:
                 break;
         }
