@@ -3,7 +3,7 @@ package com.awy.data.base;
 import java.io.Serializable;
 import java.util.Collection;
 
-public interface IDDDBaseRepository<T> {
+public interface BaseRepository<T> {
 
     int insert(T t);
 

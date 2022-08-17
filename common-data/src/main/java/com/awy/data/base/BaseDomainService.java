@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @param <DO> 领域层对象
  * @param <PO> 数据库映射对象
  */
-public abstract class BaseDomainService<M extends IDDDBaseRepository<PO>,F extends BaseFactory<DO,PO>,DO,PO> {
+public abstract class BaseDomainService<M extends BaseRepository<PO>,F extends BaseFactory<DO,PO>,DO,PO> {
 
     @Autowired
     private M baseRepository;

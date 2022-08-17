@@ -1,0 +1,39 @@
+package {0}.domain.{1}.service;
+
+import cn.hutool.core.bean.BeanUtil;
+import {}.data.base.BaseFactory;
+import {0}.domain.{1}.entity.{2};
+import {0}.domain.{1}.repository.po.{3};
+import org.springframework.stereotype.Service;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@Service
+public class {2}Factory extends BaseFactory<{2}, {3}> {
+
+    @Override
+    public {3} create({2} model) {
+        {3} po = new {3}();
+        return this.edit(model,po);
+    }
+
+    @Override
+    public {3} edit({2} model, {3} po) {
+        BeanUtil.copyProperties(model,po);
+        return po;
+    }
+
+    @Override
+    public {2} getSimpleInfo({3} po) {
+        {2} config = new {2}();
+        BeanUtil.copyProperties(po,config);
+        return config;
+    }
+
+    @Override
+    public void wrapperInfo({2} model) {
+
+    }
+}
