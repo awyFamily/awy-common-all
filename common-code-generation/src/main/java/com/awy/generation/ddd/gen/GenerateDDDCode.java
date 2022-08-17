@@ -135,7 +135,7 @@ public class GenerateDDDCode {
 
     private void genDomainService() {
         String poStr = getFileContent("templates/DDDDomainServiceTemplate.template");
-        StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName(),model.getBaseDomainServiceVersion()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".service";
         genFile(poStr,replaceArr,packageName, DDDConstant.domain_service_suffix);
