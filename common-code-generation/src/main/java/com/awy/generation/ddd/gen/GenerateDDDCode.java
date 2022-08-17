@@ -1,6 +1,6 @@
 package com.awy.generation.ddd.gen;
 
-import cn.hutool.core.io.file.FileReader;
+import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
@@ -9,6 +9,8 @@ import com.awy.generation.constants.GenerationConstant;
 import com.awy.generation.ddd.model.GenerationModel;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.List;
 
 /**
@@ -82,65 +84,66 @@ public class GenerateDDDCode {
         }
     }
 
+
     private void genPO() {
-        FileReader reader = new FileReader("templates/DDDPOTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDPOTemplate.template");
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".repository.po";
         genFile(poStr,replaceArr,packageName,DDDConstant.po_suffix);
     }
 
     private void genDO() {
-        FileReader reader = new FileReader("templates/DDDEntityTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDEntityTemplate.template");
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".entity";
         genFile(poStr,replaceArr,packageName, GenerationConstant.point_java);
     }
 
     private void genMapper() {
-        FileReader reader = new FileReader("templates/DDDMapperTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDMapperTemplate.template");
+        poStr = StrUtil.format(poStr,model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".repository.mapper";
         genFile(poStr,replaceArr,packageName, GenerationConstant.mapper_suffix + GenerationConstant.point_java);
     }
 
     private void genRepository() {
-        FileReader reader = new FileReader("templates/DDDRepositoryTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDRepositoryTemplate.template");
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".repository.facade";
         genFile(poStr,replaceArr,packageName, DDDConstant.repository_suffix);
     }
 
     private void genRepositoryImpl() {
-        FileReader reader = new FileReader("templates/DDDRepositoryImplTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDRepositoryImplTemplate.template");
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".repository.persistence";
         genFile(poStr,replaceArr,packageName, DDDConstant.repository_impl_suffix);
     }
 
     private void genFactory() {
-        FileReader reader = new FileReader("templates/DDDFactoryTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDFactoryTemplate.template");
+        poStr = StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".service";
         genFile(poStr,replaceArr,packageName, DDDConstant.factory_suffix);
     }
 
     private void genDomainService() {
-        FileReader reader = new FileReader("templates/DDDDomainServiceTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getDataGroupName(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDDomainServiceTemplate.template");
+        StrUtil.format(poStr,model.getDataGroupName(),model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.getPoName(),model.getBaseDomainServiceVersion()};
         String packageName = model.getPackagePrefix() + ".domain." + model.getDomain() + ".service";
         genFile(poStr,replaceArr,packageName, DDDConstant.domain_service_suffix);
     }
 
     private void genApplicationService() {
-        FileReader reader = new FileReader("templates/DDDApplicationServiceTemplate.template");
-        String poStr = StrUtil.format(reader.readString(),model.getAuthor(),model.getDateStr());
+        String poStr = getFileContent("templates/DDDApplicationServiceTemplate.template");
+        poStr = StrUtil.format(poStr,model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.toLowerCaseByFirstChar(model.getDomainEntityName())};
         String packageName = model.getPackagePrefix() + ".application.service";
         genFile(poStr,replaceArr,packageName, DDDConstant.application_service_suffix);
@@ -153,7 +156,7 @@ public class GenerateDDDCode {
             }
         }
 
-        String packagePath =  getRelativePath();
+        String packagePath =  getAbsolutePath();
 
         List<String> split = StrUtil.split(packageName, ".");
         for (String s : split) {
@@ -167,7 +170,64 @@ public class GenerateDDDCode {
         }
     }
 
-    private String getRelativePath() {
-        return System.getProperty("user.dir")  +  File.separatorChar + model.getArtifactId() + File.separatorChar  + "src" +File.separatorChar + "main" + File.separatorChar + "java"+ File.separatorChar;
+    private String getFileContent(String relativePath) {
+        InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath);
+        return IoUtil.read(inputStream, Charset.forName("utf-8"));
+    }
+
+    private String getAbsolutePath() {
+        return getArtifactPath() + File.separatorChar  + "src" +File.separatorChar + "main" + File.separatorChar + "java"+ File.separatorChar;
+    }
+
+    private String artifactPath;
+
+    public String getArtifactPath() {
+        if (StrUtil.isBlank(this.artifactPath)) {
+            this.artifactPath = getPollExpectFilePath(new File(System.getProperty("user.dir")), model.getArtifactId());
+            Assert.isFalse(StrUtil.isBlank(this.artifactPath),"没有找到模块:{}",model.getArtifactId());
+        }
+        return this.artifactPath;
+    }
+
+    private  String getPollExpectFilePath(File file, String expectFileName) {
+        String relativePath = getExpectFilePath(file, expectFileName);
+        if (StrUtil.isBlank(relativePath)) {
+            String[] childrenFileList = file.list();
+            File inner;
+            //第二次循环
+            for (String filename : childrenFileList) {
+                inner = new File(file.getPath() + File.separatorChar + filename);
+                if (!inner.isDirectory()) {
+                    continue;
+                }
+                relativePath = getExpectFilePath(inner, expectFileName);
+                if (StrUtil.isNotBlank(relativePath)) {
+                    return relativePath;
+                }
+                //第三次循环
+                String[] childrenInnerFileList = inner.list();
+                for (String innerFilename : childrenInnerFileList) {
+                    relativePath = getExpectFilePath(new File(inner.getPath() + File.separatorChar + innerFilename), expectFileName);
+                    if (StrUtil.isNotBlank(relativePath)) {
+                        return relativePath;
+                    }
+                }
+            }
+        }
+        return relativePath;
+    }
+
+    private  String getExpectFilePath(File file,String expectFileName) {
+        if (file != null && file.isDirectory()) {
+            String path = file.getPath();
+            String[] childrenFileList = file.list();
+
+            for (String filename : childrenFileList) {
+                if(expectFileName.equals(filename)) {
+                    return path + File.separatorChar + filename;
+                }
+            }
+        }
+        return "";
     }
 }
