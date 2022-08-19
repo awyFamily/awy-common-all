@@ -50,7 +50,6 @@ public class Rules {
     }
 
     public void unRegistry(String name) {
-
         repository.remove(name);
     }
 

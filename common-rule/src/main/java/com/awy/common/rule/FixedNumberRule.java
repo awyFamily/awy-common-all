@@ -1,7 +1,7 @@
 package com.awy.common.rule;
 
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
-import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Setter;
 
@@ -29,8 +29,8 @@ public abstract class FixedNumberRule<T extends RuleConfigModel> extends Abstrac
     }
 
     @Override
-    public RuleTypeEnum getType() {
-        return RuleTypeEnum.FIXED_NUMBER;
+    public String getType() {
+        return DefaultRuleTypeEnum.FIXED_NUMBER.getId();
     }
 
     public abstract int getNumber(String key);

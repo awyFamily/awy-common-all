@@ -1,17 +1,16 @@
 package com.awy.common.rule;
 
-import cn.hutool.core.util.StrUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
-import com.awy.common.rule.enums.RuleTypeEnum;
 import com.awy.common.rule.model.SpElModel;
 import com.awy.common.rule.model.SpElSimpleModel;
 import lombok.Setter;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,8 +38,8 @@ public abstract class SpELRule extends AbstractRule<SpElModel> {
     public abstract Boolean addCondition(SpElSimpleModel model);
 
     @Override
-    public RuleTypeEnum getType() {
-        return RuleTypeEnum.SP_EL;
+    public String getType() {
+        return DefaultRuleTypeEnum.SP_EL.getId();
     }
 
     @Override
@@ -48,6 +47,7 @@ public abstract class SpELRule extends AbstractRule<SpElModel> {
         if (!JSONUtil.isTypeJSON(condition)) {
             return false;
         }
+        //只解析一层,不进行深层数据解析
         JSONObject json = JSONUtil.parseObj(condition);
         Map<String, SpElSimpleModel> conditionMap = getConditionMap();
         Boolean hasSuccess;
@@ -90,9 +90,8 @@ public abstract class SpELRule extends AbstractRule<SpElModel> {
             return;
         }
         setAndConCondition(model.getHasAndConCondition());
-        if (StrUtil.isNotBlank(model.getEls())) {
-            List<SpElSimpleModel> array = JSONUtil.parseArray(model.getEls()).toList(SpElSimpleModel.class);
-            for (SpElSimpleModel simpleModel : array) {
+        if (CollUtil.isNotEmpty(model.getEls())) {
+            for (SpElSimpleModel simpleModel : model.getEls()) {
                 addCondition(simpleModel);
             }
         }

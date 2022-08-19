@@ -1,10 +1,8 @@
 package com.awy.common.rule;
 
-import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
-import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.memory.MemoryRuleFactory;
 import com.awy.common.rule.model.*;
 import org.junit.Assert;
@@ -82,7 +80,7 @@ public class MemoryRuleFactoryTest {
         floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FLOAT_VALUE.getId());
         model.setName("2");
         model.setPriority(2);
         model.setExpand(JSONUtil.toJsonStr(floatValueRuleModel));
@@ -127,7 +125,7 @@ public class MemoryRuleFactoryTest {
         fixedNumberRuleModel.setFixedNumber(2);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FIXED_NUMBER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FIXED_NUMBER.getId());
         model.setName("1");
         model.setPriority(1);
         model.setExpand(JSONUtil.toJsonStr(fixedNumberRuleModel));
@@ -156,7 +154,7 @@ public class MemoryRuleFactoryTest {
         timerRuleModel.setTimeout(3L);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.TIMER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.TIMER.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
@@ -173,10 +171,10 @@ public class MemoryRuleFactoryTest {
         modelStrs.add(spElSimpleModel);
         spElSimpleModel = SpElSimpleModel.create("ah","32",">").or("12","<");
         modelStrs.add(spElSimpleModel);
-        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+        spElModel.setEls(modelStrs);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setRuleType(DefaultRuleTypeEnum.SP_EL.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(spElModel));
@@ -197,10 +195,10 @@ public class MemoryRuleFactoryTest {
         modelStrs.add(spElSimpleModel);
         spElSimpleModel = SpElSimpleModel.create("ah","32",">").or("12","<");
         modelStrs.add(spElSimpleModel);
-        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+        spElModel.setEls(modelStrs);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setRuleType(DefaultRuleTypeEnum.SP_EL.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(spElModel));
@@ -221,10 +219,10 @@ public class MemoryRuleFactoryTest {
         modelStrs.add(spElSimpleModel);
         spElSimpleModel = SpElSimpleModel.create("ah","32",">");
         modelStrs.add(spElSimpleModel);
-        spElModel.setEls(JSONUtil.toJsonStr(modelStrs));
+        spElModel.setEls(modelStrs);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.SP_EL.getId());
+        model.setRuleType(DefaultRuleTypeEnum.SP_EL.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(spElModel));

@@ -2,6 +2,8 @@ package com.awy.common.rule.model;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author yhw
  * @date 2022-08-15
@@ -21,5 +23,6 @@ public class SpElModel extends RuleConfigModel {
      * [{"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"},
      * {"cKey":"a","firstV":"b","firstE":"gt","conC":"or","secondV":"b","secondE":"lt"}]
      */
-    private String els;
+//    private String els;
+    private List<SpElSimpleModel> els;
 }

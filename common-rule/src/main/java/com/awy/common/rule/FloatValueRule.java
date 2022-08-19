@@ -4,7 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
-import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.model.FloatValueRuleModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,8 +41,8 @@ public abstract class FloatValueRule extends AbstractRule<FloatValueRuleModel> {
     }
 
     @Override
-    public RuleTypeEnum getType() {
-        return RuleTypeEnum.FLOAT_VALUE;
+    public String getType() {
+        return DefaultRuleTypeEnum.FLOAT_VALUE.getId();
     }
 
     public abstract String getLastCondition(String key, String conditionKey);
