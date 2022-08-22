@@ -2,6 +2,7 @@ package com.awy.data.base;
 
 import cn.hutool.core.lang.Assert;
 import com.awy.data.constants.DataConstant;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,9 +17,11 @@ import java.io.Serializable;
  */
 public abstract class BaseDomainService<M extends BaseRepository<PO>,F extends BaseFactory<DO,PO>,DO,PO> {
 
+    @Setter
     @Autowired
     private M baseRepository;
 
+    @Setter
     @Autowired
     private F baseFactory;
 
