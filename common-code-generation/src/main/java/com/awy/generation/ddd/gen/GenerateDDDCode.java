@@ -31,6 +31,7 @@ public class GenerateDDDCode {
     public static GenerateDDDCode create(String dataGroupName, String artifactId, String domain) {
         return create(dataGroupName,artifactId,domain,"");
     }
+
     public static GenerateDDDCode create(String dataGroupName, String artifactId, String domain,String baseDomainServiceVersion) {
         return create(dataGroupName,"",artifactId,"",domain,baseDomainServiceVersion);
     }

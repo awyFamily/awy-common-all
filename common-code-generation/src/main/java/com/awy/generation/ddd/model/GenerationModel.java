@@ -14,11 +14,18 @@ import java.time.LocalDateTime;
 @Data
 public class GenerationModel {
 
+    /**
+     * data依赖包, 包的前缀(默认 com.awy)
+     */
     private String dataGroupName;
 
     private String author;
 
     private String dateStr;
+
+    public GenerationModel(String author, String artifactId, String packagePrefix, String domain) {
+        this("",author,artifactId,packagePrefix,domain,"");
+    }
 
     public GenerationModel(String dataGroupName, String author, String artifactId, String packagePrefix, String domain,String baseDomainServiceVersion) {
         this.dataGroupName = dataGroupName;
@@ -80,6 +87,9 @@ public class GenerationModel {
         return this.domainEntityName;
     }
 
+    /**
+     * po 名称
+     */
     private String poName;
 
     public String getPoName() {
