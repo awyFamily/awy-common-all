@@ -60,7 +60,7 @@ public class GenerateDDDCode {
     }
 
     public GenerateDDDCode genApplicationService(boolean genApplicationService) {
-        this.genDO = genApplicationService;
+        this.genApplicationService = genApplicationService;
         return this;
     }
 
