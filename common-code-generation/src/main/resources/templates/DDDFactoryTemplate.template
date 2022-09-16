@@ -21,15 +21,15 @@ public class {2}Factory extends BaseFactory<{2}, {3}> {
 
     @Override
     public {3} edit({2} model, {3} po) {
-        BeanUtil.copyProperties(model,po);
+        BeanUtil.copyProperties(model,po,"createTime","updateTime","createBy","updateBy");
         return po;
     }
 
     @Override
     public {2} getSimpleInfo({3} po) {
-        {2} config = new {2}();
-        BeanUtil.copyProperties(po,config);
-        return config;
+        {2} model = new {2}();
+        BeanUtil.copyProperties(po,model);
+        return model;
     }
 
     @Override
