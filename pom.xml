@@ -118,6 +118,7 @@
         <module>common-tcp</module>
         <module>common-test</module>
         <module>common-rule</module>
+        <module>common-generate-labels</module>
 
 
     </modules>
