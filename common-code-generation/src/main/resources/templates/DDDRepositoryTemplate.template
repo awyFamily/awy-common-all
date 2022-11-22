@@ -1,0 +1,12 @@
+package {0}.domain.{1}.repository.facade;
+
+import {}.data.base.BaseRepository;
+import {0}.domain.{1}.repository.po.{3};
+
+/**
+ * @author {}
+ * @date {}
+ */
+public interface {2}Repository extends BaseRepository<{3}> {
+
+}

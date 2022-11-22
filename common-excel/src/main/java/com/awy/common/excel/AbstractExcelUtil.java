@@ -767,7 +767,6 @@ public abstract class AbstractExcelUtil<T>{
             declaredMethod = clazz.getDeclaredMethod(getMethodName(column));
         } catch (NoSuchMethodException e) {
             declaredMethod = clazz.getSuperclass().getDeclaredMethod(getMethodName(column));
-            e.printStackTrace();
         } catch (SecurityException e) {
             e.printStackTrace();
         }

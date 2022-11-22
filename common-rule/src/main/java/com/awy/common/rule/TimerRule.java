@@ -2,7 +2,7 @@ package com.awy.common.rule;
 
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
-import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.model.RuleConfigModel;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,7 +29,7 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
     }
 
     public TimerRule(String name, int priority, String groupName) {
-        super(name,priority,groupName);
+        this(name,priority,groupName,RuleChainNodeTypeNum.fail_end);
     }
 
     public TimerRule(String name, int priority, String groupName, RuleChainNodeTypeNum ruleChainNodeTypeNum) {
@@ -37,8 +37,8 @@ public abstract class TimerRule<T extends RuleConfigModel> extends AbstractRule<
     }
 
     @Override
-    public RuleTypeEnum getType() {
-        return RuleTypeEnum.TIMER;
+    public String getType() {
+        return DefaultRuleTypeEnum.TIMER.getId();
     }
 
     public abstract String getCache(String key);

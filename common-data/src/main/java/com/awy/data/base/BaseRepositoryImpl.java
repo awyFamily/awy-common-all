@@ -19,7 +19,7 @@ import java.util.Collection;
  * @author yhw
  * @date 2022-04-26
  */
-public class BaseRepositoryImpl<M extends BaseMapper<T>, T> implements IDDDBaseRepository<T> {
+public class BaseRepositoryImpl<M extends BaseMapper<T>, T> implements BaseRepository<T> {
 
     @Getter
     @Setter

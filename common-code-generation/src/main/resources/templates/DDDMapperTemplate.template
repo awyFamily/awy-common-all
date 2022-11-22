@@ -1,0 +1,11 @@
+package {0}.domain.{1}.repository.mapper;
+
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import {0}.domain.{1}.repository.po.{3};
+
+/**
+ * @author {}
+ * @date {}
+ */
+public interface {2}Mapper extends BaseMapper<{3}> {
+}

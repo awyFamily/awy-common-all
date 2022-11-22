@@ -17,6 +17,9 @@ public class RuleModel {
 
     private int priority;
 
+    /**
+     * 规则类型
+     */
     private String ruleType;
 
     private String ruleChainNodeType;

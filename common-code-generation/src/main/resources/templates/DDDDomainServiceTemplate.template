@@ -1,0 +1,49 @@
+package {0}.domain.{1}.service;
+
+
+import cn.hutool.core.lang.Assert;
+import {}.data.base.BaseDomainService{4};
+import {0}.domain.{1}.entity.{2};
+import {0}.domain.{1}.repository.facade.{2}Repository;
+import {0}.domain.{1}.repository.po.{3};
+import org.springframework.stereotype.Service;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@Service
+public class {2}DomainService extends BaseDomainService{4}<{2}Repository,{2}Factory, {2}, {3}> {
+
+    @Override
+    protected void beforeCreate({2} model) {
+    }
+
+    @Override
+    protected void afterCreate({2} model, {3} po) {
+        model.setId(po.getId());
+    }
+
+    @Override
+    protected {2}PO beforeModify({2} model) {
+        {3} po = this.getRepository().getById(model.getId());
+        Assert.isFalse(po == null,"数据不存在");
+        return po;
+    }
+
+    @Override
+    protected void afterModify({2} model, {3} po) {
+
+    }
+
+    @Override
+    protected void beforeDelete({3} po) {
+
+    }
+
+    @Override
+    protected void afterDelete({3} po) {
+
+    }
+
+}

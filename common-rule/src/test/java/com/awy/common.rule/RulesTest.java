@@ -2,7 +2,7 @@ package com.awy.common.rule;
 
 import cn.hutool.json.JSONUtil;
 import com.awy.common.rule.enums.RuleChainNodeTypeNum;
-import com.awy.common.rule.enums.RuleTypeEnum;
+import com.awy.common.rule.enums.DefaultRuleTypeEnum;
 import com.awy.common.rule.memory.MemoryFixedNumberRule;
 import com.awy.common.rule.model.FixedNumberRuleModel;
 import com.awy.common.rule.model.FloatValueRuleModel;
@@ -120,7 +120,7 @@ public class RulesTest {
         fixedNumberRuleModel.setFixedNumber(3);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FIXED_NUMBER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FIXED_NUMBER.getId());
         model.setName("1");
         model.setPriority(1);
         model.setExpand(JSONUtil.toJsonStr(fixedNumberRuleModel));
@@ -134,7 +134,7 @@ public class RulesTest {
         floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FLOAT_VALUE.getId());
         model.setName("2");
         model.setPriority(2);
         model.setExpand(JSONUtil.toJsonStr(floatValueRuleModel));
@@ -146,7 +146,7 @@ public class RulesTest {
         timerRuleModel.setTimeout(3L);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.TIMER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.TIMER.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
@@ -195,7 +195,7 @@ public class RulesTest {
         floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FLOAT_VALUE.getId());
         model.setRuleChainNodeType(RuleChainNodeTypeNum.success_end_fail_continue.getId());
         model.setName("2");
         model.setPriority(2);
@@ -209,7 +209,7 @@ public class RulesTest {
 //        timerRuleModel.setRuleChainNodeType(RuleChainNodeTypeNum.one_success.getId());
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.TIMER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.TIMER.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
@@ -265,7 +265,7 @@ public class RulesTest {
         fixedNumberRuleModel.setFixedNumber(3);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FIXED_NUMBER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FIXED_NUMBER.getId());
         model.setName("1");
         model.setPriority(1);
         model.setExpand(JSONUtil.toJsonStr(fixedNumberRuleModel));
@@ -279,7 +279,7 @@ public class RulesTest {
         floatValueRuleModel.setFloatValueMaps(JSONUtil.toJsonStr(floatMap));
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.FLOAT_VALUE.getId());
+        model.setRuleType(DefaultRuleTypeEnum.FLOAT_VALUE.getId());
         model.setName("2");
         model.setPriority(2);
         model.setExpand(JSONUtil.toJsonStr(floatValueRuleModel));
@@ -291,7 +291,7 @@ public class RulesTest {
         timerRuleModel.setTimeout(3L);
 
         RuleModel model = new RuleModel();
-        model.setRuleType(RuleTypeEnum.TIMER.getId());
+        model.setRuleType(DefaultRuleTypeEnum.TIMER.getId());
         model.setName("3");
         model.setPriority(3);
         model.setExpand(JSONUtil.toJsonStr(timerRuleModel));
