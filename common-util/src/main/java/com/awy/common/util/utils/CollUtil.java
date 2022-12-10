@@ -20,33 +20,14 @@ public class CollUtil extends cn.hutool.core.collection.CollUtil {
         if(CollUtil.isEmpty(collection) || groupKey == null){
             return new HashMap();
         }
-        Map<? extends K, List<T>> map = collection.stream().filter(obj -> ObjectUtil.isNotNull(obj))
-                .collect(Collectors.groupingBy(groupKey));
-        if(CollUtil.isEmpty(map)){
-            return new HashMap();
-        }
-        Map<K,T> resultMap = new HashMap();
-        for (Map.Entry<? extends K, List<T>> entry : map.entrySet()) {
-            resultMap.put(entry.getKey(),entry.getValue().get(0));
-        }
-        return resultMap;
+        return collection.stream().filter(obj -> ObjectUtil.isNotNull(obj)).collect(Collectors.toMap(groupKey,obj -> obj));
     }
-
 
     public  static <T,K> Map<K,T>  conversionConcurrentMap(Collection<T> collection, Function<? super T, ? extends K> groupKey){
         if(CollUtil.isEmpty(collection) || groupKey == null){
             return new ConcurrentHashMap<>();
         }
-        Map<? extends K, List<T>> map = collection.stream().filter(obj -> ObjectUtil.isNotNull(obj))
-                .collect(Collectors.groupingByConcurrent(groupKey));
-        if(CollUtil.isEmpty(map)){
-            return new ConcurrentHashMap<>();
-        }
-        Map<K,T> resultMap = new ConcurrentHashMap<>();
-        for (Map.Entry<? extends K, List<T>> entry : map.entrySet()) {
-            resultMap.put(entry.getKey(),entry.getValue().get(0));
-        }
-        return resultMap;
+        return collection.stream().filter(obj -> ObjectUtil.isNotNull(obj)).collect(Collectors.toConcurrentMap(groupKey,obj -> obj));
     }
 
     /**
