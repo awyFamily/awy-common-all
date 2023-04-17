@@ -29,7 +29,7 @@
 		<mysql.connector.java.version>8.0.28</mysql.connector.java.version>
 		<!-- 稳定版 -->
 		<jedis.version>2.9.0</jedis.version>
-		<spring.data.mongodb.version>2.1.9.RELEASE</spring.data.mongodb.version>
+		<spring.data.mongodb.version>3.3.5</spring.data.mongodb.version>
 		<ojdbc6.version>11.2.0.3</ojdbc6.version>
 		<!-- alibaba druid 连接池 -->
 		<druid.spring.boot.starter>1.1.9</druid.spring.boot.starter>
