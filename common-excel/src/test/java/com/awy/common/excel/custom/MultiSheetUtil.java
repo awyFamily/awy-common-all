@@ -1,6 +1,8 @@
-package com.awy.common.excel;
+package com.awy.common.excel.custom;
 
 import cn.hutool.core.collection.CollectionUtil;
+import com.awy.common.excel.AbstractExcelUtil;
+import com.awy.common.excel.MultiSheetImportVO;
 import org.apache.poi.ss.usermodel.*;
 
 import java.util.List;
@@ -40,6 +42,13 @@ public class MultiSheetUtil extends AbstractExcelUtil<MultiSheetImportVO> {
 
     }
 
+    /**
+     * 自定义每一行数据生成一个 sheet
+     * @param workbook 工作薄
+     * @param datas 数据列表
+     * @param titles 表头
+     * @param widths 宽度列表
+     */
     @Override
     protected void writeCustomizeData(Workbook workbook, List<MultiSheetImportVO> datas, String[] titles, Integer[] widths) {
         Sheet sheet;
@@ -61,7 +70,7 @@ public class MultiSheetUtil extends AbstractExcelUtil<MultiSheetImportVO> {
             //异常天数
             setCellGBKValue(style,row.createCell(2, CellType.STRING),"0");
 
-            //空两行
+            //空两行(自定义跳过两行.....)
 
             //第四行（对应excel 下标5行）
             row = sheet.createRow(4);

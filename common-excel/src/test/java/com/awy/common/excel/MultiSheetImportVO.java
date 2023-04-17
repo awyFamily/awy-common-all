@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@NoArgsConstructor
 @Data
 public class MultiSheetImportVO {
 
@@ -20,6 +21,14 @@ public class MultiSheetImportVO {
             return new ArrayList<>();
         }
         return details.stream().sorted(Comparator.comparing(Detail::getData)).collect(Collectors.toList());
+    }
+
+    public MultiSheetImportVO(String sn, String data, Integer number, String data2, Integer number2) {
+        this.sn = sn;
+        List<Detail>  details = new ArrayList<>();
+        details.add(new Detail(data,number));
+        details.add(new Detail(data2,number2));
+        this.details = details;
     }
 
 
