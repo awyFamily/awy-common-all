@@ -1,5 +1,6 @@
 package com.awy.common.excel.enums;
 
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.excel.constants.PoiPool;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,5 +17,16 @@ public enum  ExcelTypeEnum {
 
     private String suffix;
 
-//    private
+    public static ExcelTypeEnum getByFileSuffix(String path) {
+        if(StrUtil.isEmpty(path)){
+            throw new RuntimeException("file path is empty ...");
+        }
+        if(path.endsWith(PoiPool.XSSF_WORK_BOOK)){
+            return XSSF_WORK_BOOK;
+        }
+        if(path.endsWith(PoiPool.HSSF_WORK_BOOK)){
+            return HSSF_WORK_BOOK;
+        }
+        throw new RuntimeException("file type error ...");
+    }
 }

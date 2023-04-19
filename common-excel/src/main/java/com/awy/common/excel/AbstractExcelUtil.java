@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
 import com.awy.common.excel.constants.PoiPool;
 import com.awy.common.excel.enums.ExcelTypeEnum;
+import com.awy.common.excel.utils.ExcelHelper;
 import com.awy.common.util.utils.FileUtil;
 import lombok.Data;
 import org.apache.commons.compress.utils.Lists;
@@ -17,8 +18,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -38,7 +37,7 @@ import java.util.stream.Collectors;
  * @author yhw
  */
 @Data
-public abstract class AbstractExcelUtil<T>{
+public abstract class AbstractExcelUtil<T>  {
 
     //====================================================== import =================================================================
 
@@ -59,7 +58,7 @@ public abstract class AbstractExcelUtil<T>{
      * @return
      */
     public List<Map<String,Object>> importRemote(String networkPath,String[] columns) {
-        return readData(getImportWorkbook(networkPath, PoiPool.NOT_NATIVE_FILE, getFileSuffix(networkPath)), columns);
+        return readData(ExcelHelper.getImportWorkbook(networkPath), columns);
     }
 
     /**
@@ -69,7 +68,7 @@ public abstract class AbstractExcelUtil<T>{
      * @return
      */
     public List<Map<String,Object>> importNative(String path,String[] columns){
-        return readData(getImportWorkbook(path,PoiPool.IS_NATIVE_FILE,getFileSuffix(path)),columns);
+        return readData(ExcelHelper.getImportWorkbook(path), columns);
     }
 
     /**
@@ -80,7 +79,7 @@ public abstract class AbstractExcelUtil<T>{
      * @return 数据列表
      */
     public List<Map<String,Object>> importStream(InputStream inputStream,String fileName,String[] columns) {
-        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)), columns);
+        return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns);
     }
 
     //--------------------------- import get object list ---------------------------------------
@@ -103,7 +102,7 @@ public abstract class AbstractExcelUtil<T>{
      */
     public List<T> importRemote(String networkPath,String[] columns,Class<T> clazz) {
 //        return getResultList(importRemote(networkPath,columns),clazz);
-        return readData(getImportWorkbook(networkPath, PoiPool.NOT_NATIVE_FILE, getFileSuffix(networkPath)),columns,clazz);
+        return readData(ExcelHelper.getImportWorkbook(networkPath), columns, clazz);
     }
 
     /**
@@ -115,7 +114,7 @@ public abstract class AbstractExcelUtil<T>{
      */
     public List<T> importNative(String path,String[] columns,Class<T> clazz){
 //        return getResultList(importNative(path,columns),clazz);
-        return readData(getImportWorkbook(path, PoiPool.IS_NATIVE_FILE, getFileSuffix(path)),columns,clazz);
+        return readData(ExcelHelper.getImportWorkbook(path), columns, clazz);
     }
 
     /**
@@ -128,80 +127,12 @@ public abstract class AbstractExcelUtil<T>{
      */
     public List<T> importStream(InputStream inputStream,String fileName,String[] columns,Class<T> clazz){
 //        return getResultList(importNative(path,columns),clazz);
-        return readData(getImportWorkbook(inputStream, getFileSuffix(fileName)),columns,clazz);
+        return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns, clazz);
     }
 
 
 
     //================================== import common option =======================================================
-
-    private InputStream uploadFile(String path){
-        try {
-            URL url = new URL(path);
-            URLConnection conn = url.openConnection();
-            //设置超时时间
-            conn.setConnectTimeout(60*1000);
-            //防止屏蔽程序抓取而返回403错误
-            conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
-            return conn.getInputStream();
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("upload timeOut or file not exists",e);
-        }
-    }
-
-    private ExcelTypeEnum getFileSuffix(String path){
-        if(StrUtil.isEmpty(path)){
-            throw new RuntimeException("file path is empty ...");
-        }
-        if(path.endsWith(PoiPool.XSSF_WORK_BOOK)){
-            return ExcelTypeEnum.XSSF_WORK_BOOK;
-        }
-        if(path.endsWith(PoiPool.HSSF_WORK_BOOK)){
-            return ExcelTypeEnum.HSSF_WORK_BOOK;
-        }
-        throw new RuntimeException("file type error ...");
-    }
-
-    private Workbook getImportWorkbook(String path,Boolean isNativeFile,ExcelTypeEnum typeEnum){
-        try(InputStream inputStream = isNativeFile ? new FileInputStream(path) : uploadFile(path)){
-            /*switch (typeEnum){
-                case XSSF_WORK_BOOK:
-                    workbook = createXssfWorkbook(inputStream);
-                    break;
-                case HSSF_WORK_BOOK:
-                    workbook = createHssfWorkbook(inputStream);
-                    break;
-                default:
-                    throw new RuntimeException("excel type not exists");
-            }*/
-            return this.getImportWorkbook(inputStream,typeEnum);
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Workbook getImportWorkbook(InputStream inputStream,ExcelTypeEnum typeEnum){
-        if(inputStream == null){
-            throw new RuntimeException("input stream is null");
-        }
-        Workbook workbook;
-        try(inputStream){
-            switch (typeEnum){
-                case XSSF_WORK_BOOK:
-                    workbook = createXssfWorkbook(inputStream);
-                    break;
-                case HSSF_WORK_BOOK:
-                    workbook = createHssfWorkbook(inputStream);
-                    break;
-                default:
-                    throw new RuntimeException("excel type not exists");
-            }
-        }catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        return workbook;
-    }
 
     private List<T> getResultList(List<Map<String, Object>> maps,Class<T> clazz){
         if(CollectionUtil.isEmpty(maps)){
@@ -691,7 +622,8 @@ public abstract class AbstractExcelUtil<T>{
      */
     public CellStyle getCellStyle(Workbook wb, IndexedColors colors, HorizontalAlignment halign, VerticalAlignment valign){
         CellStyle cellStyle = wb.createCellStyle();
-        cellStyle.setFillBackgroundColor(colors.index);
+        cellStyle.setFillForegroundColor(colors.index);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cellStyle.setAlignment(halign);
         cellStyle.setVerticalAlignment(valign);
         return cellStyle;
@@ -702,7 +634,7 @@ public abstract class AbstractExcelUtil<T>{
     }
 
     public  void setCellGBKValue(CellStyle style, Cell cell, String value) {
-        if(StrUtil.isNotBlank(value)&&!"null".equals(value)) {
+        if(StrUtil.isNotBlank(value) && !"null".equals(value)) {
             cell.setCellValue(value);
         }
         if(style != null){
@@ -742,7 +674,7 @@ public abstract class AbstractExcelUtil<T>{
         } catch (SecurityException e) {
             e.printStackTrace();
         }
-        if(declaredMethod == null){
+        if (declaredMethod == null){
             return null;
         }
         return formatValue(declaredMethod.invoke(t)).toString();
