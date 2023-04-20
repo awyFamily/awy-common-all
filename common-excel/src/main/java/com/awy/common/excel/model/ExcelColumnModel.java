@@ -2,10 +2,7 @@ package com.awy.common.excel.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.ss.usermodel.HorizontalAlignment;
-import org.apache.poi.ss.usermodel.IndexedColors;
-import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.*;
 
 /**
  * @author yhw
@@ -15,10 +12,8 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 @Data
 public class ExcelColumnModel {
 
-    private int width;
 
-    private int height;
-
+//    private int height;
     private IndexedColors fillForegroundColor;
 
     private HorizontalAlignment horizontalAlignment;
@@ -29,25 +24,42 @@ public class ExcelColumnModel {
 
     private ExcelFontModel fontModel;
 
-    public ExcelColumnModel(int width, int height) {
-        this(width, height, null, null);
+
+    public ExcelColumnModel(IndexedColors fillForegroundColor) {
+        this(fillForegroundColor, null);
     }
 
-    public ExcelColumnModel(int width, int height, IndexedColors fillForegroundColor) {
-        this(width, height, fillForegroundColor, null);
+    public ExcelColumnModel(IndexedColors fillForegroundColor, ExcelFontModel fontModel) {
+        this(fillForegroundColor, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, FillPatternType.SOLID_FOREGROUND, fontModel);
     }
 
-    public ExcelColumnModel(int width, int height, IndexedColors fillForegroundColor, ExcelFontModel fontModel) {
-        this(width, height, fillForegroundColor, HorizontalAlignment.CENTER, VerticalAlignment.CENTER, FillPatternType.SOLID_FOREGROUND, fontModel);
-    }
-
-    public ExcelColumnModel(int width, int height, IndexedColors fillForegroundColor, HorizontalAlignment horizontalAlignment, VerticalAlignment valignAlignment, FillPatternType fillPatternType, ExcelFontModel fontModel) {
-        this.width = width;
-        this.height = height;
+    public ExcelColumnModel(IndexedColors fillForegroundColor, HorizontalAlignment horizontalAlignment, VerticalAlignment valignAlignment, FillPatternType fillPatternType, ExcelFontModel fontModel) {
         this.fillForegroundColor = fillForegroundColor;
         this.horizontalAlignment = horizontalAlignment;
         this.valignAlignment = valignAlignment;
         this.fillPatternType = fillPatternType;
         this.fontModel = fontModel;
+    }
+
+    public CellStyle toCellStyle(Workbook workbook) {
+        CellStyle cellStyle = workbook.createCellStyle();
+        cellStyle.setFillForegroundColor(this.fillForegroundColor.getIndex());
+        cellStyle.setFillPattern(this.fillPatternType);
+        cellStyle.setAlignment(this.horizontalAlignment);
+        cellStyle.setVerticalAlignment(this.valignAlignment);
+    if (this.fontModel != null) {
+        Font font = workbook.createFont();
+        font.setUnderline(this.fontModel.getUnderline().getByteValue());
+        font.setColor(this.fontModel.getColors().getIndex());
+        font.setFontHeightInPoints(this.fontModel.getHeight());
+        cellStyle.setFont(font);
+    }
+    cellStyle.setWrapText(true);
+    // cellStyle.setBorderBottom(BorderStyle.THIN);
+    // cellStyle.setBorderLeft(BorderStyle.THIN);
+    // cellStyle.setBorderRight(BorderStyle.THIN);
+    // cellStyle.setBorderTop(BorderStyle.THIN);
+    return cellStyle;
+
     }
 }

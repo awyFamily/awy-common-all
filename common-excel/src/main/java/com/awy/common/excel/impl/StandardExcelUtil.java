@@ -3,6 +3,7 @@ package com.awy.common.excel.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReflectUtil;
 import com.awy.common.excel.AbstractExcelUtil;
+import com.awy.common.excel.utils.ExcelHelper;
 import org.apache.commons.compress.utils.Lists;
 import org.apache.poi.ss.usermodel.*;
 
@@ -35,7 +36,7 @@ public class StandardExcelUtil<T> extends AbstractExcelUtil<T> {
                 row = sheetAt.getRow(i);
                 rowMap = new HashMap<>();
                 for(int j = 0; j < columnsSize; j++){
-                    rowMap.put(columns[j], getCellValue(row.getCell(j)));
+                    rowMap.put(columns[j], ExcelHelper.getCellValue(row.getCell(j)));
                 }
                 result.add(rowMap);
             }
@@ -66,9 +67,9 @@ public class StandardExcelUtil<T> extends AbstractExcelUtil<T> {
                 row = sheetAt.getRow(i);
                 rowMap = new HashMap<>();
                 for(int j = 0; j < columnsSize; j++){
-                    rowMap.put(columns[j], getCellValue(row.getCell(j)));
+                    rowMap.put(columns[j], ExcelHelper.getCellValue(row.getCell(j)));
                 }
-                result.add(BeanUtil.fillBeanWithMapIgnoreCase(rowMap,ReflectUtil.newInstance(clazz),true));
+                result.add(BeanUtil.fillBeanWithMapIgnoreCase(rowMap, ReflectUtil.newInstance(clazz),true));
             }
 
             return result;
@@ -81,12 +82,13 @@ public class StandardExcelUtil<T> extends AbstractExcelUtil<T> {
     protected void writeData(Sheet sheet, CellStyle style, List<T> datas, String[] columns) {
         T t;
         Row row;
+        Class<?> tClass = datas.get(0).getClass();
         for (int i = 0; i < datas.size() ; i++) {
             t = datas.get(i);
             row = sheet.createRow((i + 1));
             for(int j = 0; j < columns.length; j++){
                 try {
-                    setCellGBKValue(style,row.createCell(j, CellType.STRING),getValue(t, columns[j]));
+                    setCellGBKValue(style,row.createCell(j, CellType.STRING), ExcelHelper.getValue(t, tClass, columns[j]));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

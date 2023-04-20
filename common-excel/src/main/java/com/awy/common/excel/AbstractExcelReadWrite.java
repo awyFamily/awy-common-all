@@ -1,8 +1,12 @@
 package com.awy.common.excel;
 
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.excel.enums.ExcelTypeEnum;
 import com.awy.common.excel.utils.ExcelHelper;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -33,5 +37,40 @@ public abstract class AbstractExcelReadWrite<T> implements ExcelReadWrite<T> {
         return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns);
     }
 
+    public void setCellGBKValue(Cell cell, String value) {
+        setCellGBKValue(null,cell,value);
+    }
+
+    public int getStandardWidth(Integer width){
+        return (int)((width + 0.72) * 256);
+    }
+
+    public  void setCellGBKValue(CellStyle style, Cell cell, String value) {
+        if(StrUtil.isNotBlank(value) && !"null".equals(value)) {
+            cell.setCellValue(value);
+        }
+        if(style != null){
+            cell.setCellStyle(style);
+        }
+    }
+
+    public void checkTable(Sheet sheetAt, String[] columns){
+        //get table head
+        Row headRow = sheetAt.getRow(0);
+        if(headRow.getPhysicalNumberOfCells() != columns.length){
+            throw new RuntimeException("The actual number of columns does not match the expected number of columns");
+        }
+    }
+
+    public void close(Workbook workbook){
+        try {
+            if (workbook instanceof SXSSFWorkbook) {
+                ((SXSSFWorkbook) workbook).dispose();
+            }
+            workbook.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

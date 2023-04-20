@@ -15,25 +15,34 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 @Data
 public class ExcelHeadColumnModel extends ExcelColumnModel {
 
+    private int width;
+
     private String name;
 
-    public ExcelHeadColumnModel(String name, int width, int height) {
-        super(width, height);
+    public ExcelHeadColumnModel(String name) {
         this.name = name;
     }
 
-    public ExcelHeadColumnModel(String name, int width, int height, IndexedColors fillForegroundColor) {
-        super(width, height, fillForegroundColor);
+    public ExcelHeadColumnModel(String name, int width) {
         this.name = name;
+        this.width = width;
     }
 
-    public ExcelHeadColumnModel(String name, int width, int height, IndexedColors fillForegroundColor, ExcelFontModel fontModel) {
-        super(width, height, fillForegroundColor, fontModel);
+    public ExcelHeadColumnModel(String name, int width , IndexedColors fillForegroundColor) {
+        super(fillForegroundColor);
         this.name = name;
+        this.width = width;
     }
 
-    public ExcelHeadColumnModel(String name, int width, int height, IndexedColors fillForegroundColor, HorizontalAlignment horizontalAlignment, VerticalAlignment valignAlignment, FillPatternType fillPatternType, ExcelFontModel fontModel) {
-        super(width, height, fillForegroundColor, horizontalAlignment, valignAlignment, fillPatternType, fontModel);
+    public ExcelHeadColumnModel(String name, int width , IndexedColors fillForegroundColor, ExcelFontModel fontModel) {
+        super(fillForegroundColor, fontModel);
         this.name = name;
+        this.width = width;
+    }
+
+    public ExcelHeadColumnModel(String name, int width , IndexedColors fillForegroundColor, HorizontalAlignment horizontalAlignment, VerticalAlignment valignAlignment, FillPatternType fillPatternType, ExcelFontModel fontModel) {
+        super(fillForegroundColor, horizontalAlignment, valignAlignment, fillPatternType, fontModel);
+        this.name = name;
+        this.width = width;
     }
 }

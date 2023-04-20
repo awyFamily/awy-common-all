@@ -1,7 +1,7 @@
 package com.awy.common.excel;
 
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.Sheet;
+import com.awy.common.excel.model.ExcelDataColumnModel;
+import com.awy.common.excel.model.ExcelHeadColumnModel;
 import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.List;
@@ -14,6 +14,6 @@ public interface ExcelReadWrite<T> {
 
     List<T> readData(Workbook workbook, String[] columns);
 
-    void writeData(Sheet sheet, CellStyle style, List<T> dataList, String[] columns);
+    void writeData(Workbook workbook, List<T> dataList, List<ExcelHeadColumnModel> headColumnModels, List<ExcelDataColumnModel> columnModels);
 
 }

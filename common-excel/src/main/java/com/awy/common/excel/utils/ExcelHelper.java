@@ -1,19 +1,29 @@
 package com.awy.common.excel.utils;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.excel.constants.PoiPool;
 import com.awy.common.excel.enums.ExcelTypeEnum;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * @author 叶红伟
@@ -79,6 +89,16 @@ public class ExcelHelper {
         }
     }
 
+    /**
+     * 创建SXSSFWorkbook，用于大批量数据写出
+     * 创建以【.xlsx】为后缀的表格(只写, Stream 的方式)
+     * @return xlsx table
+     */
+    public static Workbook createSXssfWorkbook(){
+//        return new SXSSFWorkbook(new XSSFWorkbook());
+        return new SXSSFWorkbook();
+    }
+
     private static boolean isNativeFile(String path) {
         if (path.length() < 5) {
             try {
@@ -106,5 +126,134 @@ public class ExcelHelper {
             e.printStackTrace();
             throw new RuntimeException("upload timeOut or file not exists",e);
         }
+    }
+
+    //======================= cell option =================================================================
+    public static Object getCellValue(Cell cell){
+        if(cell == null){
+            return null;
+        }
+        CellType cellType = cell.getCellType();
+        Object result = null;
+        switch (cellType){
+            case _NONE:
+                break;
+            case STRING:
+                result = cell.getStringCellValue();
+                break;
+            case NUMERIC:
+                result = cell.getNumericCellValue();
+                String str = Double.toString(cell.getNumericCellValue());
+                if(str.indexOf(".") == 1 && str.indexOf("E") != -1) {
+                    //防止数字太长被转换成科学计数法
+                    DecimalFormat df = new DecimalFormat("0");
+                    result = df.format(cell.getNumericCellValue());
+                }
+
+                // 由于日期类型格式也被认为是数值型，此处判断是否是日期的格式，若时，则读取为日期类型
+                // org.apache.poi.ss.usermodel.BuiltinFormats
+                if(cell.getCellStyle().getDataFormat() > 0xd)  {
+                    result = cell.getDateCellValue();
+                }
+                break;
+            case BOOLEAN:
+                result = cell.getBooleanCellValue();
+                break;
+            case BLANK:
+                result = cell.getDateCellValue();
+                break;
+            case FORMULA:
+                break;
+            case ERROR:
+                break;
+            default:
+                break;
+        }
+        return  result;
+    }
+
+    //============================ reflection option ===================================
+
+    /**
+     * 反射获取值
+     * @param t 实例对象
+     * @param column 列名
+     * @return 值
+     * @throws Exception
+     */
+    public static <T> String getValue(T t, String column) throws Exception {
+        return getValue(t, t.getClass(), column);
+    }
+
+    public static <T> String getValue(T t, Class<?> clazz, String column) throws Exception {
+        Method declaredMethod = null;
+        try {
+            declaredMethod = clazz.getDeclaredMethod(getMethodName(column));
+        } catch (NoSuchMethodException e) {
+            declaredMethod = clazz.getSuperclass().getDeclaredMethod(getMethodName(column));
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+        if (declaredMethod == null){
+            return null;
+        }
+        return formatValue(declaredMethod.invoke(t)).toString();
+    }
+
+    public static String getMethodName(String methodName){
+        return "get".concat(capitalize(methodName));
+    }
+
+    /**
+     * 首字符转大写
+     * @param str 源字符
+     * @return 转大写的字符
+     */
+    public static String capitalize(final String str) {
+        int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+
+        //获取第一个字节
+        final char firstChar = str.charAt(0);
+        //将第一个字符大写
+        final char newChar = Character.toTitleCase(firstChar);
+        if (firstChar == newChar) {
+            // already capitalized
+            return str;
+        }
+
+        char[] newChars = new char[strLen];
+        newChars[0] = newChar;
+        str.getChars(1,strLen, newChars, 1);
+        return String.valueOf(newChars);
+    }
+
+    public static Object formatValue(Object object){
+        if(object == null){
+            return "";
+        }
+        if(object instanceof String){
+            return object;
+        }
+        if(object instanceof Number){
+            return object;
+        }
+        //注意 当执行导入操作时时，格式化的时间将无法转换成LocalTime,需要重新定义Date 类型进行接收
+        if(object instanceof LocalDate){
+            LocalDate localDate = (LocalDate) object;
+            return localDate.format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATE_PATTERN));
+        }
+        if(object instanceof LocalDateTime){
+            LocalDateTime localDateTime = (LocalDateTime) object;
+            return localDateTime.format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN));
+        }
+        if(object instanceof Date){
+            LocalDateTime localDateTime = (LocalDateTime) object;
+            return localDateTime.format(DateTimeFormatter.ofPattern(DatePattern.NORM_DATETIME_PATTERN));
+        }
+        return object + "";
     }
 }

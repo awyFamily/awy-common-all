@@ -20,7 +20,7 @@ public class SimpleExcelTest {
     }
 
     @Test
-    public String exportZipTest(){
+    public void exportZipTest(){
         List<User>  list = getData();
         long start = System.currentTimeMillis();
         String testExport = FileUtil.createHomeFolder("testExport");
@@ -34,16 +34,15 @@ public class SimpleExcelTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return "";
     }
 
     @Test
-    public String simpleExportTest(){
+    public void simpleExportTest(){
         List<User>  list = getData();
         long start = System.currentTimeMillis();
         String result = new StandardExcelUtil().exportFilePath("测试2222", list, new String[]{"用户名", "年龄", "创建时间"}, new String[]{"name", "age", "createTime"});
+        System.out.println(result);
         System.out.println("生成Excel花费时间：" + (System.currentTimeMillis() - start));
-        return result;
     }
 
     private List<User> getData(){
