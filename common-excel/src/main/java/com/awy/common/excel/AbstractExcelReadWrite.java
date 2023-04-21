@@ -2,10 +2,12 @@ package com.awy.common.excel;
 
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.excel.enums.ExcelTypeEnum;
+import com.awy.common.excel.model.ExcelHeadColumnModel;
 import com.awy.common.excel.utils.ExcelHelper;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -35,6 +37,37 @@ public abstract class AbstractExcelReadWrite<T> implements ExcelReadWrite<T> {
      */
     public List<T> importStream(InputStream inputStream, String fileName, String[] columns) {
         return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns);
+    }
+
+    public File exportTemplate(String excelName, String folderPath, String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
+        return null;
+    }
+
+    public byte[] exportTemplate(String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
+        Workbook workbook = ExcelHelper.createSXssfWorkbook();
+        Sheet sheet = workbook.createSheet(sheetName);
+        // create header row
+        Row headerRow = sheet.createRow(0);
+        ExcelHeadColumnModel headColumnModel;
+        for (int i = 0; i < headColumnModels.size(); i++) {
+            headColumnModel = headColumnModels.get(i);
+            setCellGBKValue(headColumnModel.toCellStyle(workbook), headerRow.createCell(i), headColumnModel.getName());
+        }
+        // apply validations
+        DataValidationHelper validationHelper = sheet.getDataValidationHelper();
+        for (IExcelValidation validation : excelValidations) {
+//            sheet.addValidationData(validationHelper.createValidation());
+        }
+        // write to byte array
+//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+//        try {
+//            workbook.write(outputStream);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            close(workbook);
+//        }
+        return null;
     }
 
     public void setCellGBKValue(Cell cell, String value) {

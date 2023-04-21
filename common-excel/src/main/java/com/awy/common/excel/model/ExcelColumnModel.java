@@ -13,7 +13,7 @@ import org.apache.poi.ss.usermodel.*;
 public class ExcelColumnModel {
 
 
-//    private int height;
+    //    private int height;
     private IndexedColors fillForegroundColor;
 
     private HorizontalAlignment horizontalAlignment;
@@ -43,23 +43,31 @@ public class ExcelColumnModel {
 
     public CellStyle toCellStyle(Workbook workbook) {
         CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setFillForegroundColor(this.fillForegroundColor.getIndex());
-        cellStyle.setFillPattern(this.fillPatternType);
-        cellStyle.setAlignment(this.horizontalAlignment);
-        cellStyle.setVerticalAlignment(this.valignAlignment);
-    if (this.fontModel != null) {
-        Font font = workbook.createFont();
-        font.setUnderline(this.fontModel.getUnderline().getByteValue());
-        font.setColor(this.fontModel.getColors().getIndex());
-        font.setFontHeightInPoints(this.fontModel.getHeight());
-        cellStyle.setFont(font);
-    }
-    cellStyle.setWrapText(true);
-    // cellStyle.setBorderBottom(BorderStyle.THIN);
-    // cellStyle.setBorderLeft(BorderStyle.THIN);
-    // cellStyle.setBorderRight(BorderStyle.THIN);
-    // cellStyle.setBorderTop(BorderStyle.THIN);
-    return cellStyle;
+        if (this.fillForegroundColor != null) {
+            cellStyle.setFillForegroundColor(this.fillForegroundColor.getIndex());
+        }
+        if (this.fillPatternType != null) {
+            cellStyle.setFillPattern(this.fillPatternType);
+        }
+        if (this.horizontalAlignment != null) {
+            cellStyle.setAlignment(this.horizontalAlignment);
+        }
+        if (this.valignAlignment != null) {
+            cellStyle.setVerticalAlignment(this.valignAlignment);
+        }
+        if (this.fontModel != null) {
+            Font font = workbook.createFont();
+            font.setUnderline(this.fontModel.getUnderline().getByteValue());
+            font.setColor(this.fontModel.getColors().getIndex());
+            font.setFontHeightInPoints(this.fontModel.getHeight());
+            cellStyle.setFont(font);
+        }
+        cellStyle.setWrapText(true);
+        // cellStyle.setBorderBottom(BorderStyle.THIN);
+        // cellStyle.setBorderLeft(BorderStyle.THIN);
+        // cellStyle.setBorderRight(BorderStyle.THIN);
+        // cellStyle.setBorderTop(BorderStyle.THIN);
+        return cellStyle;
 
     }
 }
