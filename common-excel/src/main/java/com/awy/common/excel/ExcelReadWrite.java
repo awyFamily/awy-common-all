@@ -14,6 +14,6 @@ public interface ExcelReadWrite<T> {
 
     List<T> readData(Workbook workbook, String[] columns);
 
-    void writeData(Workbook workbook, List<T> dataList, List<ExcelHeadColumnModel> headColumnModels, List<ExcelDataColumnModel> columnModels);
+    void writeData(Workbook workbook, List<T> dataList, List<ExcelDataColumnModel> columnModels);
 
 }

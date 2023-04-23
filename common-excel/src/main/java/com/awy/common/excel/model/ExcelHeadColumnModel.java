@@ -19,6 +19,10 @@ public class ExcelHeadColumnModel extends ExcelColumnModel {
 
     private String name;
 
+    public int getStandardWidth(){
+        return (int)((this.width + 0.72) * 256);
+    }
+
     public ExcelHeadColumnModel(String name) {
         this.name = name;
     }

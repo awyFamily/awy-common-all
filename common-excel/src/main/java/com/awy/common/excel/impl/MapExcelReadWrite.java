@@ -2,10 +2,12 @@ package com.awy.common.excel.impl;
 
 import com.awy.common.excel.AbstractExcelReadWrite;
 import com.awy.common.excel.model.ExcelDataColumnModel;
-import com.awy.common.excel.model.ExcelHeadColumnModel;
 import com.awy.common.excel.utils.ExcelHelper;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,20 +45,8 @@ public class MapExcelReadWrite extends AbstractExcelReadWrite<Map<String, Object
     }
 
     @Override
-    public void writeData(Workbook workbook, List<Map<String, Object>> dataList, List<ExcelHeadColumnModel> headColumnModels, List<ExcelDataColumnModel> columnModels) {
-        Sheet sheet = workbook.createSheet();
-        Row headRow = sheet.createRow(0);
-        Cell cell;
-        ExcelHeadColumnModel headColumnModel;
-        for(int i = 0; i < headColumnModels.size(); i++){
-            cell = headRow.createCell(i, CellType.STRING);
-            headColumnModel = headColumnModels.get(i);
-            cell.setCellValue(headColumnModel.getName());
-            cell.setCellStyle(headColumnModel.toCellStyle(workbook));
-            sheet.setColumnWidth(i, getStandardWidth(headColumnModel.getWidth()));
-//            headRow.setHeight();
-        }
-
+    public void writeData(Workbook workbook, List<Map<String, Object>> dataList, List<ExcelDataColumnModel> columnModels) {
+        Sheet sheet = workbook.getSheetAt(0);
         Map<String, Object> map;
         Row row;
         for(int i = 0; i < dataList.size(); i++){

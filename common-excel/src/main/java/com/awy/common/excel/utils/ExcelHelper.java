@@ -2,12 +2,14 @@ package com.awy.common.excel.utils;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
+import com.awy.common.excel.IExcelValidation;
 import com.awy.common.excel.constants.PoiPool;
 import com.awy.common.excel.enums.ExcelTypeEnum;
+import com.awy.common.excel.model.ExcelValidationModel;
+import com.awy.common.excel.model.ExcelValidationTypeModel;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -126,6 +128,49 @@ public class ExcelHelper {
             e.printStackTrace();
             throw new RuntimeException("upload timeOut or file not exists",e);
         }
+    }
+
+    public static DataValidation createDataValidation(IExcelValidation validation, Sheet sheet) {
+        ExcelValidationModel.Range range = validation.getValidationModel().getRange();
+        DataValidationHelper validationHelper = sheet.getDataValidationHelper();
+        DataValidationConstraint constraint;
+        ExcelValidationTypeModel validationTypeModel = validation.getValidationTypeModel();
+        switch (validation.getValidationType()) {
+            case INTEGER:
+                constraint = validationHelper.createIntegerConstraint(validationTypeModel.getOperatorType(), validationTypeModel.getFormula1(), validationTypeModel.getFormula2());
+                break;
+            case DECIMAL:
+                constraint = validationHelper.createDecimalConstraint(validationTypeModel.getOperatorType(), validationTypeModel.getFormula1(), validationTypeModel.getFormula2());
+                break;
+            case LIST:
+                constraint = validationHelper.createExplicitListConstraint(validationTypeModel.getExplicitListOfValues());
+                break;
+            case DATE:
+                constraint = validationHelper.createDateConstraint(validationTypeModel.getOperatorType(), validationTypeModel.getFormula1(), validationTypeModel.getFormula2(), "yyyy-MM-dd");
+                break;
+            case TIME:
+                constraint = validationHelper.createTimeConstraint(validationTypeModel.getOperatorType(), validationTypeModel.getFormula1(), validationTypeModel.getFormula2());
+                break;
+            case TEXT_LENGTH:
+                constraint = validationHelper.createTextLengthConstraint(validationTypeModel.getOperatorType(), validationTypeModel.getFormula1(), validationTypeModel.getFormula2());
+                break;
+            case FORMULA:
+                constraint = validationHelper.createCustomConstraint(validationTypeModel.getFormula1());
+                break;
+            default:
+                constraint = validationHelper.createCustomConstraint("");
+                break;
+        }
+        CellRangeAddressList addressList = new CellRangeAddressList(range.getFirstRow(), range.getLastRow(), range.getFirstCol(), range.getLastCol());
+        DataValidation dataValidation = validationHelper.createValidation(constraint, addressList);
+
+        ExcelValidationModel.Box box = validation.getValidationModel().getShowBox();
+        if (box != null) {
+            dataValidation.setShowErrorBox(true);
+            dataValidation.createErrorBox(box.getBoxTitle(), box.getBoxMessage());
+            dataValidation.setErrorStyle(box.getBoxStyle());
+        }
+        return dataValidation;
     }
 
     //======================= cell option =================================================================

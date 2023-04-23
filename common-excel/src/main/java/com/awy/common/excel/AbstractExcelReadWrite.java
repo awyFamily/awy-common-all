@@ -1,15 +1,23 @@
 package com.awy.common.excel;
 
+import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
+import com.awy.common.excel.constants.PoiPool;
 import com.awy.common.excel.enums.ExcelTypeEnum;
+import com.awy.common.excel.model.ExcelDataColumnModel;
 import com.awy.common.excel.model.ExcelHeadColumnModel;
 import com.awy.common.excel.utils.ExcelHelper;
+import com.awy.common.util.utils.CollUtil;
+import com.awy.common.util.utils.DateJdK8Util;
+import com.awy.common.util.utils.FileUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,43 +47,75 @@ public abstract class AbstractExcelReadWrite<T> implements ExcelReadWrite<T> {
         return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns);
     }
 
-    public File exportTemplate(String excelName, String folderPath, String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
-        return null;
+    public String exportTemplate(String excelName, String folderPath, String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
+        Workbook workbook = this.processExport(sheetName, headColumnModels, excelValidations, new ArrayList<>(), new ArrayList<>());
+        return this.getExportPath(excelName, folderPath, workbook);
+    }
+
+    private String getExportPath(String excelName,String folderPath,Workbook  workbook){
+        String excelPath;
+        String fileName = excelName.concat("_").concat(DateJdK8Util.formatLocalDateTime(LocalDateTime.now(), DatePattern.PURE_DATETIME_PATTERN));
+        if (StrUtil.isBlank(folderPath)) {
+            excelPath = FileUtil.getCurrentDataFormatFilePath(PoiPool.EXPORT_EXCEL_PATH, fileName);
+        } else {
+            excelPath = folderPath.concat(File.separator).concat(fileName).concat(PoiPool.XSSF_WORK_BOOK);
+        }
+        try(OutputStream outputStream = new FileOutputStream(excelPath)){
+            workbook.write(outputStream);
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            close(workbook);
+        }
+        return excelPath;
     }
 
     public byte[] exportTemplate(String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
+        Workbook workbook = this.processExport(sheetName, headColumnModels, excelValidations, new ArrayList<>(), new ArrayList<>());
+        return this.convertWorkbookToBytes(workbook);
+    }
+
+    private Workbook processExport(String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations, List<ExcelDataColumnModel> columnModels, List<T> dataList) {
         Workbook workbook = ExcelHelper.createSXssfWorkbook();
         Sheet sheet = workbook.createSheet(sheetName);
         // create header row
-        Row headerRow = sheet.createRow(0);
+        this.initHeaderRow(workbook, sheet, headColumnModels);
+
+        // apply validations
+        if (CollUtil.isNotEmpty(excelValidations)) {
+            for (IExcelValidation validation : excelValidations) {
+                sheet.addValidationData(ExcelHelper.createDataValidation(validation, sheet));
+            }
+        }
+        if (CollUtil.isNotEmpty(dataList)) {
+            this.writeData(workbook, dataList, columnModels);
+        }
+        return workbook;
+    }
+
+    public void initHeaderRow(Workbook workbook, Sheet sheet, List<ExcelHeadColumnModel> headColumnModels) {
         ExcelHeadColumnModel headColumnModel;
+        Row headerRow = sheet.createRow(0);
         for (int i = 0; i < headColumnModels.size(); i++) {
             headColumnModel = headColumnModels.get(i);
             setCellGBKValue(headColumnModel.toCellStyle(workbook), headerRow.createCell(i), headColumnModel.getName());
+            sheet.setColumnWidth(i, headColumnModel.getStandardWidth());
         }
-        // apply validations
-        DataValidationHelper validationHelper = sheet.getDataValidationHelper();
-        for (IExcelValidation validation : excelValidations) {
-//            sheet.addValidationData(validationHelper.createValidation());
+    }
+
+    public byte[] convertWorkbookToBytes(Workbook workbook) {
+        try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            workbook.write(outputStream);
+            return outputStream.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            close(workbook);
         }
-        // write to byte array
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        try {
-//            workbook.write(outputStream);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } finally {
-//            close(workbook);
-//        }
-        return null;
     }
 
     public void setCellGBKValue(Cell cell, String value) {
         setCellGBKValue(null,cell,value);
-    }
-
-    public int getStandardWidth(Integer width){
-        return (int)((width + 0.72) * 256);
     }
 
     public  void setCellGBKValue(CellStyle style, Cell cell, String value) {
