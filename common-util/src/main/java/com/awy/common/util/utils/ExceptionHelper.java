@@ -2,12 +2,13 @@ package com.awy.common.util.utils;
 
 import cn.hutool.cache.Cache;
 import cn.hutool.cache.CacheUtil;
+import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.util.StrUtil;
 import com.taobao.arthas.core.util.Decompiler;
 
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 /**
  * 异常工具
@@ -16,15 +17,16 @@ import java.util.Arrays;
  * @date 2023-04-26
  */
 public final class ExceptionHelper {
-
-    private final static String classes = "classes";
-    private final static String target = "target";
     private final static String dot_class = ".class";
+    private final static String dot_java = ".java";
+    private final static String dot_jar = ".jar";
     private final static String dot = ".";
     private final static String default_charset = "utf8";
     private final static String match_prefix = "/*";
     private final static String match_suffix = "*/";
     private final static String line_break_symbol = "\n";
+    private final static String resource_concat_symbol = "/";
+    private final static String tmpdir = "java.io.tmpdir";
     private final static Cache<String, String>  CONTENT_CACHE = CacheUtil.newLRUCache(300);
 
     public static String getTriggerCodeLineContent(Exception e) {
@@ -53,21 +55,35 @@ public final class ExceptionHelper {
             return lineContent;
         }
 
-        File file = new File(dot);
-        boolean hasNative = Arrays.stream(file.list()).anyMatch(obj -> target.equals(obj));
+        Class<?> failClass;
+        try {
+            failClass = Class.forName(stackTraceElement.getClassName());
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+        URL location = failClass.getProtectionDomain().getCodeSource().getLocation();
+
         StringBuilder sb = new StringBuilder();
         try {
-            sb.append(file.getCanonicalPath()).append(File.separator);
-            if (hasNative) {
-                sb.append(target).append(File.separator);
+            File tempFile = null;
+            int jarIndexOf = location.getPath().indexOf(dot_jar);
+            if (jarIndexOf > 0) {
+                InputStream stream = failClass.getClassLoader().getResourceAsStream(stackTraceElement.getClassName().replace(dot, resource_concat_symbol).concat(dot_class));
+                String tempDir = System.getProperty(tmpdir);
+                String className = stackTraceElement.getFileName().substring(0, stackTraceElement.getFileName().length() - dot_java.length()).concat(dot_class);
+                tempFile = new File(tempDir.concat(File.separator).concat(className));
+                FileWriter.create(tempFile).writeFromStream(stream);
+                sb.append(tempFile.getPath());
+            } else {
+                sb.append(new File(location.getFile()).getCanonicalPath()).append(File.separator);
+                sb.append(stackTraceElement.getClassName().replace(dot, File.separator));
+                sb.append(dot_class);
             }
-            sb.append(classes).append(File.separator);
-            sb.append(stackTraceElement.getClassName().replace(dot, File.separator));
-            sb.append(dot_class);
-//            String codes = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName());
-//            lineContent = readLineByIndexOf(codes, stackTraceElement.getLineNumber());
             lineContent = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName(), stackTraceElement.getLineNumber());
             CONTENT_CACHE.put(cacheKey, lineContent);
+            if (tempFile != null) {
+                tempFile.delete();
+            }
             return lineContent;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
