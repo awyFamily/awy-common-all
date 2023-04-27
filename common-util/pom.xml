@@ -66,8 +66,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.taobao.arthas</groupId>
-			<artifactId>arthas-core</artifactId>
+			<groupId>org.benf</groupId>
+			<artifactId>cfr</artifactId>
 		</dependency>
 	</dependencies>
 

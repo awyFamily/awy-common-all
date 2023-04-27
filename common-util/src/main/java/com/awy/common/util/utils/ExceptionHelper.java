@@ -1,5 +1,7 @@
 package com.awy.common.util.utils;
 
+import cn.hutool.cache.Cache;
+import cn.hutool.cache.CacheUtil;
 import cn.hutool.core.util.StrUtil;
 import com.taobao.arthas.core.util.Decompiler;
 
@@ -22,6 +24,8 @@ public final class ExceptionHelper {
     private final static String default_charset = "utf8";
     private final static String match_prefix = "/*";
     private final static String match_suffix = "*/";
+    private final static String line_break_symbol = "\n";
+    private final static Cache<String, String>  CONTENT_CACHE = CacheUtil.newLRUCache(300);
 
     public static String getTriggerCodeLineContent(Exception e) {
         return getTriggerCodeLineContent(e, StrUtil.EMPTY);
@@ -43,6 +47,11 @@ public final class ExceptionHelper {
         if (stackTraceElement == null) {
             stackTraceElement = e.getStackTrace()[0];
         }
+        String cacheKey = stackTraceElement.getClassName() + stackTraceElement.getMethodName() + stackTraceElement.getLineNumber();
+        String lineContent = CONTENT_CACHE.get(cacheKey);
+        if (StrUtil.isNotBlank(lineContent)) {
+            return lineContent;
+        }
 
         File file = new File(dot);
         boolean hasNative = Arrays.stream(file.list()).anyMatch(obj -> target.equals(obj));
@@ -55,15 +64,10 @@ public final class ExceptionHelper {
             sb.append(classes).append(File.separator);
             sb.append(stackTraceElement.getClassName().replace(dot, File.separator));
             sb.append(dot_class);
-
-//            System.out.println("classPath : " + sb.toString());
             String codes = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName());
-//            String code = readLine(codes, stackTraceElement.getLineNumber());
-//            if (StrUtil.isNotBlank(code)) {
-//                return code;
-//            }
-//            codes = Decompiler.decompile(sb.toString(), StrUtil.EMPTY);
-            return readLine(codes, stackTraceElement.getLineNumber());
+            lineContent = readLineByIndexOf(codes, stackTraceElement.getLineNumber());
+            CONTENT_CACHE.put(cacheKey, lineContent);
+            return lineContent;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
@@ -86,5 +90,20 @@ public final class ExceptionHelper {
         }catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static String readLineByIndexOf(String content, int lineNumber)  {
+        String match = match_prefix + lineNumber + match_suffix;
+        int indexOf = content.indexOf(match);
+        if (indexOf < 0) {
+            return StrUtil.EMPTY;
+        }
+        content = content.substring(indexOf + match.length(), content.length()).trim();
+        indexOf = content.indexOf(line_break_symbol);
+        if (indexOf < 0) {
+            return content;
+        }
+        content = content.substring(0, indexOf);
+        return content;
     }
 }
