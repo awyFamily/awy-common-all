@@ -64,8 +64,9 @@ public final class ExceptionHelper {
             sb.append(classes).append(File.separator);
             sb.append(stackTraceElement.getClassName().replace(dot, File.separator));
             sb.append(dot_class);
-            String codes = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName());
-            lineContent = readLineByIndexOf(codes, stackTraceElement.getLineNumber());
+//            String codes = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName());
+//            lineContent = readLineByIndexOf(codes, stackTraceElement.getLineNumber());
+            lineContent = Decompiler.decompile(sb.toString(), stackTraceElement.getMethodName(), stackTraceElement.getLineNumber());
             CONTENT_CACHE.put(cacheKey, lineContent);
             return lineContent;
         } catch (IOException ex) {

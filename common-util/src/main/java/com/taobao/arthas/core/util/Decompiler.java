@@ -19,6 +19,34 @@ import java.util.Map.Entry;
  */
 public class Decompiler {
 
+    /**
+     * 获取指定行代码
+     * @param classFilePath 地址
+     * @param methodName 方法名称
+     * @param lineNumber 行号
+     * @return 行代码
+     */
+    public static String decompile(String classFilePath, String methodName, int lineNumber) {
+        if (lineNumber < 0) {
+            return StrUtil.EMPTY;
+        }
+        Pair<String, NavigableMap<Integer, Integer>> pair = decompileWithMappings(classFilePath, methodName, false);
+        NavigableMap<Integer, Integer> lineMapping = pair.getSecond();
+        String resultCode = pair.getFirst();
+        int actualLine = -1;
+        for (Map.Entry<Integer, Integer> entry : lineMapping.entrySet()) {
+            if (lineNumber == entry.getValue().intValue()) {
+                actualLine = entry.getKey() - 1;
+                break;
+            }
+        }
+        if (actualLine < 0) {
+            return StrUtil.EMPTY;
+        }
+        List<String> lines = toLines(resultCode);
+        return lines.get(actualLine);
+    }
+
     public static String decompile(String classFilePath, String methodName) {
         return decompile(classFilePath, methodName, false);
     }
@@ -27,10 +55,29 @@ public class Decompiler {
         return decompile(classFilePath, methodName, hideUnicode, true);
     }
 
-    public static Pair<String, NavigableMap<Integer, Integer>> decompileWithMappings(String classFilePath,
-            String methodName, boolean hideUnicode, boolean printLineNumber) {
-        final StringBuilder sb = new StringBuilder(8192);
+    public static String decompile(String classFilePath, String methodName, boolean hideUnicode,
+                                   boolean printLineNumber) {
+        return decompileWithMappings(classFilePath, methodName, hideUnicode, printLineNumber).getFirst();
+    }
 
+    public static Pair<String, NavigableMap<Integer, Integer>> decompileWithMappings(String classFilePath,
+                                                                                     String methodName, boolean hideUnicode, boolean printLineNumber) {
+        Pair<String, NavigableMap<Integer, Integer>> pair = decompileWithMappings(classFilePath, methodName, hideUnicode);
+        if (!printLineNumber) {
+            return pair;
+        }
+
+        NavigableMap<Integer, Integer> lineMapping = pair.getSecond();
+        String resultCode = pair.getFirst();
+        if (!lineMapping.isEmpty()) {
+            resultCode = addLineNumber(resultCode, lineMapping);
+        }
+        return Pair.make(resultCode, lineMapping);
+    }
+
+    private static Pair<String, NavigableMap<Integer, Integer>> decompileWithMappings(String classFilePath,
+            String methodName, boolean hideUnicode) {
+        final StringBuilder sb = new StringBuilder(8192);
         final NavigableMap<Integer, Integer> lineMapping = new TreeMap<Integer, Integer>();
 
         OutputSinkFactory mySink = new OutputSinkFactory() {
@@ -85,16 +132,11 @@ public class Decompiler {
         driver.analyse(toAnalyse);
 
         String resultCode = sb.toString();
-        if (printLineNumber && !lineMapping.isEmpty()) {
-            resultCode = addLineNumber(resultCode, lineMapping);
-        }
+//        if (printLineNumber && !lineMapping.isEmpty()) {
+//            resultCode = addLineNumber(resultCode, lineMapping);
+//        }
 
         return Pair.make(resultCode, lineMapping);
-    }
-
-    public static String decompile(String classFilePath, String methodName, boolean hideUnicode,
-            boolean printLineNumber) {
-        return decompileWithMappings(classFilePath, methodName, hideUnicode, printLineNumber).getFirst();
     }
 
     private static String addLineNumber(String src, Map<Integer, Integer> lineMapping) {
