@@ -38,7 +38,7 @@ public final class ExceptionHelper {
         StackTraceElement stackTraceElement = null;
         if (StrUtil.isNotBlank(rootPackageName)) {
             for (StackTraceElement element : e.getStackTrace()) {
-                if (element.getClassName().contains(rootPackageName)) {
+                if (element.getClassName().length() >= rootPackageName.length() && rootPackageName.equals(element.getClassName().substring(0, rootPackageName.length()))) {
                     stackTraceElement = element;
                     break;
                 }
