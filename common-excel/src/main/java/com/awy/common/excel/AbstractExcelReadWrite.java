@@ -4,6 +4,7 @@ import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.excel.constants.PoiPool;
 import com.awy.common.excel.enums.ExcelTypeEnum;
+import com.awy.common.excel.model.ExcelColumnMappingModel;
 import com.awy.common.excel.model.ExcelDataColumnModel;
 import com.awy.common.excel.model.ExcelHeadColumnModel;
 import com.awy.common.excel.utils.ExcelHelper;
@@ -14,10 +15,8 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,24 +26,39 @@ import java.util.List;
 public abstract class AbstractExcelReadWrite<T> implements ExcelReadWrite<T> {
 
     /**
+     * 获取导入列的属性列表
+     * @param workbook 工作薄
+     * @param columnMappingModels 列映射
+     * @return 列名映射列表
+     */
+    public abstract List<String> getImportColumns(Workbook workbook, List<ExcelColumnMappingModel> columnMappingModels);
+
+    /**
      * 通过文件路径导入数据
      * @param filePath
-     * @param columns
+     * @param columnMappingModels
      * @return
      */
-    public List<T> importFilePath(String filePath, String[] columns) {
-        return readData(ExcelHelper.getImportWorkbook(filePath), columns);
+    public List<T> importFilePath(String filePath, List<ExcelColumnMappingModel> columnMappingModels) {
+        return doReadData(ExcelHelper.getImportWorkbook(filePath), columnMappingModels);
     }
 
     /**
      * 通过输入流导入数据
      * @param inputStream 数据流
      * @param fileName 文件名称
-     * @param columns 列名
+     * @param columnMappingModels 列名映射
      * @return 数据列表
      */
-    public List<T> importStream(InputStream inputStream, String fileName, String[] columns) {
-        return readData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columns);
+    public List<T> importStream(InputStream inputStream, String fileName, List<ExcelColumnMappingModel> columnMappingModels) {
+        return doReadData(ExcelHelper.getImportWorkbook(inputStream, ExcelTypeEnum.getByFileSuffix(fileName)), columnMappingModels);
+    }
+
+    private List<T> doReadData(Workbook workbook, List<ExcelColumnMappingModel> columnMappingModels) {
+        List<String> columns = getImportColumns(workbook, columnMappingModels);
+        List<T> result = readData(workbook, columns);
+        close(workbook);
+        return result;
     }
 
     public String exportTemplate(String excelName, String folderPath, String sheetName, List<ExcelHeadColumnModel> headColumnModels, List<IExcelValidation> excelValidations) {
@@ -127,10 +141,10 @@ public abstract class AbstractExcelReadWrite<T> implements ExcelReadWrite<T> {
         }
     }
 
-    public void checkTable(Sheet sheetAt, String[] columns){
+    public void checkTable(Sheet sheetAt, List<String> columns){
         //get table head
         Row headRow = sheetAt.getRow(0);
-        if(headRow.getPhysicalNumberOfCells() != columns.length){
+        if(headRow.getPhysicalNumberOfCells() != columns.size()){
             throw new RuntimeException("The actual number of columns does not match the expected number of columns");
         }
     }

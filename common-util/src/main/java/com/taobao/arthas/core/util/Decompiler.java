@@ -179,8 +179,7 @@ public class Decompiler {
 
     public static List<String> toLines(String text) {
         List<String> result = new ArrayList<String>();
-        BufferedReader reader = new BufferedReader(new StringReader(text));
-        try {
+        try (BufferedReader reader = new BufferedReader(new StringReader(text))) {
             String line = reader.readLine();
             while (line != null) {
                 result.add(line);
@@ -188,12 +187,6 @@ public class Decompiler {
             }
         } catch (IOException exc) {
             // quit
-        } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                // ignore
-            }
         }
         return result;
     }
