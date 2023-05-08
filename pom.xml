@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.awyFamily</groupId>
 	<artifactId>awy-common-all</artifactId>
@@ -12,11 +12,11 @@
 	<properties>
 		<java.version>11</java.version>
 		<!-- https://docs.spring.io/spring-cloud/docs/Hoxton.SR11/reference/html/ -->
-<!--		<spring.boot.version>2.3.10.RELEASE</spring.boot.version>-->
+		<!--		<spring.boot.version>2.3.10.RELEASE</spring.boot.version>-->
 		<spring.boot.version>2.3.11.RELEASE</spring.boot.version>
 		<spring.cloud.version>Hoxton.SR11</spring.cloud.version>
-<!--		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>-->
-<!--		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>-->
+		<!--		<spring.boot.version>2.2.5.RELEASE</spring.boot.version>-->
+		<!--		<spring.cloud.version>Hoxton.SR3</spring.cloud.version>-->
 		<!--<alibaba.cloud.version>2.1.0.RELEASE</alibaba.cloud.version>-->
 		<alibaba.cloud.version>2.2.0.RELEASE</alibaba.cloud.version>
 		<!-- nacos配置中心 0.2.1 对应的是1.1.1  -->
@@ -35,7 +35,7 @@
 		<druid.spring.boot.starter>1.1.9</druid.spring.boot.starter>
 		<mybatis.plus.version>3.3.1</mybatis.plus.version>
 		<!-- netty -->
-<!--		<netty.version>4.1.48.Final</netty.version>-->
+		<!--		<netty.version>4.1.48.Final</netty.version>-->
 		<netty.version>4.1.55.Final</netty.version>
 		<!-- t-io aio通讯 -->
 		<org.t.io.version>3.3.0.v20190512-RELEASE</org.t.io.version>
@@ -48,7 +48,7 @@
 		<guava.version>[30.0-jre,)</guava.version>
 		<google.gson.version>2.8.6</google.gson.version>
 		<lombok.version>1.18.6</lombok.version>
-<!--		<fastjson.version>1.2.62</fastjson.version>-->
+		<!--		<fastjson.version>1.2.62</fastjson.version>-->
 		<fastjson.version>1.2.75</fastjson.version>
 		<arthas.version>3.6.8</arthas.version>
 		<benf.cfr.version>0.152</benf.cfr.version>
@@ -59,13 +59,13 @@
 		<jasypt.version>2.1.2</jasypt.version>
 		<!--日志-->
 		<slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.15.0</log4j.version>
+		<log4j.version>2.15.0</log4j.version>
 		<!-- 编码 -->
 		<project.sourceEncoding>UTF-8</project.sourceEncoding>
 		<!-- apache maven插件版本-->
 		<org.apache.maven.plugins.version>3.8.0</org.apache.maven.plugins.version>
 		<docker.plugins.version>1.2.0</docker.plugins.version>
-<!--		<docker.plugins.version>1.2.0</docker.plugins.version>-->
+		<!--		<docker.plugins.version>1.2.0</docker.plugins.version>-->
 		<awy.common.version>2.0.0-SNAPSHOT</awy.common.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -109,16 +109,16 @@
 		<!-- 网关公共包 -->
 		<module>common-gateway</module>
 		<!-- 待开发 -->
-<!--		<module>common-rpc</module>-->
+		<!--		<module>common-rpc</module>-->
 		<!-- netty 实现 webSocket -->
 		<module>common-ws-netty</module>
 		<module>common-ws-client</module>
 		<module>common-modbus</module>
-        <module>common-tcp</module>
-        <module>common-test</module>
+		<module>common-tcp</module>
+		<module>common-test</module>
 
 
-    </modules>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
