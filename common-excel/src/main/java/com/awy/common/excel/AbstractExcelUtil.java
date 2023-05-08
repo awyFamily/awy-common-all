@@ -1,7 +1,5 @@
 package com.awy.common.excel;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.core.util.ZipUtil;
@@ -12,29 +10,21 @@ import com.awy.common.excel.utils.ExcelThreadPool;
 import com.awy.common.util.utils.FileUtil;
 import lombok.Data;
 import org.apache.commons.compress.utils.Lists;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLEncoder;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 /**
  * When you need to implement complex operations,
