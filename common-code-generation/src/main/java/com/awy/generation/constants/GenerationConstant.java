@@ -18,5 +18,7 @@ public interface GenerationConstant {
 
     String point_java = ".java";
 
+    String api_default_suffix = "api";
+
 
 }

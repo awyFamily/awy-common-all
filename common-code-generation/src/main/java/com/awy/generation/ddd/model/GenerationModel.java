@@ -1,6 +1,7 @@
 package com.awy.generation.ddd.model;
 
 import cn.hutool.core.util.StrUtil;
+import com.awy.generation.constants.GenerationConstant;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -68,6 +69,28 @@ public class GenerationModel {
             return this.artifactId.replaceAll("_",".").replaceAll("-",".");
         }
         return this.packagePrefix;
+    }
+
+    private String apiArtifactId;
+
+    public String getApiArtifactId() {
+        if (StrUtil.isBlank(this.apiArtifactId)) {
+            int last = Math.max(this.artifactId.lastIndexOf("_"), this.artifactId.lastIndexOf("-"));
+            if (last < 0) {
+                return this.artifactId + "-" + GenerationConstant.api_default_suffix;
+            }
+            return this.artifactId.substring(0, last + 1) + GenerationConstant.api_default_suffix;
+        }
+        return this.apiArtifactId;
+    }
+
+    private String apiPackagePrefix;
+
+    public String getApiPackagePrefix() {
+        if (StrUtil.isBlank(this.apiPackagePrefix)) {
+            return this.getApiArtifactId().replaceAll("_",".").replaceAll("-",".");
+        }
+        return this.apiPackagePrefix;
     }
 
     /**

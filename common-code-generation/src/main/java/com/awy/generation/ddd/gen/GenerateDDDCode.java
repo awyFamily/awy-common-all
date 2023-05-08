@@ -25,6 +25,7 @@ public class GenerateDDDCode {
     private boolean genFactory = true;
     private boolean genDomainService = true;
     private boolean genApplicationService = true;
+    private boolean genApi = true;
 
     private GenerateDDDCode(){}
 
@@ -61,6 +62,11 @@ public class GenerateDDDCode {
 
     public GenerateDDDCode genApplicationService(boolean genApplicationService) {
         this.genApplicationService = genApplicationService;
+        return this;
+    }
+
+    public GenerateDDDCode genApi(boolean genApi) {
+        this.genApi = genApi;
         return this;
     }
 
@@ -147,6 +153,18 @@ public class GenerateDDDCode {
         poStr = StrUtil.format(poStr,model.getAuthor(),model.getDateStr());
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.toLowerCaseByFirstChar(model.getDomainEntityName())};
         String packageName = model.getPackagePrefix() + ".application.service";
+        genFile(poStr,replaceArr,packageName, DDDConstant.application_service_suffix);
+    }
+
+    private void genApi() {
+        String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.toLowerCaseByFirstChar(model.getDomainEntityName())};
+        String packageName = model.getPackagePrefix() + ".interfaces.api";
+        genCode("templates/DDDApiTemplate.template",packageName, replaceArr);
+    }
+
+    private void genCode(String templatePath, String packageName, String[] replaceArr) {
+        String poStr = getFileContent(templatePath);
+        poStr = StrUtil.format(poStr,model.getAuthor(),model.getDateStr());
         genFile(poStr,replaceArr,packageName, DDDConstant.application_service_suffix);
     }
 
