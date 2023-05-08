@@ -17,8 +17,12 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -162,6 +166,33 @@ public abstract class AbstractExcelUtil<T>  {
 
 
     //============================= export single sheet option =========================================
+
+    public void writeFileServletResponse(String fileName, File file, HttpServletResponse response) {
+        try(InputStream inputStream = new BufferedInputStream(new FileInputStream(file))) {
+            this.writeBytesServletResponse(fileName,inputStream.readAllBytes(),response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeInputStreamServletResponse(String fileName,InputStream inputStream,HttpServletResponse response) {
+        try {
+            this.writeBytesServletResponse(fileName,inputStream.readAllBytes(),response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeBytesServletResponse(String fileName,byte[] b,HttpServletResponse response) {
+        try(OutputStream os = new BufferedOutputStream(response.getOutputStream())){
+            response.setContentType("application/octet-stream");
+            response.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8"));
+            os.write(b);
+            os.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 获取导出字节数组

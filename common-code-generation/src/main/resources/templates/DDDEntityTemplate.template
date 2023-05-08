@@ -1,0 +1,15 @@
+package {0}.domain.{1}.entity;
+
+import {}.data.model.BaseEntity;
+import lombok.Data;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@Data
+public class {2} extends BaseEntity {
+
+    private Long id;
+
+}

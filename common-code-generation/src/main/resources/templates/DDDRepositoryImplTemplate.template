@@ -1,0 +1,16 @@
+package {0}.domain.{1}.repository.persistence;
+
+import {}.data.base.BaseRepositoryImpl;
+import {0}.domain.{1}.repository.facade.{2}Repository;
+import {0}.domain.{1}.repository.mapper.{2}Mapper;
+import {0}.domain.{1}.repository.po.{3};
+import org.springframework.stereotype.Repository;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@Repository
+public class {2}RepositoryImpl extends BaseRepositoryImpl<{2}Mapper, {3}> implements {2}Repository {
+
+}

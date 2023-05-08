@@ -1,8 +1,11 @@
 package com.awy.common.gateway.config;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.discovery.client.route.RouterEum;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,4 +39,22 @@ public class AuthFilterProperties {
      * 放行的路径地址
      */
     private List<String> releaseUrl;
+
+    private String ipWhiteList;
+
+    public List<String> getIpWhiteList() {
+        if (StrUtil.isBlank(this.ipWhiteList)) {
+            return new ArrayList<>();
+        }
+        return CollUtil.newArrayList(this.ipWhiteList.split(","));
+    }
+
+    private String ipBlackList;
+
+    public List<String> getIpBlackList() {
+        if (StrUtil.isBlank(this.ipBlackList)) {
+            return new ArrayList<>();
+        }
+        return CollUtil.newArrayList(this.ipBlackList.split(","));
+    }
 }

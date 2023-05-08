@@ -1,0 +1,24 @@
+package {0}.domain.{1}.repository.po;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import {}.data.model.BaseEntity;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Data
+@TableName("")
+public class {3} extends BaseEntity {
+
+    @TableId(type = IdType.ASSIGN_ID)
+    private Long id;
+
+}

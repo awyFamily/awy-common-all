@@ -1,7 +1,7 @@
 package com.awy.common.security.converter;
 
-import com.awy.common.util.constants.SecurityConstant;
 import com.awy.common.security.oauth2.model.AuthUser;
+import com.awy.common.util.constants.SecurityConstant;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -40,6 +40,8 @@ public class AwyUserAuthenticationConverter implements UserAuthenticationConvert
             response.put(SecurityConstant.USER_ID, authUser.getUserId());
             response.put(SecurityConstant.COMPANY_IDS, authUser.getCompanyIds());
             response.put(SecurityConstant.PLAT_FROM_TYPE, authUser.getPlatformTypes());
+            response.put(SecurityConstant.ROLES, authUser.getRoles());
+            response.put(SecurityConstant.PERMISSIONS, authUser.getPermissions());
         }
 
         if (authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
@@ -65,9 +67,11 @@ public class AwyUserAuthenticationConverter implements UserAuthenticationConvert
             String userId = (String)map.get(SecurityConstant.USER_ID);
             List<Integer> platformTypes = (List<Integer>)map.get(SecurityConstant.PLAT_FROM_TYPE);
             List<Integer> companyIds = (List<Integer>)map.get(SecurityConstant.COMPANY_IDS);
+            List<String> roles = (List<String>)map.get(SecurityConstant.ROLES);
+            List<String> permissions = (List<String>)map.get(SecurityConstant.PERMISSIONS);
 
             //Security User增强类
-            AuthUser user = new AuthUser(userId, platformTypes,companyIds, username, SecurityConstant.N_A,
+            AuthUser user = new AuthUser(userId,platformTypes,companyIds, roles,permissions, username, SecurityConstant.N_A,
                     true, true, true, true, authorities);
             return new UsernamePasswordAuthenticationToken(user, SecurityConstant.N_A, authorities);
         }

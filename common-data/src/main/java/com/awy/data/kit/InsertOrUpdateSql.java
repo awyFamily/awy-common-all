@@ -3,8 +3,9 @@ package com.awy.data.kit;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
-import com.google.common.collect.Lists;
 import com.awy.common.util.utils.ReflexUtils;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
@@ -115,17 +116,17 @@ public final class InsertOrUpdateSql {
     /**
      * 大数据批量新增,不需要setID(hasDelete默认为false,新增请忽略创建，修改时间)
      * @param t 实体名
+     * @param tableName 实体名
      * @param list 新增对应的实体集合
      * @param ignoreColumn 忽略的列
      * @return 批量新增SQL语句
      * @author yhw
      */
-    public static <T> String getInsertSql(Class<T> t,List<T> list,String...ignoreColumn){
+    public static <T> String getInsertSql(Class<T> t,String tableName,List<T> list,String...ignoreColumn){
         StringBuilder sql = new StringBuilder();
-
         List<String> columnList = getColumnList(t, list, ignoreColumn);
         sql.append("insert into ");
-        sql.append(toUnderlineCase(t.getSimpleName()));//表名
+        sql.append(StrUtil.isBlank(tableName) ? getTableName(t) : tableName);//表名
         sql.append(" (");
         sql.append(columnList.stream().map(str->toUnderlineCase(str)).collect(Collectors.joining(",")));//列名
         sql.append(") values");
@@ -175,17 +176,26 @@ public final class InsertOrUpdateSql {
         return sql.toString();
     }
 
+
+    private static <T> String getTableName(Class<T> t) {
+        TableName annotation = t.getAnnotation(TableName.class);
+        if (annotation != null) {
+            return annotation.value();
+        }
+        return toUnderlineCase(t.getSimpleName());
+    }
     //==================================================================================
     /**
      * 批量修改(请确保list对象中主键列值不能为空)
-     * @param t 实体类名
+     * @param tableName 实体类名
      * @param primaryKey 主键列名(不传递默认主键ID)
+     * @param t 实体类名
      * @param list 修改对应的实体集合
      * @param ignoreColumn 忽略的列
      * @return 批量修改SQL语句
      * @author yhw
      */
-    public static <T> String getUpdateSql(Class<T> t,String primaryKey,List<T> list,String...ignoreColumn) {
+    public static <T> String getUpdateSql(String tableName,String primaryKey,Class<T> t,List<T> list,String...ignoreColumn) {
         long start = System.currentTimeMillis();
         StringBuilder sql = new StringBuilder();
 
@@ -204,7 +214,7 @@ public final class InsertOrUpdateSql {
         List<String> columnList = getColumnList(t, list, ignoreColumn);
 
         sql.append("UPDATE ");
-        sql.append(toUnderlineCase(t.getSimpleName()));//表名
+        sql.append(StrUtil.isBlank(tableName) ? getTableName(t) : tableName);//表名
         sql.append(" SET ");
         //修改内容
         sql.append(getUpdateSqlStr(primaryKey,list,columnList));

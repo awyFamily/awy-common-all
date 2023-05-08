@@ -1,5 +1,6 @@
 package com.awy.common.redis;
 
+import cn.hutool.core.util.StrUtil;
 import com.awy.common.redis.data.ScanData;
 import com.awy.common.util.utils.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,7 +185,62 @@ public class RedisWrapper {
         this.setStrEx(key, JsonUtil.toJson(value),timeOut,timeUnit);
     }
 
+    //=============  atomic operator ======================
 
+    public Long decrement(String key) {
+        return this.getStringTemplate().decrement(key);
+    }
+
+    public Long decrement(String key, long delta) {
+        return this.getStringTemplate().decrement(key,delta);
+    }
+
+    public Long decrementEx(String key,final long timeout) {
+        return this.decrementEx(key,1,timeout);
+    }
+
+    public Long decrementEx(String key, long delta, final long timeout) {
+        return this.decrementEx(key,timeout,delta,TimeUnit.SECONDS);
+    }
+
+    public Long decrementEx(String key, long delta, final long timeout, final TimeUnit unit) {
+        String exists = this.getStr(key);
+        Long result = (delta == 1) ? this.decrement(key) : this.decrement(key,delta);
+        if (StrUtil.isBlank(exists)) {
+            this.expire(key,timeout,unit);
+            return result;
+        }
+        return result;
+    }
+
+    public Long increment(String key) {
+        return this.getStringTemplate().increment(key);
+    }
+
+    public Long increment(String key, long delta) {
+        return this.getStringTemplate().increment(key,delta);
+    }
+
+    public Long incrementEx(String key,final long timeout) {
+        return this.incrementEx(key,1,timeout);
+    }
+
+    public Long incrementEx(String key, long delta, final long timeout) {
+        return this.incrementEx(key,timeout,delta,TimeUnit.SECONDS);
+    }
+
+    public Long incrementEx(String key, long delta, final long timeout, final TimeUnit unit) {
+        //expire <- ttl = -2 , forever <- ttl = -1
+        String exists = this.getStr(key);
+        Long result = (delta == 1) ? this.increment(key) : this.increment(key,delta);
+        if (StrUtil.isBlank(exists)) {
+            this.expire(key,timeout,unit);
+            return result;
+        }
+        return result;
+    }
+
+    //========================================
 
 
     //===================== map ================================
@@ -211,24 +267,68 @@ public class RedisWrapper {
         return redisTemplate.opsForList();
     }
 
+    public <T> void rightPush(String key,T value) {
+        this.getListTemplate().rightPush(key,value);
+    }
 
+    public <T> void rightPushEx(String key,T value, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().rightPush(key,value);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
 
+    public <T> void rightPushAllEx(String key,List<T> values, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().rightPush(key,values);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> void leftPush(String key,T value) {
+        this.getListTemplate().leftPush(key,value);
+    }
+
+    public <T> void leftPushEx(String key,T value, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().leftPush(key,value);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> void leftPushAllEx(String key,List<T> values, final long timeout, final TimeUnit unit) {
+        this.getListTemplate().leftPushAll(key,values);
+        this.redisTemplate.expire(key,timeout,unit);
+    }
+
+    public <T> List<T> getList(String key, long start, long end) {
+        return (List<T>)this.getListTemplate().range(key, start, end);
+    }
+
+    public <T> List<T> getAllList(String key) {
+        return (List<T>)this.getListTemplate().range(key, 0, -1);
+    }
+
+    public void removeListValue(String key,Object value) {
+        this.removeListValue(key,value,0);
+    }
+
+    public void removeListValue(String key,Object value,long count) {
+        this.getListTemplate().remove(key,count,value);
+    }
 
     public SetOperations getSetTemplate(){
         return redisTemplate.opsForSet();
     }
 
 
-
-
     public ZSetOperations getZsetTemplate(){
         return redisTemplate.opsForZSet();
+    }
+
+    public void expire(String key,final long timeout, final TimeUnit unit) {
+        this.redisTemplate.expire(key,timeout,unit);
     }
 
     //================================ hyperLogLog ============================================
     public HyperLogLogOperations getHyperLogLog(){
         return redisTemplate.opsForHyperLogLog();
     }
+
 
     //============================= 删除操作 =======================================
 

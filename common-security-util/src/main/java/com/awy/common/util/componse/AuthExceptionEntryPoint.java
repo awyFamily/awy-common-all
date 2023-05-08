@@ -23,7 +23,7 @@ public class AuthExceptionEntryPoint implements AuthenticationEntryPoint {
 
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
         Throwable cause = authException.getCause();
 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

@@ -2,12 +2,21 @@ package com.awyFamily.common.test;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.hutool.json.JSON;
+import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
 import org.junit.After;
 import org.junit.Before;
 
+import javax.swing.filechooser.FileSystemView;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Map;
 
@@ -122,7 +131,49 @@ public abstract class ApiBaseTest {
             httpRequest.auth(getTokenStr(username,password));
         }
 
-        responseResult = httpRequest.execute().body();
+        HttpResponse response = httpRequest.execute();
+        if (response.headers().get("Content-Disposition") != null) {
+            String disposition = response.header("Content-Disposition");
+            //attachment
+            if (disposition.contains("attachment")) {
+                FileSystemView fsv = FileSystemView.getFileSystemView();
+                File homeDirectory = fsv.getHomeDirectory();
+                String filePath = homeDirectory.getPath();
+                String filename = "";
+                if (disposition.contains("filename") || disposition.contains("fileName") || disposition.contains("FileName")) {
+                    for (String inner: disposition.split(";")) {
+                        if (inner.contains("filename") || inner.contains("fileName") || inner.contains("FileName")) {
+                            String[] filenames = inner.split("=");
+                            if (filenames.length > 1) {
+                                filename = URLDecoder.decode(filenames[1], Charset.forName("utf-8"));
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (StrUtil.isBlank(filename)) {
+                    filename = UUID.fastUUID().toString() + ".tmp";
+                }
+
+                filePath =  filePath + File.separator + filename;
+                byte[] bytes = response.bodyBytes();
+                File file = new File(filePath);
+                if (response.getStatus() == 200 && bytes.length > 0) {
+                    try(FileOutputStream out = new FileOutputStream(file)) {
+                        out.write(bytes);
+                    } catch (Exception e) {
+                        System.err.println(e);
+                    }
+                }
+
+                //输出文件地址
+                parameters = new JSONObject();
+                parameters.putByPath("filePath",filePath);
+                responseResult = parameters.toString();
+            }
+        } else {
+            responseResult = response.body();
+        }
     }
 
     public ApiBaseTest post() {

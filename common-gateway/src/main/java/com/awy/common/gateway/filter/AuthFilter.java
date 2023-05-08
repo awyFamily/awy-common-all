@@ -1,11 +1,12 @@
 package com.awy.common.gateway.filter;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.json.JSONObject;
-import com.google.common.collect.Lists;
 import com.awy.common.discovery.client.util.ServiceInstanceUtil;
 import com.awy.common.gateway.config.AuthFilterProperties;
 import com.awy.common.redis.RedisWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.client.ServiceInstance;
@@ -27,6 +28,7 @@ import reactor.core.publisher.Mono;
 import javax.annotation.Resource;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ import java.util.Map;
  * internal service only need to get the token. get the token info
  * @author yhw
  */
+@Slf4j
 @Component
 public class AuthFilter implements GlobalFilter, Ordered {
 
@@ -59,17 +62,22 @@ public class AuthFilter implements GlobalFilter, Ordered {
     // -> DefaultAccessTokenConverter
     private static final String EXPIRES = "exp";
 
+    private static final String X_FORWARDED_FOR = "X-Forwarded-For";
 
+    private static final String X_REAL_IP = "X-Real-IP";
 
-//    private final static String AUTH_INSTANCE = "server-auth";
-
-//    private final static String CHECK_URI_SUFFIX = "/oauth/check_token";
-
-    private List<String> ignoreUri = Lists.newArrayList();
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
+        log.info("request: {} , X-Real-IP : {} , X-Forwarded-For : {} ",request.getURI().getPath(),request.getHeaders().get(X_REAL_IP),request.getHeaders().get(X_FORWARDED_FOR));
+        List<String> hosts = this.getHosts(request);
+        if (isWhiteList(hosts)) {
+            return chain.filter(exchange);
+        }
+        if (isBlackList(hosts)) {
+            return getResponse(exchange);
+        }
         if(isIgnore(request)){
             return chain.filter(exchange);
         }
@@ -78,6 +86,39 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return getResponse(exchange);
         }
         return chain.filter(exchange);
+    }
+
+    private List<String> getHosts(ServerHttpRequest request) {
+        List<String> hosts = new ArrayList<>();
+        hosts.addAll(CollUtil.isEmpty(request.getHeaders().get(X_FORWARDED_FOR)) ? new ArrayList<>(0) : request.getHeaders().get(X_FORWARDED_FOR));
+        hosts.addAll(CollUtil.isEmpty(request.getHeaders().get(X_REAL_IP)) ? new ArrayList<>(0) : request.getHeaders().get(X_REAL_IP));
+        return hosts;
+    }
+
+    private boolean isWhiteList(List<String> hosts) {
+        if (CollUtil.isNotEmpty(authFilterProperties.getIpWhiteList())) {
+            if (CollUtil.isNotEmpty(hosts)) {
+                for (String host : hosts) {
+                    if (authFilterProperties.getIpWhiteList().contains(host)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean isBlackList(List<String> hosts) {
+        if (CollUtil.isNotEmpty(authFilterProperties.getIpBlackList())) {
+            if (CollUtil.isNotEmpty(hosts)) {
+                for (String host : hosts) {
+                    if (authFilterProperties.getIpBlackList().contains(host)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 
