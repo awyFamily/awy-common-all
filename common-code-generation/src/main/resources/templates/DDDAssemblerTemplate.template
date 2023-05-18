@@ -1,0 +1,33 @@
+package {0}.interfaces.assembler;
+
+import cn.hutool.core.bean.BeanUtil;
+import {0}.api.dto.{1}.{2}BaseDTO;
+import {0}.api.dto.{1}.{2}CreateDTO;
+import {0}.api.dto.{1}.{2}EditDTO;
+import {0}.api.vo.{1}.{2}VO;
+import {0}.domain.{1}.entity.{2};
+
+/**
+ * @author {}
+ * @date {}
+ */
+public final class {2}Assembler {
+
+    public static {2} toDO({2}BaseDTO dto) {
+        {2} model = new {2}();
+        if (dto instanceof {2}CreateDTO) {
+            {2}CreateDTO createDTO = ({2}CreateDTO) dto;
+            BeanUtil.copyProperties(model, createDTO);
+        } else if (dto instanceof {2}EditDTO) {
+            {2}EditDTO editDTO = ({2}EditDTO) dto;
+            BeanUtil.copyProperties(model, editDTO);
+        }
+        return model;
+    }
+
+    public static {2}VO toVO({2} model) {
+        {2}VO vo = new {2}VO();
+        BeanUtil.copyProperties(vo, model);
+        return vo;
+    }
+}

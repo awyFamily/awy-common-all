@@ -1,0 +1,45 @@
+package {0}.interfaces.api;
+
+import com.awy.common.util.model.ApiResult;
+import {0}.api.dto.{1}.{2}CreateDTO;
+import {0}.api.dto.{1}.{2}EditDTO;
+import {0}.api.vo.{1}.{2}VO;
+import {0}.application.service.{2}ApplicationService;
+import {0}.domain.{1}.entity.{2};
+import {0}.interfaces.assembler.{2}Assembler;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+/**
+ * @author {}
+ * @date {}
+ */
+@Slf4j
+@AllArgsConstructor
+@RequestMapping("/{1}")
+@RestController
+public class {2}Api {
+
+    private final {2}ApplicationService {1}ApplicationService;
+
+    @GetMapping("/info/{id}")
+    public ApiResult<{2}VO> create(@PathVariable("id") Long id) {
+        return ApiResult.ok({2}Assembler.toVO({1}ApplicationService.getInfo(id)));
+    }
+
+    @PostMapping("/create")
+    public ApiResult<Long> create(@Valid @RequestBody {2}CreateDTO dto) {
+        {2} model = {2}Assembler.toDO(dto);
+        {1}ApplicationService.create(model);
+        return ApiResult.ok(model.getId());
+    }
+
+    @PostMapping("/edit")
+    public ApiResult<Boolean> edit(@Valid @RequestBody {2}EditDTO dto) {
+        {2} model = {2}Assembler.toDO(dto);
+        return ApiResult.ok({1}ApplicationService.edit(model));
+    }
+}

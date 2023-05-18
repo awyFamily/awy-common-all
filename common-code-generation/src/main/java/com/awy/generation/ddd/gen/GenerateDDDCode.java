@@ -89,6 +89,9 @@ public class GenerateDDDCode {
         if (genApplicationService) {
             this.genApplicationService();
         }
+        if (genApi) {
+            this.genApi();
+        }
     }
 
 
@@ -157,10 +160,19 @@ public class GenerateDDDCode {
     }
 
     private void genApi() {
-        String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName(),model.toLowerCaseByFirstChar(model.getDomainEntityName())};
+        this.genAssembler();
+        String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName()};
         String packageName = model.getPackagePrefix() + ".interfaces.api";
         genCode("templates/DDDApiTemplate.template",packageName, replaceArr);
     }
+
+    private void genAssembler() {
+        String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName()};
+        String packageName = model.getPackagePrefix() + ".interfaces.assembler";
+        genCode("templates/DDDAssemblerTemplate.template",packageName, replaceArr);
+    }
+
+    //User
 
     private void genCode(String templatePath, String packageName, String[] replaceArr) {
         String poStr = getFileContent(templatePath);
