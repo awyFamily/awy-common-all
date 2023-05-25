@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
 /**
  * @author yhw
@@ -73,6 +74,19 @@ public final class SendUtil {
             }finally {
                 ModBusFutureContext.removeFuture(uid);
             }
+        }
+        return null;
+    }
+
+    public static <T extends ModbusResponse, R> R sendRequestAwait(int manufacturer,int equipmentSerialNumber, ModbusRequest message , Function<T, R> function){
+        String sessionId = ModbusSession.getSessionId(manufacturer, equipmentSerialNumber);
+        return sendRequestAwait(sessionId, message, function);
+    }
+
+    public static <T extends ModbusResponse, R> R sendRequestAwait(String sessionId, ModbusRequest message, Function<T, R> function){
+        ModbusResponse modbusResponse = sendRequestAwait(sessionId, message);
+        if (modbusResponse != null) {
+            return function.apply((T) modbusResponse);
         }
         return null;
     }

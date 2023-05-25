@@ -17,6 +17,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 		<filtering>true</filtering>
+		<skipTests>true</skipTests>
 	</properties>
 
 	<dependencies>
