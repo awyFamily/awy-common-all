@@ -163,21 +163,21 @@ public class GenerateDDDCode {
         this.genAssembler();
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName()};
         String packageName = model.getPackagePrefix() + ".interfaces.api";
-        genCode("templates/DDDApiTemplate.template",packageName, replaceArr);
+        genCode("templates/DDDApiTemplate.template",packageName, replaceArr, DDDConstant.api_suffix);
     }
 
     private void genAssembler() {
         String[] replaceArr = new String[] {model.getPackagePrefix(),model.getDomain(),model.getDomainEntityName()};
         String packageName = model.getPackagePrefix() + ".interfaces.assembler";
-        genCode("templates/DDDAssemblerTemplate.template",packageName, replaceArr);
+        genCode("templates/DDDAssemblerTemplate.template",packageName, replaceArr, DDDConstant.assembler_suffix);
     }
 
     //User
 
-    private void genCode(String templatePath, String packageName, String[] replaceArr) {
+    private void genCode(String templatePath, String packageName, String[] replaceArr, String fileSuffix) {
         String poStr = getFileContent(templatePath);
         poStr = StrUtil.format(poStr,model.getAuthor(),model.getDateStr());
-        genFile(poStr,replaceArr,packageName, DDDConstant.application_service_suffix);
+        genFile(poStr,replaceArr,packageName, fileSuffix);
     }
 
     private void genFile(String fileContentStr,String[] replaceArr,String packageName,String fileSuffix) {

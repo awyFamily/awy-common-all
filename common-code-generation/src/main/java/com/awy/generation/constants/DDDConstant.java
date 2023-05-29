@@ -35,4 +35,8 @@ public interface DDDConstant {
     String domain_service_suffix = "DomainService" + GenerationConstant.point_java;
 
     String application_service_suffix = "ApplicationService" + GenerationConstant.point_java;
+
+    String api_suffix = "Api" + GenerationConstant.point_java;
+
+    String assembler_suffix = "Assembler" + GenerationConstant.point_java;
 }
