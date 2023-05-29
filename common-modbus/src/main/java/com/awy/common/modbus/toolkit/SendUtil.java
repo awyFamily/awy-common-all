@@ -3,7 +3,6 @@ package com.awy.common.modbus.toolkit;
 import com.awy.common.modbus.server.context.ModBusFutureContext;
 import com.awy.common.modbus.server.context.ModbusSession;
 import com.awy.common.modbus.server.context.SessionContext;
-import com.digitalpetri.modbus.FunctionCode;
 import com.digitalpetri.modbus.codec.rtu.ModbusRtuPayload;
 import com.digitalpetri.modbus.requests.ModbusRequest;
 import com.digitalpetri.modbus.responses.ModbusResponse;
@@ -107,5 +106,4 @@ public final class SendUtil {
         }
         return false;
     }
-
 }
