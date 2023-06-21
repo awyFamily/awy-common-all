@@ -15,6 +15,12 @@ public class CustomizeAuthDTO {
      */
     private final String customizeAuthName;
 
+    private static final String DEFAULT_AUTH_NAME = "用户名密码认证";
+
+    public CustomizeAuthDTO() {
+        this.customizeAuthName = DEFAULT_AUTH_NAME;
+    }
+
     public CustomizeAuthDTO(String customizeAuthName) {
         this.customizeAuthName = customizeAuthName;
     }
