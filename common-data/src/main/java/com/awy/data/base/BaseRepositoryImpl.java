@@ -3,6 +3,7 @@ package com.awy.data.base;
 import cn.hutool.core.util.StrUtil;
 import com.awy.common.util.model.BasePageDTO;
 import com.awy.common.util.utils.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.metadata.OrderItem;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -50,6 +52,14 @@ public class BaseRepositoryImpl<M extends BaseMapper<T>, T> implements BaseRepos
     @Override
     public T getById(Serializable id) {
         return baseMapper.selectById(id);
+    }
+
+    @Override
+    public T getOneSafe(Wrapper<T> queryWrapper) {
+        List<T> list = baseMapper.selectList(queryWrapper);
+        if (CollUtil.isEmpty(list))
+            return null;
+        return list.get(0);
     }
 
     @Override

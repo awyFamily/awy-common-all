@@ -1,5 +1,7 @@
 package com.awy.data.base;
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+
 import java.io.Serializable;
 import java.util.Collection;
 
@@ -17,5 +19,6 @@ public interface BaseRepository<T> {
 
     T getById(Serializable id);
 
+    T getOneSafe(Wrapper<T> queryWrapper);
 
 }
