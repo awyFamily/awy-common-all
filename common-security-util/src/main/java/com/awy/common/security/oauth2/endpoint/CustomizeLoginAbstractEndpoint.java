@@ -21,6 +21,7 @@ import org.springframework.security.oauth2.provider.*;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.util.StringUtils;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,7 +54,7 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
         //requestParameters
         Map<String, String> requestParameters = new HashMap<>();
         requestParameters.put("client_secret", "secret");
-        TokenRequest tokenRequest = new TokenRequest(requestParameters, this.getClientId(), CollUtil.newArrayList("app"), "password");
+        TokenRequest tokenRequest = this.tokenRequest(requestParameters, this.getClientId(), CollUtil.newArrayList("app"), "password");
 
 
         if (this.getClientId() != null && !this.getClientId().equals("")) {
@@ -77,6 +78,11 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
 
         AuthUser authUser = (AuthUser) oAuth2Authentication.getPrincipal();
         return new OAuth2AuthenticationVO(accessToken,authUser.getCompanyIds(),authUser.getRoles(),authUser.getPermissions());
+    }
+
+    public TokenRequest tokenRequest(Map<String, String> requestParameters, String clientId, Collection<String> scope,
+                                     String grantType) {
+        return new TokenRequest(requestParameters, clientId, scope, grantType);
     }
 
     /**
@@ -127,7 +133,7 @@ public abstract class CustomizeLoginAbstractEndpoint<T extends CustomizeAuthDTO>
 
         //save log
         if (this.getAuthLogService() != null) {
-            this.getAuthLogService().insertLoginLog(authUser,SecurityConstant.CUSTOMIZE_AUTH_METHOD,dto.getCustomizeAuthName());
+            this.getAuthLogService().insertLoginLog(authUser, SecurityConstant.CUSTOMIZE_AUTH_METHOD, dto.getCustomizeAuthName());
         }
 
         //client info
