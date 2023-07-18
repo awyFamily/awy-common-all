@@ -30,4 +30,11 @@ public final class {2}Assembler {
         BeanUtil.copyProperties(vo, model);
         return vo;
     }
+
+    public static List<{2}VO> toVOList(List<{2}> models) {
+        if (CollUtil.isEmpty(models)) {
+            return new ArrayList<>();
+        }
+        return models.stream().map({2}Assembler::toVO).collect(Collectors.toList());
+    }
 }

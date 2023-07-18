@@ -8,5 +8,5 @@ import {0}.domain.{1}.repository.po.{3};
  * @date {}
  */
 public interface {2}Repository extends BaseRepository<{3}> {
-
+    List<{3}> getByIds(Collection<? extends Serializable> ids);
 }

@@ -32,6 +32,13 @@ public class {2}Factory extends BaseFactory<{2}, {3}> {
         return model;
     }
 
+    public List<{2}> getSimpleInfos(List<{3}> pos) {
+        if (CollUtil.isEmpty(pos)) {
+            return new ArrayList<>();
+        }
+        return pos.stream().map(this::getSimpleInfo).collect(Collectors.toList());
+    }
+
     @Override
     public void wrapperInfo({2} model) {
 

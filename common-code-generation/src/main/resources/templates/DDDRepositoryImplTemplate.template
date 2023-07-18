@@ -13,4 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class {2}RepositoryImpl extends BaseRepositoryImpl<{2}Mapper, {3}> implements {2}Repository {
 
+    @Override
+    public List<{3}> getByIds(Collection<? extends Serializable> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return new ArrayList<>();
+        }
+        return this.getBaseMapper().selectBatchIds(ids);
+    }
+
 }
